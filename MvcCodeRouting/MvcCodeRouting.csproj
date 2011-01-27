@@ -42,7 +42,7 @@
     <Compile Include="CodeRoutingViewEngineWrapper.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="HttpMethodPrefixedActionInvoker.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
