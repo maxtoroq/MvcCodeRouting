@@ -31,7 +31,7 @@ namespace MvcCodeRouting {
          return actionMethodName.Substring(WordBoundary.Match(actionMethodName).Index);
       }
 
-      public static string GetMethod(string actionMethodName) {
+      public static string GetHttpMethod(string actionMethodName) {
          
          if (actionMethodName == null) throw new ArgumentNullException("actionMethodName");
 

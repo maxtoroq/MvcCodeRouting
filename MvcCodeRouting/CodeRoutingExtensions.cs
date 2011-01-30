@@ -53,9 +53,9 @@ namespace MvcCodeRouting {
          string baseNamespace = null,
          string rootController = "Home",
          string defaultAction = "Index",
+         IDictionary<Type, string> defaultConstraints = null,
          Func<string, string> routeFormatter = null,
-         Func<MethodInfo, string> actionNameExtractor = null,
-         IDictionary<Type, string> defaultConstraints = null
+         Func<MethodInfo, string> actionNameExtractor = null
          ) {
 
          if (assembly == null)
@@ -63,9 +63,6 @@ namespace MvcCodeRouting {
 
          if (baseNamespace == null)
             baseNamespace = assembly.GetName().Name;
-
-         if (routeFormatter == null)
-            routeFormatter = s => s;
 
          if (defaultConstraints == null) {
             defaultConstraints = _defaultConstraints;
@@ -77,6 +74,9 @@ namespace MvcCodeRouting {
 
             defaultConstraints = def;
          }
+
+         if (routeFormatter == null)
+            routeFormatter = s => s;
 
          var actions = ControllerInfo.GetControllers(assembly, baseNamespace, rootController, defaultAction, routeFormatter)
             .Select(c => c.GetActions(actionNameExtractor, defaultConstraints))
@@ -166,12 +166,11 @@ namespace MvcCodeRouting {
 
          segments.Add("{action}");
 
-         if (actionNames.Count == 1) {
-            segments[1] = first.Name;
+         bool hardcodeAction = actionNames.Count == 1
+            && !(count == 1 && first.IsDefaultAction);
 
-            if (count == 1 && first.IsDefaultAction)
-               segments[1] = "";
-         }
+         if (hardcodeAction) 
+            segments[1] = first.Name;
 
          segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
 
@@ -206,7 +205,7 @@ namespace MvcCodeRouting {
          if (controllerNames.Count > 1)
             constraints.Add("controller", String.Join("|", controllerNames));
 
-         if (actionNames.Count > 1)
+         if (!hardcodeAction || actionNames.Count > 1)
             constraints.Add("action", String.Join("|", actionNames));
 
          foreach (var param in parameters.Where(p => p.Constraint != null)) {
@@ -230,6 +229,8 @@ namespace MvcCodeRouting {
 
       public static string ToCSharpMapRouteCalls(this RouteCollection routes) {
 
+         if (routes == null) throw new ArgumentNullException("routes");
+
          StringBuilder sb = new StringBuilder();
 
          foreach (Route item in routes.OfType<Route>()) {
@@ -247,6 +248,8 @@ namespace MvcCodeRouting {
       }
 
       public static string ToCSharpMapRouteCall(this Route route) {
+
+         if (route == null) throw new ArgumentNullException("route");
 
          StringBuilder sb = new StringBuilder();
 
@@ -337,6 +340,8 @@ namespace MvcCodeRouting {
       }
 
       public static void EnableCodeRouting(this ViewEngineCollection engines) {
+
+         if (engines == null) throw new ArgumentNullException("engines");
 
          Type virtualPathProvType = typeof(VirtualPathProviderViewEngine);
 
@@ -667,6 +672,7 @@ namespace MvcCodeRouting {
             Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(paramType) : paramType;
             defaultConstraints.TryGetValue(t, out constr);
          }
+
          this._Constraint = constr;
       }
 

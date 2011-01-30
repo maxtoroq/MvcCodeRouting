@@ -26,6 +26,9 @@ namespace MvcCodeRouting {
       readonly IViewEngine wrappedEngine;
 
       public CodeRoutingViewEngineWrapper(IViewEngine wrappedEngine) {
+
+         if (wrappedEngine == null) throw new ArgumentNullException("wrappedEngine");
+
          this.wrappedEngine = wrappedEngine;
       }
 
