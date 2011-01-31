@@ -41,7 +41,6 @@
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingViewEngineWrapper.cs" />
     <Compile Include="FromRouteAttribute.cs" />
-    <Compile Include="HttpMethodPrefixedActionInvoker.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
   </ItemGroup>
