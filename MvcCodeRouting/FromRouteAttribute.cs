@@ -25,6 +25,7 @@ namespace MvcCodeRouting {
    public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder {
 
       public string Constraint { get; set; }
+      public bool CatchAll { get; set; }
 
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 

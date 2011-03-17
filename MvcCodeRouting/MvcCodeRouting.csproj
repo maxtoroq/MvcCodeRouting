@@ -38,11 +38,15 @@
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionInfo.cs" />
     <Compile Include="CodeRoutingExtensions.cs" />
+    <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="CodeRoutingViewEngineWrapper.cs" />
+    <Compile Include="ControllerInfo.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
+    <Compile Include="RouteParameterInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
