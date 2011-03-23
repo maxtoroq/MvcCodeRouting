@@ -49,8 +49,7 @@ namespace MvcCodeRouting {
             settings = new CodeRoutingSettings();
 
          var actions = ControllerInfo.GetControllers(assembly, baseNamespace, settings)
-            .Select(c => c.GetActions())
-            .SelectMany(a => a);
+            .SelectMany(c => c.GetActions());
 
          registeredActions.AddRange(actions);
 
@@ -266,7 +265,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      public static string ToCSharpMapRouteCall(this Route route) {
+      private static string ToCSharpMapRouteCall(this Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
 
