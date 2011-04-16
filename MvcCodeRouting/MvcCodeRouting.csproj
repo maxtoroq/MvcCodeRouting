@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionInfo.cs" />
+    <Compile Include="CodeRoute.cs" />
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="CodeRoutingViewEngineWrapper.cs" />

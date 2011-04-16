@@ -58,7 +58,7 @@ namespace MvcCodeRouting {
 
          var groupedActions = GroupActions(actions);
 
-         foreach (var route in groupedActions.Select(g => CreateRoute(g)))
+         foreach (var route in groupedActions.Select(g => CodeRoute.Create(g)))
             routes.Add(route);
       }
 
@@ -167,82 +167,6 @@ namespace MvcCodeRouting {
          }
 
          return finalGrouping;
-      }
-
-      private static Route CreateRoute(IEnumerable<ActionInfo> actions) {
-
-         ActionInfo first = actions.First();
-         int count = actions.Count();
-         var controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
-         var actionNames = actions.Select(a => a.Name).Distinct().ToList();
-
-         List<string> segments = new List<string>();
-         segments.Add(first.Controller.UrlTemplate);
-
-         if (controllerNames.Count == 1)
-            segments[0] = first.Controller.ControllerUrl;
-
-         segments.Add("{action}");
-
-         bool hardcodeAction = actionNames.Count == 1
-            && !(count == 1 && first.IsDefaultAction);
-
-         if (hardcodeAction) 
-            segments[1] = first.Name;
-
-         segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
-
-         string url = String.Join("/", segments.Where(s => !String.IsNullOrEmpty(s)));
-
-         var defaults = new RouteValueDictionary();
-
-         if (controllerNames.Count == 1)
-            defaults.Add("controller", controllerNames.First());
-
-         string defaultAction = null;
-
-         if (actionNames.Count == 1) {
-            defaultAction = first.Name;
-         } else {
-            var defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
-
-            if (defAction != null)
-               defaultAction = defAction.Name;
-         }
-
-         if (defaultAction != null)
-            defaults.Add("action", defaultAction);
-
-         var parameters = first.RouteParameters;
-
-         foreach (var param in parameters.Where(p => p.IsOptional))
-            defaults.Add(param.Name, UrlParameter.Optional);
-
-         var constraints = new RouteValueDictionary();
-
-         if (controllerNames.Count > 1)
-            constraints.Add("controller", String.Join("|", controllerNames));
-
-         if (!hardcodeAction || actionNames.Count > 1)
-            constraints.Add("action", String.Join("|", actionNames));
-
-         foreach (var param in parameters.Where(p => p.Constraint != null)) {
-
-            string regex = param.Constraint;
-
-            if (param.IsOptional)
-               regex = String.Concat("(", regex, ")?");
-
-            constraints.Add(param.Name, regex);
-         }
-
-         var dataTokens = new RouteValueDictionary();
-         dataTokens.Add("Namespaces", new string[1] { first.Controller.Type.Namespace });
-         dataTokens.Add("BaseRoute", String.Join("/", first.Controller.BaseRouteSegments));
-
-         Route route = new Route(url, defaults, constraints, dataTokens, new MvcRouteHandler());
-
-         return route;
       }
 
       public static string ToCSharpMapRouteCalls(this RouteCollection routes) {
