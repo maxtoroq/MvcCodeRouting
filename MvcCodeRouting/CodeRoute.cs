@@ -150,7 +150,7 @@ namespace MvcCodeRouting {
 
    class NamespaceConstraint : IRouteConstraint {
 
-      public const string Key = "__urlgen";
+      public const string Key = "__namespace";
 
       public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
 

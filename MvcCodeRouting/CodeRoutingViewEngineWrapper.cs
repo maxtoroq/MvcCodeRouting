@@ -21,7 +21,7 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting {
    
-   public class CodeRoutingViewEngineWrapper : IViewEngine {
+   class CodeRoutingViewEngineWrapper : IViewEngine {
 
       readonly IViewEngine wrappedEngine;
 
