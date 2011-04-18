@@ -1,0 +1,33 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<!DOCTYPE html>
+<html>
+<head>
+   <title>MvcCodeRouting Samples</title>
+   <style type="text/css">
+      body { font-family: Arial; font-size: 90%; }
+      #header { border-bottom: solid 1px gray; }
+      #header a { text-decoration: none; }
+   </style>
+</head>
+<body>
+   <div id="header">
+      <%: Html.ActionLink("Home", "", "Samples.Home")%> - 
+      <%: Html.ActionLink("Users", "", "Samples.User")%> -
+      <%: Html.ActionLink("Account", "", "Samples.Account")%> - 
+      <%: Html.ActionLink("Admin", "", "Samples.Admin")%> - 
+      <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a>
+
+      <% if (Page.User.Identity.IsAuthenticated) { %>
+      <div style="float: right;">
+         <strong>
+            <%: Page.User.Identity.Name %>
+         </strong> - 
+         <%: Html.ActionLink("Log Off", "LogOff", "Samples.Account") %>
+      </div>
+      <% } %>
+   </div>
+   <div id="content">
+      <asp:ContentPlaceHolder ID="content" runat="server"/>
+   </div>
+</body>
+</html>

@@ -148,7 +148,7 @@ namespace MvcCodeRouting {
       }
    }
 
-   class NamespaceConstraint : IRouteConstraint {
+   public class NamespaceConstraint : IRouteConstraint {
 
       public const string Key = "__namespace";
 

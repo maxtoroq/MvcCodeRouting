@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Web Developer Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting", "MvcCodeRouting\MvcCodeRouting.csproj", "{94D52E7E-6949-439F-80ED-212DAA85DB6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{223E2D37-5245-41C4-B576-CFD911433E41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{94D52E7E-6949-439F-80ED-212DAA85DB6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94D52E7E-6949-439F-80ED-212DAA85DB6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94D52E7E-6949-439F-80ED-212DAA85DB6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{223E2D37-5245-41C4-B576-CFD911433E41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223E2D37-5245-41C4-B576-CFD911433E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223E2D37-5245-41C4-B576-CFD911433E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223E2D37-5245-41C4-B576-CFD911433E41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

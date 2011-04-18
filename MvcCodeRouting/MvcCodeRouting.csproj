@@ -47,7 +47,7 @@
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
-    <Compile Include="RouteDebuggingHandler.cs" />
+    <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteParameterInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
