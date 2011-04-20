@@ -19,5 +19,9 @@ namespace Samples.User {
 
          return View();
       }
+
+      public ActionResult UrlGenerationTests() {
+         return View();
+      }
    }
 }

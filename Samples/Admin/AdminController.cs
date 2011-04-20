@@ -12,5 +12,9 @@ namespace Samples.Admin {
       public ActionResult Index() {
          return View();
       }
+
+      public ActionResult UrlGenerationTests() {
+         return View();
+      }
    }
 }

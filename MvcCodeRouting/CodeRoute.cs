@@ -93,7 +93,7 @@ namespace MvcCodeRouting {
             constraints.Add(param.Name, regex);
          }
 
-         constraints.Add(NamespaceConstraint.Key, new NamespaceConstraint());
+         constraints.Add(BaseRouteConstraint.Key, new BaseRouteConstraint());
 
          var dataTokens = new RouteValueDictionary { 
             { "Namespaces", new string[1] { first.Controller.Type.Namespace } },
@@ -113,34 +113,81 @@ namespace MvcCodeRouting {
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
 
          string controller;
-         string[] currentNamespaces;
+         string currentBaseRoute;
+         RouteData routeData = requestContext.RouteData;
 
          if (values != null
             && (controller = values["controller"] as string) != null
-            && (currentNamespaces = requestContext.RouteData.DataTokens["Namespaces"] as string[]) != null
-            && currentNamespaces.Length == 1) {
+            && (currentBaseRoute = routeData.DataTokens["BaseRoute"] as string) != null) {
 
-            bool controllerIsQualified = controller.Contains('.');
+            string baseRoute = currentBaseRoute;
+            bool hasBaseRouteValue = values.ContainsKey(BaseRouteConstraint.Key);
+            StringBuilder theController = new StringBuilder(controller);
 
-            if (controllerIsQualified) {
-               string[] segments = controller.Split('.');
-               string theController = segments.Last();
-               string controllerNamespace = String.Join(".", segments.Skip(0));
+            if (theController.Length > 0 && !hasBaseRouteValue) {
 
-               values["controller"] = theController;
-               values[NamespaceConstraint.Key] = controllerNamespace;
-            
-            } else {
-               values[NamespaceConstraint.Key] = currentNamespaces[0];
+               List<string> baseRouteSegments = (baseRoute.Length > 0) ?
+                  baseRoute.Split('/').ToList()
+                  : new List<string>();
+
+               if (theController[0] == '~') {
+
+                  baseRouteSegments.Clear();
+                  theController.Remove(0, 1);
+
+               } else if (theController[0] == '.') {
+
+                  if (theController.Length > 1 && theController[1] == '.') {
+
+                     if (baseRouteSegments.Count == 0)
+                        return null;
+
+                     baseRouteSegments.RemoveAt(baseRouteSegments.Count - 1);
+                     theController.Remove(0, 2);
+                  
+                  } else {
+
+                     string[] namespaces = routeData.DataTokens["Namespaces"] as string[];
+
+                     if (namespaces == null || namespaces.Length > 1)
+                        return null;
+
+                     baseRouteSegments.Add(namespaces[0].Split('.').Last());
+                     theController.Remove(0, 1);
+                  }
+               }
+
+               if (theController.Length > 1) {
+
+                  string[] controllerSegments = theController.ToString().Split('.');
+
+                  if (controllerSegments.Length > 1) {
+
+                     baseRouteSegments.AddRange(controllerSegments.Take(controllerSegments.Length - 1));
+                     
+                     theController.Clear();
+                     theController.Append(controllerSegments.Last());
+                  }
+               }
+
+               baseRoute = String.Join(".", baseRouteSegments);
             }
-            
-            var virtualPath = base.GetVirtualPath(requestContext, values);
 
-            if (controllerIsQualified) 
-               values["controller"] = controller;
+            if (theController.Length == 0)
+               values.Remove("controller");
+            else
+               values["controller"] = theController.ToString();
 
-            values.Remove(NamespaceConstraint.Key);
-            
+            if (!hasBaseRouteValue)
+               values[BaseRouteConstraint.Key] = baseRoute;
+
+            VirtualPathData virtualPath = base.GetVirtualPath(requestContext, values);
+
+            values["controller"] = controller;
+
+            if (!hasBaseRouteValue)
+               values.Remove(BaseRouteConstraint.Key);
+
             return virtualPath;
          }
 
@@ -148,23 +195,22 @@ namespace MvcCodeRouting {
       }
    }
 
-   public class NamespaceConstraint : IRouteConstraint {
+   public class BaseRouteConstraint : IRouteConstraint {
 
-      public const string Key = "__namespace";
+      public const string Key = "__baseroute";
 
       public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
 
          string controller;
-         string currentNamespace;
-         string[] routeNamespaces;
+         string baseRoute;
+         string routeBaseRoute;
 
          if (routeDirection == RouteDirection.UrlGeneration
             && (controller = values["controller"] as string) != null
-            && (currentNamespace = values[Key] as string) != null
-            && (routeNamespaces = route.DataTokens["Namespaces"] as string[]) != null
-            && routeNamespaces.Length == 1) {
+            && (baseRoute = values[Key] as string) != null
+            && (routeBaseRoute = route.DataTokens["BaseRoute"] as string) != null) {
 
-            return String.Equals(currentNamespace, routeNamespaces[0], StringComparison.Ordinal);
+            return String.Equals(baseRoute, routeBaseRoute, StringComparison.Ordinal);
          }
 
          return true;

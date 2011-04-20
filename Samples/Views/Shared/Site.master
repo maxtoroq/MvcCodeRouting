@@ -11,18 +11,19 @@
 </head>
 <body>
    <div id="header">
-      <%: Html.ActionLink("Home", "", "Samples.Home")%> - 
-      <%: Html.ActionLink("Users", "", "Samples.User")%> -
-      <%: Html.ActionLink("Account", "", "Samples.Account")%> - 
-      <%: Html.ActionLink("Admin", "", "Samples.Admin")%> - 
-      <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a>
+      <%: Html.ActionLink("Home", "", "~Home")%> - 
+      <%: Html.ActionLink("Users", "", "~User")%> -
+      <%: Html.ActionLink("Account", "", "~Account")%> - 
+      <%: Html.ActionLink("Admin", "", "~Admin")%> - 
+      <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a> - 
+      <%: Html.ActionLink("Url Generation Tests", "UrlGenerationTests")%> 
 
       <% if (Page.User.Identity.IsAuthenticated) { %>
       <div style="float: right;">
          <strong>
             <%: Page.User.Identity.Name %>
          </strong> - 
-         <%: Html.ActionLink("Log Off", "LogOff", "Samples.Account") %>
+         <%: Html.ActionLink("Log Off", "LogOff", "~Account") %>
       </div>
       <% } %>
    </div>

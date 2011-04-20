@@ -33,14 +33,14 @@ namespace MvcCodeRouting {
          if (!request.IsLocal)
             throw new HttpException(403, "Forbidden");
 
-         string lang = request.QueryString["lang"];
+         string format = request.QueryString["format"];
 
-         if (String.IsNullOrEmpty(lang))
-            response.Redirect(request.Url.AbsolutePath + "?lang=csharp", endResponse: true);
+         if (String.IsNullOrEmpty(format))
+            response.Redirect(request.Url.AbsolutePath + "?format=csharp", endResponse: true);
 
          response.ContentType = "text/plain";
 
-         switch (lang) {
+         switch (format) {
             case "csharp":
                response.Write(RouteTable.Routes.ToCSharpMapRouteCalls());
                break;
@@ -90,6 +90,12 @@ namespace MvcCodeRouting {
             sb.AppendFormat("routes.IgnoreRoute(\"{0}\");", route.Url);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+
+            string baseRoute = route.DataTokens["BaseRoute"] as string;
+
+            if (baseRoute != null)
+               sb.AppendFormat("// BaseRoute: \"{0}\"", baseRoute)
+                  .AppendLine();
 
             sb.AppendFormat("routes.MapRoute(null, \"{0}\"", route.Url);
 
@@ -216,6 +222,12 @@ namespace MvcCodeRouting {
             sb.AppendFormat("routes.IgnoreRoute(\"{0}\")", route.Url);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+
+            string baseRoute = route.DataTokens["BaseRoute"] as string;
+
+            if (baseRoute != null)
+               sb.AppendFormat("' BaseRoute: \"{0}\"", baseRoute)
+                  .AppendLine();
 
             sb.AppendFormat("routes.MapRoute(Nothing, \"{0}\"", route.Url);
 

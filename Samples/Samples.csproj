@@ -59,6 +59,7 @@
     <Content Include="Views\Admin\User\Edit.aspx" />
     <Content Include="Views\Admin\User\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Shared\UrlGenerationTests.aspx" />
     <Content Include="Views\User\Index.aspx" />
     <Content Include="Views\User\Profile.aspx" />
     <Content Include="Web.config" />

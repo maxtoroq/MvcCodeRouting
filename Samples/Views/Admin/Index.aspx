@@ -5,7 +5,7 @@
    <h1>Admin</h1>
    <ul>
       <li>
-         <%: Html.ActionLink("Users", "", "User") %>
+         <%: Html.ActionLink("Users", "", ".User") %>
       </li>
    </ul>
 

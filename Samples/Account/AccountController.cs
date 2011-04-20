@@ -28,14 +28,14 @@ namespace Samples.Account {
 
          FormsAuthentication.SetAuthCookie(username, createPersistentCookie: false);
 
-         return Redirect(returnUrl ?? this.Url.Action("", "Samples.Home"));
+         return Redirect(returnUrl ?? this.Url.Action("", "~Home"));
       }
 
       public ActionResult LogOff() {
          
          FormsAuthentication.SignOut();
          
-         return RedirectToAction("", "Samples.Home");
+         return RedirectToAction("", "~Home");
       }
 
       public ActionResult Register() {
@@ -49,6 +49,10 @@ namespace Samples.Account {
 
       public ActionResult ChangePasswordSuccess() {
          throw new NotImplementedException();
+      }
+
+      public ActionResult UrlGenerationTests() {
+         return View();
       }
    }
 }

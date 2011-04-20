@@ -15,5 +15,9 @@ namespace Samples.Home {
       public ActionResult About() {
          throw new NotImplementedException();
       }
+
+      public ActionResult UrlGenerationTests() {
+         return View();
+      }
    }
 }
