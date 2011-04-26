@@ -62,7 +62,7 @@ namespace MvcCodeRouting {
             routes.Add(route);
       }
 
-      private static void CheckSingleRootController(IEnumerable<ActionInfo> actions) {
+      static void CheckSingleRootController(IEnumerable<ActionInfo> actions) {
 
          var rootControllers = actions
             .Select(a => a.Controller)
@@ -81,7 +81,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      private static void CheckNoAmbiguousUrls(IEnumerable<ActionInfo> actions) {
+      static void CheckNoAmbiguousUrls(IEnumerable<ActionInfo> actions) {
 
          var ambiguousController =
             (from a in actions
@@ -107,7 +107,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      private static IEnumerable<IEnumerable<ActionInfo>> GroupActions(IEnumerable<ActionInfo> actions) {
+      static IEnumerable<IEnumerable<ActionInfo>> GroupActions(IEnumerable<ActionInfo> actions) {
 
          var groupedActions =
             (from a in actions
@@ -140,25 +140,63 @@ namespace MvcCodeRouting {
                var ordered = set.OrderByDescending(a => a.RouteParameters.Count).ToList();
 
                while (ordered.Count > 0) {
-                  var first = ordered.First();
-                  var overloads = ordered.Skip(1).Where(a => overloadsComparer.Equals(first, a)).ToList();
+                  var firstInSet = ordered.First();
+                  var similar = ordered.Skip(1).Where(a => overloadsComparer.Equals(firstInSet, a)).ToList();
 
-                  if (overloads.Count > 0) {
-                     var last = overloads.Last();
+                  if (similar.Count > 0) {
+                     var overloadCompat = new[] { firstInSet }.Concat(similar).ToArray();
+                     
+                     var index = 0;
+                     var k = 0;
+                     var overloadRanges =
+                        (from a in overloadCompat
+                           let idx = ++index
+                           let next = overloadCompat.ElementAtOrDefault(idx)
+                           let diff = (next == null) ? 0 : Math.Abs(a.RouteParameters.Count - next.RouteParameters.Count)
+                           let key = (diff == 1 || diff == 0) ?
+                           k : k++
+                           group a by key into g
+                           select g).ToArray();
 
-                     foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count))
-                        param.IsOptional = true;
+                     foreach (var range in overloadRanges) {
 
-                     finalGrouping.Add(new ActionInfo[] { first }.Concat(overloads));
+                        var actionCounts =
+                           (from a in range
+                            group a by a.Name into g
+                            select g.Count()).Distinct().ToArray();
 
-                     foreach (var item in overloads)
-                        ordered.Remove(item);
+                        foreach (var count in actionCounts) {
+
+                           var sameRangeSameNumberOfOverloads =
+                              (from a in range
+                               group a by a.Name into g
+                               where g.Count() == count
+                               select g)
+                              .SelectMany(g => g)
+                              .Distinct()
+                              .OrderByDescending(a => a.RouteParameters.Count)
+                              .ToArray();
+
+                           if (sameRangeSameNumberOfOverloads.Length > 1) {
+
+                              var first = sameRangeSameNumberOfOverloads.First();
+                              var last = sameRangeSameNumberOfOverloads.Last();
+
+                              foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count))
+                                 param.IsOptional = true; 
+                           }
+
+                           finalGrouping.Add(sameRangeSameNumberOfOverloads);
+
+                           foreach (var item in sameRangeSameNumberOfOverloads)
+                              ordered.Remove(item); 
+                        }
+                     } 
 
                   } else {
-                     finalGrouping.Add(new ActionInfo[] { first });
+                     finalGrouping.Add(new[] { firstInSet });
+                     ordered.Remove(firstInSet);
                   }
-
-                  ordered.Remove(first);
                }
             } else {
 
@@ -198,7 +236,7 @@ namespace MvcCodeRouting {
             && CheckRouteParameters(y, x);
       }
 
-      private bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
+      bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
 
          for (int i = 0; i < x.RouteParameters.Count; i++) {
             var p = x.RouteParameters[i];

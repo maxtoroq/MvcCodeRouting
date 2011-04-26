@@ -40,7 +40,7 @@ namespace MvcCodeRouting {
          return FindView(controllerContext, viewName, masterName, useCache, false);
       }
 
-      private ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache, bool partial) {
+      ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache, bool partial) {
 
          if (controllerContext == null) throw new ArgumentNullException("controllerContext");
 

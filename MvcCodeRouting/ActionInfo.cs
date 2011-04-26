@@ -87,7 +87,7 @@ namespace MvcCodeRouting {
          CheckCatchAllParamIsLast(this.RouteParameters, method);
       }
 
-      private void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {
+      void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {
 
          for (int i = 0; i < parameters.Count; i++) {
 

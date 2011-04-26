@@ -77,7 +77,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      private static string ToCSharpMapRouteCall(this Route route) {
+      static string ToCSharpMapRouteCall(this Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
 
@@ -167,7 +167,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      private static string ValueToCSharpString(object val, bool constraint = false) {
+      static string ValueToCSharpString(object val, bool constraint = false) {
 
          string stringVal;
 
@@ -209,7 +209,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      private static string ToVBMapRouteCall(this Route route) {
+      static string ToVBMapRouteCall(this Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
 
@@ -299,7 +299,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      private static string ValueToVBString(object val, bool constraint = false) {
+      static string ValueToVBString(object val, bool constraint = false) {
 
          string stringVal;
 

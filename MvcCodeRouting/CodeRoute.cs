@@ -122,9 +122,10 @@ namespace MvcCodeRouting {
 
             string baseRoute = currentBaseRoute;
             bool hasBaseRouteValue = values.ContainsKey(BaseRouteConstraint.Key);
-            StringBuilder theController = new StringBuilder(controller);
 
-            if (theController.Length > 0 && !hasBaseRouteValue) {
+            if (controller.Length > 0 && !hasBaseRouteValue) {
+
+               StringBuilder theController = new StringBuilder(controller);
 
                List<string> baseRouteSegments = (baseRoute.Length > 0) ?
                   baseRoute.Split('/').ToList()
@@ -133,6 +134,16 @@ namespace MvcCodeRouting {
                if (theController[0] == '~') {
 
                   baseRouteSegments.Clear();
+                  theController.Remove(0, 1);
+               
+               } else if (theController[0] == '+') {
+
+                  string[] namespaces = routeData.DataTokens["Namespaces"] as string[];
+
+                  if (namespaces == null || namespaces.Length > 1)
+                     return null;
+
+                  baseRouteSegments.Add(namespaces[0].Split('.').Last());
                   theController.Remove(0, 1);
 
                } else if (theController[0] == '.') {
@@ -144,16 +155,6 @@ namespace MvcCodeRouting {
 
                      baseRouteSegments.RemoveAt(baseRouteSegments.Count - 1);
                      theController.Remove(0, 2);
-                  
-                  } else {
-
-                     string[] namespaces = routeData.DataTokens["Namespaces"] as string[];
-
-                     if (namespaces == null || namespaces.Length > 1)
-                        return null;
-
-                     baseRouteSegments.Add(namespaces[0].Split('.').Last());
-                     theController.Remove(0, 1);
                   }
                }
 
@@ -171,12 +172,9 @@ namespace MvcCodeRouting {
                }
 
                baseRoute = String.Join(".", baseRouteSegments);
-            }
 
-            if (theController.Length == 0)
-               values.Remove("controller");
-            else
                values["controller"] = theController.ToString();
+            }
 
             if (!hasBaseRouteValue)
                values[BaseRouteConstraint.Key] = baseRoute;

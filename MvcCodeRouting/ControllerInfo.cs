@@ -143,7 +143,7 @@ namespace MvcCodeRouting {
          return actions;
       }
 
-      private void CheckOverloads(IEnumerable<ActionInfo> actions) {
+      void CheckOverloads(IEnumerable<ActionInfo> actions) {
 
          var overloadedActions =
             (from a in actions
