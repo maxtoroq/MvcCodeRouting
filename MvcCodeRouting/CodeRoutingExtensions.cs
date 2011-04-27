@@ -211,13 +211,9 @@ namespace MvcCodeRouting {
 
          if (engines == null) throw new ArgumentNullException("engines");
 
-         Type virtualPathProvType = typeof(VirtualPathProviderViewEngine);
-
          for (int i = 0; i < engines.Count; i++) {
             IViewEngine engine = engines[i];
-
-            if (virtualPathProvType.IsAssignableFrom(engine.GetType()))
-               engines[i] = new CodeRoutingViewEngineWrapper(engine);
+            engines[i] = new CodeRoutingViewEngineWrapper(engine);
          }
       }
    }
