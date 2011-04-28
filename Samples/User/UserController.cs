@@ -22,13 +22,13 @@ namespace Samples.User {
 
       [RequireRouteParameters]
       public ActionResult Search([FromRoute]string q) {
-         return Search("", "", 0, 10);
+         throw new NotImplementedException();
       }
 
-      //[RequireRouteParameters]
-      //public ActionResult Search([FromRoute]string q, [FromRoute]string sort) {
-      //   return Search("", "", 0, 10);
-      //}
+      [RequireRouteParameters]
+      public ActionResult Search([FromRoute]string q, [FromRoute]string sort) {
+         throw new NotImplementedException();
+      }
 
       [RequireRouteParameters]
       public ActionResult Search([FromRoute]string q, [FromRoute]string sort, [FromRoute]int startIndex, [FromRoute]int pageSize) {
@@ -37,11 +37,6 @@ namespace Samples.User {
 
       [RequireRouteParameters]
       public ActionResult Search2([FromRoute]string q) {
-         throw new NotImplementedException();
-      }
-
-      [RequireRouteParameters]
-      public ActionResult Search2([FromRoute]string q, [FromRoute]string sort, [FromRoute]int startIndex, [FromRoute]int pageSize) {
          throw new NotImplementedException();
       }
 

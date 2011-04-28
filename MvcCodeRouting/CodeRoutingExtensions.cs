@@ -128,7 +128,7 @@ namespace MvcCodeRouting {
                 HasRouteParameters = (a.RouteParameters.Count > 0)
              }).ToList();
 
-         var overloadsComparer = new RouteEqualityComparer();
+         var signatureComparer = new RouteEqualityComparer();
          var finalGrouping = new List<IEnumerable<ActionInfo>>();
 
          for (int i = 0; i < groupedActions.Count; i++) {
@@ -141,54 +141,55 @@ namespace MvcCodeRouting {
 
                while (ordered.Count > 0) {
                   var firstInSet = ordered.First();
-                  var similar = ordered.Skip(1).Where(a => overloadsComparer.Equals(firstInSet, a)).ToList();
+                  var similar = ordered.Skip(1).Where(a => signatureComparer.Equals(firstInSet, a)).ToList();
 
                   if (similar.Count > 0) {
-                     var overloadCompat = new[] { firstInSet }.Concat(similar).ToArray();
-                     
-                     var index = 0;
-                     var k = 0;
-                     var overloadRanges =
-                        (from a in overloadCompat
-                           let idx = ++index
-                           let next = overloadCompat.ElementAtOrDefault(idx)
-                           let diff = (next == null) ? 0 : Math.Abs(a.RouteParameters.Count - next.RouteParameters.Count)
-                           let key = (diff == 1 || diff == 0) ?
-                           k : k++
-                           group a by key into g
-                           select g).ToArray();
+                     var signatureCompat = new[] { firstInSet }.Concat(similar).ToArray();
 
-                     foreach (var range in overloadRanges) {
+                     var maxParamCounts =
+                        (from a in signatureCompat
+                         group a by a.Name into g
+                         select g.Select(a => a.RouteParameters.Count).Max()
+                        ).Distinct().ToArray();
 
-                        var actionCounts =
-                           (from a in range
+                     foreach (var count in maxParamCounts) {
+
+                        var sameMaxNumberOfParams =
+                           (from a in signatureCompat
                             group a by a.Name into g
-                            select g.Count()).Distinct().ToArray();
+                            where g.Select(a => a.RouteParameters.Count).Max() == count
+                            select g)
+                           .SelectMany(g => g)
+                           .Distinct()
+                           .OrderByDescending(a => a.RouteParameters.Count)
+                           .ToArray();
 
-                        foreach (var count in actionCounts) {
+                        var index = 0;
+                        var k = 0;
+                        var overloadRanges =
+                           (from a in sameMaxNumberOfParams
+                            let idx = ++index
+                            let next = sameMaxNumberOfParams.ElementAtOrDefault(idx)
+                            let diff = (next == null) ? 0 : Math.Abs(a.RouteParameters.Count - next.RouteParameters.Count)
+                            let key = (diff == 1 || diff == 0) ?
+                            k : k++
+                            group a by key into g
+                            select g).ToArray();
 
-                           var sameRangeSameNumberOfOverloads =
-                              (from a in range
-                               group a by a.Name into g
-                               where g.Count() == count
-                               select g)
-                              .SelectMany(g => g)
-                              .Distinct()
-                              .OrderByDescending(a => a.RouteParameters.Count)
-                              .ToArray();
+                        foreach (var range in overloadRanges) {
 
-                           if (sameRangeSameNumberOfOverloads.Length > 1) {
+                           if (range.Count() > 1) {
 
-                              var first = sameRangeSameNumberOfOverloads.First();
-                              var last = sameRangeSameNumberOfOverloads.Last();
+                              var first = range.First();
+                              var last = range.Last();
 
                               foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count))
                                  param.IsOptional = true; 
                            }
 
-                           finalGrouping.Add(sameRangeSameNumberOfOverloads);
+                           finalGrouping.Add(range);
 
-                           foreach (var item in sameRangeSameNumberOfOverloads)
+                           foreach (var item in range)
                               ordered.Remove(item); 
                         }
                      } 

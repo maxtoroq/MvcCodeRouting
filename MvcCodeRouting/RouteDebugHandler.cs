@@ -91,12 +91,6 @@ namespace MvcCodeRouting {
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
 
-            string baseRoute = route.DataTokens["BaseRoute"] as string;
-
-            if (baseRoute != null)
-               sb.AppendFormat("// BaseRoute: \"{0}\"", baseRoute)
-                  .AppendLine();
-
             sb.AppendFormat("routes.MapRoute(null, \"{0}\"", route.Url);
 
             int i = 0;
@@ -162,6 +156,11 @@ namespace MvcCodeRouting {
             }
 
             sb.Append(");");
+
+            string baseRoute = route.DataTokens["BaseRoute"] as string;
+
+            if (baseRoute != null)
+               sb.AppendFormat(" // BaseRoute: \"{0}\"", baseRoute);
          }
 
          return sb.ToString();
@@ -222,12 +221,6 @@ namespace MvcCodeRouting {
             sb.AppendFormat("routes.IgnoreRoute(\"{0}\")", route.Url);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
-
-            string baseRoute = route.DataTokens["BaseRoute"] as string;
-
-            if (baseRoute != null)
-               sb.AppendFormat("' BaseRoute: \"{0}\"", baseRoute)
-                  .AppendLine();
 
             sb.AppendFormat("routes.MapRoute(Nothing, \"{0}\"", route.Url);
 
@@ -294,6 +287,11 @@ namespace MvcCodeRouting {
             }
 
             sb.Append(")");
+
+            string baseRoute = route.DataTokens["BaseRoute"] as string;
+
+            if (baseRoute != null)
+               sb.AppendFormat(" ' BaseRoute: \"{0}\"", baseRoute);
          }
 
          return sb.ToString();
