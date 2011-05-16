@@ -171,7 +171,7 @@ namespace MvcCodeRouting {
                   }
                }
 
-               baseRoute = String.Join(".", baseRouteSegments);
+               baseRoute = String.Join("/", baseRouteSegments);
 
                values["controller"] = theController.ToString();
             }
