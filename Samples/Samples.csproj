@@ -40,10 +40,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountController.cs" />
     <Compile Include="Admin\AdminController.cs" />
+    <Compile Include="Admin\Tasks\MaintenanceController.cs" />
     <Compile Include="Admin\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -59,7 +61,7 @@
     <Content Include="Views\Admin\User\Edit.aspx" />
     <Content Include="Views\Admin\User\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
-    <Content Include="Views\Shared\UrlGenerationTests.aspx" />
+    <Content Include="Views\Shared\UrlGenerationTests.ascx" />
     <Content Include="Views\User\Index.aspx" />
     <Content Include="Views\User\Profile.aspx" />
     <Content Include="Web.config" />

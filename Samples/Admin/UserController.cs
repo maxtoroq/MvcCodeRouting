@@ -20,9 +20,5 @@ namespace Samples.Admin {
 
          return View();
       }
-
-      public ActionResult UrlGenerationTests() {
-         return View();
-      }
    }
 }

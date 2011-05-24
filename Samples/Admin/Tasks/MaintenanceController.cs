@@ -4,15 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Samples.Home {
+namespace Samples.Admin.Tasks {
    
-   public class HomeController : Controller {
+   public class MaintenanceController : Controller {
 
       public ActionResult Index() {
-         return View();
-      }
-
-      public ActionResult About() {
          throw new NotImplementedException();
       }
    }

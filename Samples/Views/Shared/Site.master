@@ -7,6 +7,10 @@
       body { font-family: Arial; font-size: 90%; }
       #header { border-bottom: solid 1px gray; }
       #header a { text-decoration: none; }
+      #content { min-height: 500px; }
+      #footer { font-family: Verdana; font-size: 11px; background-color: #dadada; padding: 0.5em; color: #333; }
+      #footer caption { text-align: left; font-weight: bold; }
+      #footer td, th { padding: .2em .8em; }
    </style>
 </head>
 <body>
@@ -15,8 +19,7 @@
       <%: Html.ActionLink("Users", "", "~User")%> -
       <%: Html.ActionLink("Account", "", "~Account")%> - 
       <%: Html.ActionLink("Admin", "", "~Admin")%> - 
-      <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a> - 
-      <%: Html.ActionLink("Url Generation Tests", "UrlGenerationTests")%> 
+      <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a>
 
       <% if (Page.User.Identity.IsAuthenticated) { %>
       <div style="float: right;">
@@ -29,6 +32,9 @@
    </div>
    <div id="content">
       <asp:ContentPlaceHolder ID="content" runat="server"/>
+   </div>
+   <div id="footer">
+      <% Html.RenderPartial("UrlGenerationTests"); %>
    </div>
 </body>
 </html>

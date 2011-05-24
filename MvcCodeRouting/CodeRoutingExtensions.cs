@@ -14,12 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Globalization;
 
 namespace MvcCodeRouting {
 
@@ -27,19 +27,19 @@ namespace MvcCodeRouting {
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
 
-      public static void MapCodeRoutes(this RouteCollection routes, string baseNamespace) {
-         MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseNamespace) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, (CodeRoutingSettings)null);
       }
 
-      public static void MapCodeRoutes(this RouteCollection routes, string baseNamespace, CodeRoutingSettings settings) {
-         MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, settings);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseNamespace, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, settings);
       }
 
-      public static void MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace) {
-         MapCodeRoutes(routes, assembly, baseNamespace, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace) {
+         return MapCodeRoutes(routes, assembly, baseNamespace, (CodeRoutingSettings)null);
       }
 
-      public static void MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace, CodeRoutingSettings settings) {
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace, CodeRoutingSettings settings) {
 
          if (routes == null) throw new ArgumentNullException("routes");
          if (assembly == null) throw new ArgumentNullException("assembly");
@@ -58,8 +58,12 @@ namespace MvcCodeRouting {
 
          var groupedActions = GroupActions(actions);
 
-         foreach (var route in groupedActions.Select(g => CodeRoute.Create(g)))
+         var codeRoutes = groupedActions.Select(g => CodeRoute.Create(g)).ToArray();
+         
+         foreach (var route in codeRoutes)
             routes.Add(route);
+
+         return codeRoutes;
       }
 
       static void CheckSingleRootController(IEnumerable<ActionInfo> actions) {

@@ -39,9 +39,5 @@ namespace Samples.User {
       public ActionResult Search2([FromRoute]string q) {
          throw new NotImplementedException();
       }
-
-      public ActionResult UrlGenerationTests() {
-         return View();
-      }
    }
 }

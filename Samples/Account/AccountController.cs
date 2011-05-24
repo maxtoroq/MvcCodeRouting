@@ -50,9 +50,5 @@ namespace Samples.Account {
       public ActionResult ChangePasswordSuccess() {
          throw new NotImplementedException();
       }
-
-      public ActionResult UrlGenerationTests() {
-         return View();
-      }
    }
 }

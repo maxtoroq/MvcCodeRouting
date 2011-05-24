@@ -38,7 +38,7 @@ namespace MvcCodeRouting {
          if (String.IsNullOrEmpty(format))
             response.Redirect(request.Url.AbsolutePath + "?format=csharp", endResponse: true);
 
-         response.ContentType = "text/plain";
+         response.ContentType = "text/html";
 
          switch (format) {
             case "csharp":
@@ -56,12 +56,15 @@ namespace MvcCodeRouting {
    }
 
    public static class RouteDebugExtensions {
-
+      
       public static string ToCSharpMapRouteCalls(this RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
          StringBuilder sb = new StringBuilder();
+         sb.Append("<html>"); ;
+         AppendHtmlHead(sb);
+         sb.Append("<body class='csharp'>");
 
          foreach (Route item in routes.OfType<Route>()) {
 
@@ -73,6 +76,9 @@ namespace MvcCodeRouting {
                   .AppendLine();
             }
          }
+
+         sb.Append("</body>")
+            .Append("</html>");
 
          return sb.ToString();
       }
@@ -87,11 +93,11 @@ namespace MvcCodeRouting {
 
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
 
-            sb.AppendFormat("routes.IgnoreRoute(\"{0}\");", route.Url);
+            sb.AppendFormat("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>);", route.Url);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
 
-            sb.AppendFormat("routes.MapRoute(null, \"{0}\"", route.Url);
+            sb.AppendFormat("routes.MapRoute(<span class='keyword'>null</span>, <span class='string'>\"{0}\"</span>", route.Url);
 
             int i = 0;
 
@@ -99,7 +105,7 @@ namespace MvcCodeRouting {
 
                sb.Append(", ")
                   .AppendLine()
-                  .Append("    new { ");
+                  .Append("    <span class='keyword'>new</span> { ");
 
                foreach (var item in route.Defaults) {
 
@@ -117,7 +123,7 @@ namespace MvcCodeRouting {
 
                   sb.Append(", ")
                         .AppendLine()
-                        .Append("    new { ");
+                        .Append("    <span class='keyword'>new</span> { ");
 
                   int j = 0;
 
@@ -141,15 +147,15 @@ namespace MvcCodeRouting {
 
                sb.Append(", ")
                   .AppendLine()
-                  .Append("    new[] { ");
+                  .Append("    <span class='keyword'>new</span>[] { ");
 
                for (int j = 0; j < namespaces.Length; j++) {
                   if (j > 0)
                      sb.Append(", ");
                   
-                  sb.Append("\"")
+                  sb.Append("<span class='string'>\"")
                      .Append(namespaces[j])
-                     .Append("\"");
+                     .Append("\"</span>");
                }
 
                sb.Append(" }");
@@ -160,7 +166,7 @@ namespace MvcCodeRouting {
             string baseRoute = route.DataTokens["BaseRoute"] as string;
 
             if (baseRoute != null)
-               sb.AppendFormat(" // BaseRoute: \"{0}\"", baseRoute);
+               sb.AppendFormat(" <span class='comment'>// BaseRoute: \"{0}\"</span>", baseRoute);
          }
 
          return sb.ToString();
@@ -171,16 +177,16 @@ namespace MvcCodeRouting {
          string stringVal;
 
          if (val == null)
-            stringVal = "null";
+            stringVal = "<span class='keyword'>null</span>";
 
          else if (val.GetType() == typeof(string))
-            stringVal = String.Concat("@\"", val, "\"");
+            stringVal = String.Concat("<span class='string'>@\"", val, "\"</span>");
 
          else if (val.GetType() == typeof(UrlParameter))
-            stringVal = "UrlParameter.Optional";
+            stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
          else if (constraint)
-            stringVal = String.Concat("new ", val.GetType().FullName, "()");
+            stringVal = String.Concat("<span class='keyword'>new</span> ", val.GetType().FullName, "()");
          
          else
             stringVal = val.ToString();
@@ -193,6 +199,9 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
 
          StringBuilder sb = new StringBuilder();
+         sb.Append("<html>"); ;
+         AppendHtmlHead(sb);
+         sb.Append("<body class='vb'>");
 
          foreach (Route item in routes.OfType<Route>()) {
 
@@ -204,6 +213,9 @@ namespace MvcCodeRouting {
                   .AppendLine();
             }
          }
+
+         sb.Append("</body>")
+            .Append("</html>");
 
          return sb.ToString();
       }
@@ -218,11 +230,11 @@ namespace MvcCodeRouting {
 
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
 
-            sb.AppendFormat("routes.IgnoreRoute(\"{0}\")", route.Url);
+            sb.AppendFormat("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>)", route.Url);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
 
-            sb.AppendFormat("routes.MapRoute(Nothing, \"{0}\"", route.Url);
+            sb.AppendFormat("routes.MapRoute(<span class='keyword'>Nothing</span>, <span class='string'>\"{0}\"</span>", route.Url);
 
             int i = 0;
 
@@ -230,7 +242,7 @@ namespace MvcCodeRouting {
 
                sb.Append(", _")
                   .AppendLine()
-                  .Append("    New With {");
+                  .Append("    <span class='keyword'>New With</span> {");
 
                foreach (var item in route.Defaults) {
 
@@ -248,7 +260,7 @@ namespace MvcCodeRouting {
 
                   sb.Append(", _")
                         .AppendLine()
-                        .Append("    New With {");
+                        .Append("    <span class='keyword'>New With</span> {");
 
                   int j = 0;
 
@@ -272,15 +284,15 @@ namespace MvcCodeRouting {
 
                sb.Append(", _")
                   .AppendLine()
-                  .Append("    New String() {");
+                  .Append("    <span class='keyword'>New String</span>() {");
 
                for (int j = 0; j < namespaces.Length; j++) {
                   if (j > 0)
                      sb.Append(", ");
 
-                  sb.Append("\"")
+                  sb.Append("<span class='string'>\"")
                      .Append(namespaces[j])
-                     .Append("\"");
+                     .Append("\"</span>");
                }
 
                sb.Append("}");
@@ -291,7 +303,7 @@ namespace MvcCodeRouting {
             string baseRoute = route.DataTokens["BaseRoute"] as string;
 
             if (baseRoute != null)
-               sb.AppendFormat(" ' BaseRoute: \"{0}\"", baseRoute);
+               sb.AppendFormat(" <span class='comment'>' BaseRoute: \"{0}\"</span>", baseRoute);
          }
 
          return sb.ToString();
@@ -302,21 +314,35 @@ namespace MvcCodeRouting {
          string stringVal;
 
          if (val == null)
-            stringVal = "Nothing";
+            stringVal = "<span class='keyword'>Nothing<span>";
 
          else if (val.GetType() == typeof(string))
-            stringVal = String.Concat("\"", val, "\"");
+            stringVal = String.Concat("<span class='string'>\"", val, "\"</span>");
 
          else if (val.GetType() == typeof(UrlParameter))
-            stringVal = "UrlParameter.Optional";
+            stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
          else if (constraint)
-            stringVal = String.Concat("New ", val.GetType().FullName, "()");
+            stringVal = String.Concat("<span class='keyword'>New</span> ", val.GetType().FullName, "()");
 
          else
             stringVal = val.ToString();
 
          return stringVal;
+      }
+
+      static void AppendHtmlHead(StringBuilder sb) {
+
+         sb.Append("<head>")
+            .Append("<style type='text/css'>")
+            .AppendLine("body { white-space: pre; font-family: Consolas, 'Courier New'; font-size: 80%; }")
+            .AppendLine(".comment { color: #008000; }")
+            .AppendLine(".string { color: #ac1414; }")
+            .AppendLine(".keyword { color: #0026fd; }")
+            .AppendLine(".type { color: 2b91af; }")
+            .Append("</style>")
+            .Append("</head>")
+            ;
       }
    }
 }
