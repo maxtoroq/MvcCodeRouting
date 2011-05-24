@@ -47,6 +47,9 @@
     <Compile Include="Admin\AdminController.cs" />
     <Compile Include="Admin\Tasks\MaintenanceController.cs" />
     <Compile Include="Admin\UserController.cs" />
+    <Compile Include="Api\CrudController.cs" />
+    <Compile Include="Api\RoleController.cs" />
+    <Compile Include="Api\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -76,6 +79,7 @@
   <ItemGroup>
     <None Include="Views\Shared\Site.master" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

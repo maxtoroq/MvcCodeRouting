@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace MvcCodeRouting {
    
@@ -24,6 +25,7 @@ namespace MvcCodeRouting {
 
       Func<string, string> _RouteFormatter;
       readonly IDictionary<Type, string> _DefaultConstraints;
+      readonly Collection<Type> _IgnoredControllers;
 
       public string RootController { get; set; }
 
@@ -31,6 +33,10 @@ namespace MvcCodeRouting {
 
       public IDictionary<Type, string> DefaultConstraints {
          get { return _DefaultConstraints; }
+      }
+
+      public Collection<Type> IgnoredControllers { 
+         get { return _IgnoredControllers; } 
       }
 
       public Func<string, string> RouteFormatter {
@@ -48,6 +54,8 @@ namespace MvcCodeRouting {
 
          this.RootController = "Home";
          this.DefaultAction = "Index";
+
+         _IgnoredControllers = new Collection<Type>();
 
          _DefaultConstraints = new Dictionary<Type, string>();
          _DefaultConstraints.Add(typeof(Boolean), "true|false");

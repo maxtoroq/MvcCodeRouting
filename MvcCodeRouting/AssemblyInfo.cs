@@ -18,8 +18,5 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("MvcCodeRouting.dll")]
 [assembly: AssemblyDescription("MvcCodeRouting.dll")]
-[assembly: AssemblyCompany("http://mvccoderouting.codeplex.com/")]
-[assembly: AssemblyProduct("MvcCodeRouting")]
-[assembly: AssemblyCopyright("Copyright © Max Toro Q. 2011")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliantAttribute(true)]

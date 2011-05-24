@@ -109,6 +109,7 @@ namespace MvcCodeRouting {
               && !t.IsAbstract
               && baseType.IsAssignableFrom(t)
               && t.Name.EndsWith("Controller")
+              && !settings.IgnoredControllers.Contains(t)
             let controllerInfo = new ControllerInfo(t, baseNamespace, settings)
             where controllerInfo.IsInBaseNamespace
             select controllerInfo;
