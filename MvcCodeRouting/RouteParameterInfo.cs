@@ -88,42 +88,4 @@ namespace MvcCodeRouting {
          }
       }
    }
-
-   class RouteParameterInfoCollection : ReadOnlyCollection<RouteParameterInfo>, IEquatable<RouteParameterInfoCollection> {
-
-      public RouteParameterInfoCollection(IList<RouteParameterInfo> list)
-         : base(list) { }
-
-      public bool Equals(RouteParameterInfoCollection other) {
-
-         if (other == null)
-            return false;
-
-         if (other.Count != this.Count)
-            return false;
-
-         for (int i = 0; i < this.Count; i++) {
-            if (!this[i].Equals(other[i]))
-               return false;
-         }
-
-         return true;
-      }
-
-      public override bool Equals(object obj) {
-         return Equals(obj as RouteParameterInfoCollection);
-      }
-
-      public override int GetHashCode() {
-
-         unchecked {
-            int hash = 1;
-
-            foreach (var item in this)
-               hash = 31 * hash + (item == null ? 0 : item.GetHashCode());
-
-            return hash;
-         }
-      }
-   }
 }

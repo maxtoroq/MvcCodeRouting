@@ -31,6 +31,13 @@ namespace MvcCodeRouting {
          routeValues.Remove("controller");
          routeValues.Remove("action");
 
+         CodeRoute codeRoute = controllerContext.RouteData.Route as CodeRoute;
+
+         if (codeRoute != null && codeRoute.BaseRouteTokens.Count > 0) {
+            for (int i = 0; i < codeRoute.BaseRouteTokens.Count; i++) 
+               routeValues.Remove(codeRoute.BaseRouteTokens[i]);
+         }
+
          var parameters =
             (from p in methodInfo.GetParameters()
              where Attribute.IsDefined(p, typeof(FromRouteAttribute))

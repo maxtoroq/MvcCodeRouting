@@ -27,28 +27,36 @@ namespace MvcCodeRouting {
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseNamespace) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), rootNamespace);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseNamespace, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), baseNamespace, settings);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), rootNamespace, settings);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace) {
-         return MapCodeRoutes(routes, assembly, baseNamespace, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace) {
+         return MapCodeRoutes(routes, assembly, rootNamespace, (CodeRoutingSettings)null);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseNamespace, CodeRoutingSettings settings) {
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, assembly, rootNamespace, null, settings);
+      }
+
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, string baseRoute) {
+         return MapCodeRoutes(routes, assembly, rootNamespace, baseRoute, (CodeRoutingSettings)null);
+      }
+
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, string baseRoute, CodeRoutingSettings settings) {
 
          if (routes == null) throw new ArgumentNullException("routes");
          if (assembly == null) throw new ArgumentNullException("assembly");
-         if (baseNamespace == null) throw new ArgumentNullException("baseNamespace");
+         if (rootNamespace == null) throw new ArgumentNullException("rootNamespace");
 
          if (settings == null)
             settings = new CodeRoutingSettings();
 
-         var actions = ControllerInfo.GetControllers(assembly, baseNamespace, settings)
+         var actions = ControllerInfo.GetControllers(assembly, rootNamespace, baseRoute, settings)
             .SelectMany(c => c.GetActions());
 
          registeredActions.AddRange(actions);
@@ -68,20 +76,25 @@ namespace MvcCodeRouting {
 
       static void CheckSingleRootController(IEnumerable<ActionInfo> actions) {
 
-         var rootControllers = actions
-            .Select(a => a.Controller)
-            .Where(c => c.IsRootController)
-            .Distinct()
-            .ToList();
+         var controllersByBaseRoute = 
+            from c in actions.Select(a => a.Controller).Distinct()
+            group c by c.BaseRoute into g
+            select g;
 
-         if (rootControllers.Count > 1) {
+         foreach (var g in controllersByBaseRoute) {
 
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "The root controller is ambiguous between {0}.",
-                  String.Join(" and ", rootControllers.Select(c => c.Type.FullName))
-               )
-            );
+            var rootControllers = g.Where(c => c.IsRootController).ToList();
+
+            if (rootControllers.Count > 1) {
+
+               throw new InvalidOperationException(
+                  String.Format(CultureInfo.InvariantCulture,
+                     "The root controller{0} is ambiguous between {1}.",
+                     (String.IsNullOrEmpty(g.Key)) ? "" : String.Concat(" for base route '" + g.Key, "'"),
+                     String.Join(" and ", rootControllers.Select(c => c.Type.FullName))
+                  )
+               );
+            }
          }
       }
 
@@ -117,7 +130,7 @@ namespace MvcCodeRouting {
             (from a in actions
              orderby a.Controller.IsRootController descending
                 , (a.Controller.IsRootController && a.IsDefaultAction) descending
-                , a.Controller.BaseRouteSegments.Count
+                , a.Controller.NamespaceRouteSegments.Count
                 , a.Controller.Type.Namespace
                 , a.Controller.Name
                 , a.Name
@@ -132,7 +145,7 @@ namespace MvcCodeRouting {
                 HasRouteParameters = (a.RouteParameters.Count > 0)
              }).ToList();
 
-         var signatureComparer = new RouteEqualityComparer();
+         var signatureComparer = new ActionSignatureComparer();
          var finalGrouping = new List<IEnumerable<ActionInfo>>();
 
          for (int i = 0; i < groupedActions.Count; i++) {
@@ -217,45 +230,14 @@ namespace MvcCodeRouting {
          if (engines == null) throw new ArgumentNullException("engines");
 
          for (int i = 0; i < engines.Count; i++) {
+            
             IViewEngine engine = engines[i];
+
+            if (engine.GetType() == typeof(CodeRoutingViewEngineWrapper))
+               continue;
+
             engines[i] = new CodeRoutingViewEngineWrapper(engine);
          }
-      }
-   }
-
-   class RouteEqualityComparer : IEqualityComparer<ActionInfo> {
-
-      public bool Equals(ActionInfo x, ActionInfo y) {
-
-         if (x == null)
-            return y == null;
-
-         if (y == null)
-            return x == null;
-
-         return CheckRouteParameters(x, y)
-            && CheckRouteParameters(y, x);
-      }
-
-      bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
-
-         for (int i = 0; i < x.RouteParameters.Count; i++) {
-            var p = x.RouteParameters[i];
-
-            if (y.RouteParameters.Count - 1 >= i) {
-               var p2 = y.RouteParameters[i];
-
-               if (!RouteParameterInfo.NameEquals(p.Name, p2.Name)
-                  || p.Constraint != p2.Constraint)
-                  return false;
-            }
-         }
-
-         return true;
-      }
-
-      public int GetHashCode(ActionInfo obj) {
-         throw new NotImplementedException();
       }
    }
 }

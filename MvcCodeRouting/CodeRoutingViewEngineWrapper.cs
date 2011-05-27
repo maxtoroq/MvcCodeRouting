@@ -46,17 +46,17 @@ namespace MvcCodeRouting {
 
          RouteData routeData = controllerContext.RouteData;
 
-         string baseRoute = routeData.DataTokens["BaseRoute"] as string;
+         string baseLocation = routeData.DataTokens[DataTokenKeys.ViewsLocation] as string;
 
          ViewEngineResult result;
 
-         if (!String.IsNullOrEmpty(baseRoute)) {
+         if (!String.IsNullOrEmpty(baseLocation)) {
 
             string controller = routeData.GetRequiredString("controller");
 
-            string baseRoutePlusController = String.Concat(baseRoute, "/", controller);
+            string location = String.Concat(baseLocation, "/", controller);
 
-            routeData.Values["controller"] = baseRoutePlusController;
+            routeData.Values["controller"] = location;
 
             if (partial) 
                result = this.wrappedEngine.FindPartialView(controllerContext, viewName, useCache);

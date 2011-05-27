@@ -12,8 +12,13 @@ namespace Samples {
 
       void Application_Start() {
 
-         RegisterRoutes(RouteTable.Routes);
-         RegisterViewEngines(ViewEngines.Engines);
+         try {
+            RegisterRoutes(RouteTable.Routes);
+            RegisterViewEngines(ViewEngines.Engines);
+         } catch {
+            HttpRuntime.UnloadAppDomain();
+            throw;
+         }
       }
 
       void RegisterRoutes(RouteCollection routes) {
@@ -23,7 +28,7 @@ namespace Samples {
          routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
          routes.MapCodeRoutes(
-            baseNamespace: typeof(MvcApplication).Namespace
+            rootNamespace: typeof(MvcApplication).Namespace
          );
       }
 

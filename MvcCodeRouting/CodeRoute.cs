@@ -19,10 +19,16 @@ using System.Text;
 using System.Web.Routing;
 using System.Web.Mvc;
 using System.Web;
+using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace MvcCodeRouting {
    
    class CodeRoute : Route {
+
+      static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
+
+      public Collection<string> BaseRouteTokens { get; private set; }
 
       internal static CodeRoute Create(IEnumerable<ActionInfo> actions) {
 
@@ -93,22 +99,30 @@ namespace MvcCodeRouting {
             constraints.Add(param.Name, regex);
          }
 
-         constraints.Add(BaseRouteConstraint.Key, new BaseRouteConstraint());
+         constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
 
          var dataTokens = new RouteValueDictionary { 
-            { "Namespaces", new string[1] { first.Controller.Type.Namespace } },
-            { "BaseRoute", String.Join("/", first.Controller.BaseRouteSegments) }
+            { DataTokenKeys.Namespaces, new string[1] { first.Controller.Type.Namespace } },
+            { DataTokenKeys.ControllerBaseRoute, String.Join("/", first.Controller.ControllerBaseRouteSegments) },
+            { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.ControllerBaseRouteSegments.Where(s => !s.Contains('{'))) }
          };
 
-         return new CodeRoute(url) { 
+         string[] baseRouteTokens = (!String.IsNullOrEmpty(first.Controller.BaseRoute)) ? 
+            TokenPattern.Matches(first.Controller.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value).ToArray()
+            : new string[0];
+
+         return new CodeRoute(url, baseRouteTokens) { 
             Constraints = constraints,
             DataTokens = dataTokens,
             Defaults = defaults
          };
       }
 
-      private CodeRoute(string url)
-         : base(url, new MvcRouteHandler()) { }
+      private CodeRoute(string url, string[] baseRouteTokens)
+         : base(url, new MvcRouteHandler()) {
+
+         this.BaseRouteTokens = new Collection<string>(baseRouteTokens);
+      }
 
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
 
@@ -118,10 +132,10 @@ namespace MvcCodeRouting {
 
          if (values != null
             && (controller = values["controller"] as string) != null
-            && (currentBaseRoute = routeData.DataTokens["BaseRoute"] as string) != null) {
+            && (currentBaseRoute = routeData.DataTokens[DataTokenKeys.ControllerBaseRoute] as string) != null) {
 
             string baseRoute = currentBaseRoute;
-            bool hasBaseRouteValue = values.ContainsKey(BaseRouteConstraint.Key);
+            bool hasBaseRouteValue = values.ContainsKey(CodeRoutingConstraint.Key);
 
             if (controller.Length > 0 && !hasBaseRouteValue) {
 
@@ -138,7 +152,7 @@ namespace MvcCodeRouting {
                
                } else if (theController[0] == '+') {
 
-                  string[] namespaces = routeData.DataTokens["Namespaces"] as string[];
+                  string[] namespaces = routeData.DataTokens[DataTokenKeys.Namespaces] as string[];
 
                   if (namespaces == null || namespaces.Length > 1)
                      return null;
@@ -177,41 +191,20 @@ namespace MvcCodeRouting {
             }
 
             if (!hasBaseRouteValue)
-               values[BaseRouteConstraint.Key] = baseRoute;
+               values[CodeRoutingConstraint.Key] = baseRoute;
 
             VirtualPathData virtualPath = base.GetVirtualPath(requestContext, values);
 
+            // TODO: See issue #291
             values["controller"] = controller;
 
             if (!hasBaseRouteValue)
-               values.Remove(BaseRouteConstraint.Key);
+               values.Remove(CodeRoutingConstraint.Key);
 
             return virtualPath;
          }
 
          return base.GetVirtualPath(requestContext, values);
-      }
-   }
-
-   public class BaseRouteConstraint : IRouteConstraint {
-
-      public const string Key = "__baseroute";
-
-      public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
-
-         string controller;
-         string baseRoute;
-         string routeBaseRoute;
-
-         if (routeDirection == RouteDirection.UrlGeneration
-            && (controller = values["controller"] as string) != null
-            && (baseRoute = values[Key] as string) != null
-            && (routeBaseRoute = route.DataTokens["BaseRoute"] as string) != null) {
-
-            return String.Equals(baseRoute, routeBaseRoute, StringComparison.Ordinal);
-         }
-
-         return true;
       }
    }
 }

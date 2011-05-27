@@ -39,16 +39,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionInfo.cs" />
+    <Compile Include="ActionSignatureComparer.cs" />
     <Compile Include="CodeRoute.cs" />
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="CodeRoutingViewEngineWrapper.cs" />
+    <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="ControllerInfo.cs" />
+    <Compile Include="DataTokenKeys.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
+    <Compile Include="RouteDebugExtensions.cs" />
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteParameterInfo.cs" />
+    <Compile Include="RouteParameterInfoCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
