@@ -31,6 +31,14 @@ namespace Samples.Account {
          return Redirect(returnUrl ?? this.Url.Action("", "~Home"));
       }
 
+      public ActionResult LogOnStatus() {
+
+         if (this.ControllerContext.IsChildAction) 
+            return PartialView();
+
+         return new EmptyResult();
+      }
+
       public ActionResult LogOff() {
          
          FormsAuthentication.SignOut();

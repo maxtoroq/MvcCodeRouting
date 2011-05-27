@@ -195,8 +195,9 @@ namespace MvcCodeRouting {
 
             VirtualPathData virtualPath = base.GetVirtualPath(requestContext, values);
 
-            // TODO: See issue #291
-            values["controller"] = controller;
+            // See issue #291
+            if (virtualPath == null)
+               values["controller"] = controller;
 
             if (!hasBaseRouteValue)
                values.Remove(CodeRoutingConstraint.Key);

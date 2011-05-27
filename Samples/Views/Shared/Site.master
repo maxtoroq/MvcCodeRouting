@@ -3,15 +3,7 @@
 <html>
 <head>
    <title>MvcCodeRouting Samples</title>
-   <style type="text/css">
-      body { font-family: Arial; font-size: 90%; }
-      #header { border-bottom: solid 1px gray; }
-      #header a { text-decoration: none; }
-      #content { min-height: 500px; }
-      #footer { font-family: Verdana; font-size: 11px; background-color: #dadada; padding: 0.5em; color: #333; }
-      #footer caption { text-align: left; font-weight: bold; }
-      #footer td, th { padding: .2em .8em; }
-   </style>
+   <link href="<%: Url.Content("~/Content/Site.css")%>" rel="stylesheet" type="text/css" />
 </head>
 <body>
    <div id="header">
@@ -21,14 +13,7 @@
       <%: Html.ActionLink("Admin", "", "~Admin")%> - 
       <a href="<%= ResolveUrl("~/routes.axd") %>">Routes</a>
 
-      <% if (Page.User.Identity.IsAuthenticated) { %>
-      <div style="float: right;">
-         <strong>
-            <%: Page.User.Identity.Name %>
-         </strong> - 
-         <%: Html.ActionLink("Log Off", "LogOff", "~Account") %>
-      </div>
-      <% } %>
+      <%: Html.Action("LogOnStatus", "~Account")%>
    </div>
    <div id="content">
       <asp:ContentPlaceHolder ID="content" runat="server"/>

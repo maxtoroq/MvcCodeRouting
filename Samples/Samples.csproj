@@ -57,9 +57,11 @@
     <Compile Include="User\UserController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Views\Account\Index.aspx" />
     <Content Include="Views\Account\LogOn.aspx" />
+    <Content Include="Views\Account\LogOnStatus.ascx" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Admin\User\Edit.aspx" />
     <Content Include="Views\Admin\User\Index.aspx" />

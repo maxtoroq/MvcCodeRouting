@@ -1,0 +1,7 @@
+﻿body { font-family: Arial; font-size: 90%; }
+#header { border-bottom: solid 1px gray; }
+#header a { text-decoration: none; }
+#content { min-height: 500px; }
+#footer { font-family: Verdana; font-size: 11px; background-color: #dadada; padding: 0.5em; color: #333; }
+#footer caption { text-align: left; font-weight: bold; }
+#footer td, th { padding: .2em .8em; }
