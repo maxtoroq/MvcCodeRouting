@@ -54,6 +54,7 @@
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteParameterInfo.cs" />
     <Compile Include="RouteParameterInfoCollection.cs" />
+    <Compile Include="RouteSegmentType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

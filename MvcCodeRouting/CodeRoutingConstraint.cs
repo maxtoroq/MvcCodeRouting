@@ -36,7 +36,7 @@ namespace MvcCodeRouting {
             && (valuesBaseRoute = values[Key] as string) != null
             && (routeBaseRoute = route.DataTokens[DataTokenKeys.ControllerBaseRoute] as string) != null) {
 
-            return String.Equals(valuesBaseRoute, routeBaseRoute, StringComparison.Ordinal);
+            return String.Equals(valuesBaseRoute, routeBaseRoute, StringComparison.OrdinalIgnoreCase);
          }
 
          return true;

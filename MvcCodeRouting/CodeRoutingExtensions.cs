@@ -130,7 +130,7 @@ namespace MvcCodeRouting {
             (from a in actions
              orderby a.Controller.IsRootController descending
                 , (a.Controller.IsRootController && a.IsDefaultAction) descending
-                , a.Controller.NamespaceRouteSegments.Count
+                , a.Controller.NamespaceRouteParts.Count
                 , a.Controller.Type.Namespace
                 , a.Controller.Name
                 , a.Name

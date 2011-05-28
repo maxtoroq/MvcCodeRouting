@@ -14,22 +14,53 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
-using System.Globalization;
 
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ActionUrl}")]
    class ActionInfo {
 
-      public string Name { get; private set; }
+      readonly CodeRoutingSettings settings;
+      string _Name;
+      RouteParameterInfoCollection _RouteParameters;
+
       public MethodInfo Method { get; private set; }
       public ControllerInfo Controller { get; private set; }
-      public RouteParameterInfoCollection RouteParameters { get; private set; }
+
+      public string Name { 
+         get {
+            if (_Name == null) {
+               ActionNameAttribute nameAttr = Attribute.GetCustomAttribute(Method, typeof(ActionNameAttribute)) as ActionNameAttribute;
+
+               string actionName = (nameAttr != null) ? nameAttr.Name
+                  : (settings.ActionNameExtractor != null) ? settings.ActionNameExtractor(Method)
+                  : Method.Name;
+
+               _Name = settings.RouteFormatter(actionName, RouteSegmentType.Action);
+               settings.CheckCaseFormattingOnly(actionName, _Name, RouteSegmentType.Action);
+            }
+            return _Name;
+         } 
+      }
+
+      public RouteParameterInfoCollection RouteParameters {
+         get {
+            if (_RouteParameters == null) {
+               _RouteParameters = new RouteParameterInfoCollection(
+                  Method.GetParameters()
+                     .Where(p => Attribute.IsDefined(p, typeof(FromRouteAttribute)))
+                     .Select(p => new RouteParameterInfo(p, settings.DefaultConstraints))
+                     .ToList()
+               );
+            }
+            return _RouteParameters;
+         }
+      }
 
       public bool HasRequireRouteParametersAttribute {
          get { return Attribute.IsDefined(Method, typeof(RequireRouteParametersAttribute)); }
@@ -69,22 +100,9 @@ namespace MvcCodeRouting {
 
          this.Method = method;
          this.Controller = controller;
+         this.settings = settings;
 
-         ActionNameAttribute nameAttr = Attribute.GetCustomAttribute(method, typeof(ActionNameAttribute)) as ActionNameAttribute;
-
-         string actionName = (nameAttr != null) ? nameAttr.Name
-            : (settings.ActionNameExtractor != null) ? settings.ActionNameExtractor(method)
-            : method.Name;
-
-         this.Name = settings.RouteFormatter(actionName);
-         this.RouteParameters = new RouteParameterInfoCollection(
-            method.GetParameters()
-               .Where(p => Attribute.IsDefined(p, typeof(FromRouteAttribute)))
-               .Select(p => new RouteParameterInfo(p, settings.DefaultConstraints))
-               .ToList()
-         );
-
-         CheckCatchAllParamIsLast(this.RouteParameters, method);
+         CheckCatchAllParamIsLast(this.RouteParameters, this.Method);
       }
 
       void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {

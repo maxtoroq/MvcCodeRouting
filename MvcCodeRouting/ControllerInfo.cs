@@ -16,10 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
-using System.Globalization;
 
 namespace MvcCodeRouting {
    
@@ -31,8 +31,9 @@ namespace MvcCodeRouting {
       readonly CodeRoutingSettings settings;
       readonly string rootNamespace;
 
-      ReadOnlyCollection<string> _NamespaceRouteSegments;
+      ReadOnlyCollection<string> _NamespaceRouteParts;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
+      string _Name;
 
       public Type Type { get; private set; }
       public string DefaultActionName { get; private set; }
@@ -40,7 +41,12 @@ namespace MvcCodeRouting {
 
       public string Name {
          get {
-            return settings.RouteFormatter(Type.Name.Substring(0, Type.Name.Length - 10));
+            if (_Name == null) {
+               string controllerName = Type.Name.Substring(0, Type.Name.Length - 10);
+               _Name = settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
+               settings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
+            }
+            return _Name;
          }
       }
 
@@ -61,41 +67,45 @@ namespace MvcCodeRouting {
       public bool IsRootController {
          get {
             return !String.IsNullOrWhiteSpace(settings.RootController)
-               && NamespaceRouteSegments.Count == 0
+               && NamespaceRouteParts.Count == 0
                && NameEquals(Name, settings.RootController);
          }
       }
 
-      public ReadOnlyCollection<string> NamespaceRouteSegments {
+      public ReadOnlyCollection<string> NamespaceRouteParts {
          get {
-            if (_NamespaceRouteSegments == null) {
+            if (_NamespaceRouteParts == null) {
                var namespaceParts = new List<string>();
 
                if (IsInSubNamespace) {
                   namespaceParts.AddRange(
                      Type.Namespace.Remove(0, rootNamespace.Length + 1).Split('.')
-                     .Select(s => settings.RouteFormatter(s))
                   );
 
                   if (namespaceParts.Count > 0 && NameEquals(namespaceParts.Last(), Name))
                      namespaceParts.RemoveAt(namespaceParts.Count - 1);
                }
 
-               _NamespaceRouteSegments = new ReadOnlyCollection<string>(namespaceParts);
+               _NamespaceRouteParts = new ReadOnlyCollection<string>(namespaceParts);
             }
-            return _NamespaceRouteSegments;
+            return _NamespaceRouteParts;
          }
       }
 
       public ReadOnlyCollection<string> ControllerBaseRouteSegments {
          get {
             if (_ControllerBaseRouteSegments == null) {
+               string[] nsSegments = NamespaceRouteParts.Select(s => settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
+
+               for (int i = 0; i < nsSegments.Length; i++) 
+                  settings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
+
                if (String.IsNullOrEmpty(BaseRoute)) {
-                  _ControllerBaseRouteSegments = NamespaceRouteSegments;
+                  _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(nsSegments);
                } else {
                   var segments = new List<string>();
                   segments.AddRange(BaseRoute.Split('/'));
-                  segments.AddRange(NamespaceRouteSegments);
+                  segments.AddRange(nsSegments);
 
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(segments);
                }
