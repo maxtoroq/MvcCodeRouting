@@ -128,26 +128,27 @@ namespace MvcCodeRouting {
 
          var groupedActions =
             (from a in actions
-             orderby a.Controller.IsRootController descending
-                , (a.Controller.IsRootController && a.IsDefaultAction) descending
-                , a.Controller.NamespaceRouteParts.Count
-                , a.Controller.Type.Namespace
-                , a.Controller.Name
-                , a.Name
-                , a.RouteParameters.Count descending
              let declaringType1 = a.Method.DeclaringType
              let declaringType = (declaringType1.IsGenericType) ?
                 declaringType1.GetGenericTypeDefinition()
                 : declaringType1
              group a by new {
-                a.Controller.Type.Namespace,
-                DeclaringType = declaringType,
-                HasRouteParameters = (a.RouteParameters.Count > 0)
-             }).ToList();
+                Depth = a.Controller.ControllerBaseRouteSegments.Count
+                , a.Controller.IsRootController
+                , a.Controller.Type.Namespace
+                , DeclaringType = declaringType
+                , HasRouteParameters = (a.RouteParameters.Count > 0)
+             } into g
+             orderby g.Key.IsRootController descending
+                , g.Key.Depth
+                , g.Key.Namespace
+                , g.Key.HasRouteParameters descending
+             select g
+             ).ToList();
 
          var signatureComparer = new ActionSignatureComparer();
          var finalGrouping = new List<IEnumerable<ActionInfo>>();
-
+         
          for (int i = 0; i < groupedActions.Count; i++) {
 
             var set = groupedActions[i];

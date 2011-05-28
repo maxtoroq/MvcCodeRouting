@@ -21,6 +21,11 @@ namespace Samples.User {
       }
 
       [RequireRouteParameters]
+      public ActionResult Search() {
+         throw new NotImplementedException();
+      }
+
+      [RequireRouteParameters]
       public ActionResult Search([FromRoute]string q) {
          throw new NotImplementedException();
       }
