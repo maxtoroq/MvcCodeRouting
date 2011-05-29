@@ -28,6 +28,7 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
 
          StringBuilder sb = new StringBuilder();
+         sb.Append("<!DOCTYPE html>");
          sb.Append("<html>"); ;
          AppendHtmlHead(sb);
          sb.Append("<body class='csharp'>");
@@ -167,6 +168,7 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
 
          StringBuilder sb = new StringBuilder();
+         sb.Append("<!DOCTYPE html>");
          sb.Append("<html>"); ;
          AppendHtmlHead(sb);
          sb.Append("<body class='vb'>");
