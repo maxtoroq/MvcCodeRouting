@@ -234,10 +234,10 @@ namespace MvcCodeRouting {
             
             IViewEngine engine = engines[i];
 
-            if (engine.GetType() == typeof(CodeRoutingViewEngineWrapper))
+            if (engine.GetType() == typeof(ViewEngineWrapper))
                continue;
 
-            engines[i] = new CodeRoutingViewEngineWrapper(engine);
+            engines[i] = new ViewEngineWrapper(engine);
          }
       }
    }

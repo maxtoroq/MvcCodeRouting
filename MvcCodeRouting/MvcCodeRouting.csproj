@@ -49,18 +49,17 @@
     <Compile Include="CodeRoute.cs" />
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
-    <Compile Include="CodeRoutingViewEngineWrapper.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="ControllerInfo.cs" />
     <Compile Include="DataTokenKeys.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
-    <Compile Include="RouteDebugExtensions.cs" />
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteParameterInfo.cs" />
     <Compile Include="RouteParameterInfoCollection.cs" />
     <Compile Include="RouteSegmentType.cs" />
+    <Compile Include="ViewEngineWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\MvcCodeRouting.snk" />

@@ -21,11 +21,11 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting {
    
-   class CodeRoutingViewEngineWrapper : IViewEngine {
+   class ViewEngineWrapper : IViewEngine {
 
       readonly IViewEngine wrappedEngine;
 
-      public CodeRoutingViewEngineWrapper(IViewEngine wrappedEngine) {
+      public ViewEngineWrapper(IViewEngine wrappedEngine) {
 
          if (wrappedEngine == null) throw new ArgumentNullException("wrappedEngine");
 
