@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -42,7 +43,7 @@ namespace MvcCodeRouting {
                   : Method.Name;
 
                _Name = settings.RouteFormatter(actionName, RouteSegmentType.Action);
-               settings.CheckCaseFormattingOnly(actionName, _Name, RouteSegmentType.Action);
+               CodeRoutingSettings.CheckCaseFormattingOnly(actionName, _Name, RouteSegmentType.Action);
             }
             return _Name;
          } 
@@ -74,6 +75,7 @@ namespace MvcCodeRouting {
          }
       }
 
+      [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Not sure if won't be used in the future")]
       public string UrlTemplate {
          get {
             return String.Join("/",
@@ -105,7 +107,7 @@ namespace MvcCodeRouting {
          CheckCatchAllParamIsLast(this.RouteParameters, this.Method);
       }
 
-      void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {
+      static void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {
 
          for (int i = 0; i < parameters.Count; i++) {
 

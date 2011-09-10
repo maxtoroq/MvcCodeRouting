@@ -33,7 +33,7 @@ namespace MvcCodeRouting {
             && CheckRouteParameters(y, x);
       }
 
-      bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
+      static bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
 
          for (int i = 0; i < x.RouteParameters.Count; i++) {
             var p = x.RouteParameters[i];

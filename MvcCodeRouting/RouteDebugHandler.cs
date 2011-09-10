@@ -55,7 +55,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      string ToCSharpMapRouteCalls(RouteCollection routes) {
+      static string ToCSharpMapRouteCalls(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
@@ -83,7 +83,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      string ToCSharpMapRouteCall(Route route) {
+      static string ToCSharpMapRouteCall(Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
 
@@ -174,7 +174,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      string ValueToCSharpString(object val, bool constraint = false) {
+      static string ValueToCSharpString(object val, bool constraint = false) {
 
          string stringVal;
 
@@ -196,7 +196,7 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      string ToVBMapRouteCalls(RouteCollection routes) {
+      static string ToVBMapRouteCalls(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
@@ -224,7 +224,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      string ToVBMapRouteCall(Route route) {
+      static string ToVBMapRouteCall(Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
 
@@ -315,7 +315,7 @@ namespace MvcCodeRouting {
          return sb.ToString();
       }
 
-      string ValueToVBString(object val, bool constraint = false) {
+      static string ValueToVBString(object val, bool constraint = false) {
 
          string stringVal;
 
@@ -337,7 +337,7 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      void AppendTopComments(StringBuilder sb, string lineCommentChars) { 
+      static void AppendTopComments(StringBuilder sb, string lineCommentChars) { 
 
          Assembly thisAssembly = Assembly.GetExecutingAssembly();
          AssemblyName name = thisAssembly.GetName();
@@ -353,7 +353,7 @@ namespace MvcCodeRouting {
             .AppendLine();
       }
 
-      void AppendHtmlHead(StringBuilder sb) {
+      static void AppendHtmlHead(StringBuilder sb) {
 
          sb.Append("<head>")
             .Append("<style type='text/css'>")

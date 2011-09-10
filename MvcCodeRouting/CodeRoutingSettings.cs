@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace MvcCodeRouting {
    
@@ -70,11 +71,11 @@ namespace MvcCodeRouting {
             _DefaultConstraints.Add(type, @"0|[1-9]\d*");
       }
 
-      internal void CheckCaseFormattingOnly(string originalValue, string formattedValue, RouteSegmentType segmentType) {
+      internal static void CheckCaseFormattingOnly(string originalValue, string formattedValue, RouteSegmentType segmentType) {
 
          if (!String.Equals(originalValue, formattedValue, StringComparison.OrdinalIgnoreCase)) {
             throw new InvalidOperationException(
-               String.Format(
+               String.Format(CultureInfo.InvariantCulture, 
                   "Only case formatting is currently supported for {0} route segments (Original segment: '{1}', formatted segment: '{2}').",
                   segmentType,
                   originalValue,

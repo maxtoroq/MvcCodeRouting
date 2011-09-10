@@ -13,11 +13,8 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
-using System.Net;
 
 namespace MvcCodeRouting {
    
@@ -25,6 +22,8 @@ namespace MvcCodeRouting {
    public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder {
 
       public string Constraint { get; set; }
+
+      [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework")]
       public bool CatchAll { get; set; }
 
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {

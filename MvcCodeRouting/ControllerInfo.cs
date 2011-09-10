@@ -44,7 +44,7 @@ namespace MvcCodeRouting {
             if (_Name == null) {
                string controllerName = Type.Name.Substring(0, Type.Name.Length - 10);
                _Name = settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
-               settings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
+               CodeRoutingSettings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
             }
             return _Name;
          }
@@ -60,7 +60,7 @@ namespace MvcCodeRouting {
       public bool IsInSubNamespace {
          get {
             return Type.Namespace.Length > rootNamespace.Length
-               && Type.Namespace.StartsWith(rootNamespace + ".");
+               && Type.Namespace.StartsWith(rootNamespace + ".", StringComparison.Ordinal);
          }
       }
 
@@ -97,8 +97,8 @@ namespace MvcCodeRouting {
             if (_ControllerBaseRouteSegments == null) {
                string[] nsSegments = NamespaceRouteParts.Select(s => settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
 
-               for (int i = 0; i < nsSegments.Length; i++) 
-                  settings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
+               for (int i = 0; i < nsSegments.Length; i++)
+                  CodeRoutingSettings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
 
                if (String.IsNullOrEmpty(BaseRoute)) {
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(nsSegments);
@@ -137,7 +137,7 @@ namespace MvcCodeRouting {
             where t.IsPublic
               && !t.IsAbstract
               && baseType.IsAssignableFrom(t)
-              && t.Name.EndsWith("Controller")
+              && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
               && !settings.IgnoredControllers.Contains(t)
             let controllerInfo = new ControllerInfo(t, rootNamespace, baseRoute, settings)
             where controllerInfo.IsInRootNamespace
@@ -174,7 +174,7 @@ namespace MvcCodeRouting {
          return actions;
       }
 
-      void CheckOverloads(IEnumerable<ActionInfo> actions) {
+      static void CheckOverloads(IEnumerable<ActionInfo> actions) {
 
          var overloadedActions =
             (from a in actions
