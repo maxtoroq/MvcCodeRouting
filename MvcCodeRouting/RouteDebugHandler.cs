@@ -24,24 +24,35 @@ namespace MvcCodeRouting {
 
    public class RouteDebugHandler : IHttpHandler {
 
+      string format;
+
       public bool IsReusable { get { return false; } }
+
+      public static string DefaultFormat { get; set; }
 
       public void ProcessRequest(HttpContext context) {
 
          var request = context.Request;
          var response = context.Response;
 
-         if (!request.IsLocal)
-            throw new HttpException(403, "Forbidden");
+         if (!request.IsLocal) {
+            response.StatusCode = 404;
+            response.End();
+            return;
+         }
 
-         string format = request.QueryString["format"];
+         string[] formats = new[] { "csharp", "vb" };
 
-         if (String.IsNullOrEmpty(format))
-            response.Redirect(request.Url.AbsolutePath + "?format=csharp", endResponse: true);
+         this.format = new[] {  
+            request.QueryString["format"],
+            DefaultFormat,
+            formats[0]
+         }.Where(s => formats.Contains(s))
+         .First();
 
          response.ContentType = "text/html";
 
-         switch (format) {
+         switch (this.format) {
             case "csharp":
                response.Write(ToCSharpMapRouteCalls(RouteTable.Routes));
                break;
@@ -55,7 +66,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      static string ToCSharpMapRouteCalls(RouteCollection routes) {
+      string ToCSharpMapRouteCalls(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
@@ -177,18 +188,19 @@ namespace MvcCodeRouting {
       static string ValueToCSharpString(object val, bool constraint = false) {
 
          string stringVal;
+         Type type = (val != null) ? val.GetType() : null;
 
          if (val == null)
             stringVal = "<span class='keyword'>null</span>";
 
-         else if (val.GetType() == typeof(string))
+         else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>@\"", val, "\"</span>");
 
-         else if (val.GetType() == typeof(UrlParameter))
+         else if (type == typeof(UrlParameter))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
          else if (constraint)
-            stringVal = String.Concat("<span class='keyword'>new</span> ", val.GetType().FullName, "()");
+            stringVal = String.Concat("<span class='keyword'>new</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
 
          else
             stringVal = val.ToString();
@@ -196,7 +208,7 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      static string ToVBMapRouteCalls(RouteCollection routes) {
+      string ToVBMapRouteCalls(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
@@ -318,18 +330,19 @@ namespace MvcCodeRouting {
       static string ValueToVBString(object val, bool constraint = false) {
 
          string stringVal;
+         Type type = (val != null) ? val.GetType() : null;
 
          if (val == null)
             stringVal = "<span class='keyword'>Nothing<span>";
 
-         else if (val.GetType() == typeof(string))
+         else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>\"", val, "\"</span>");
 
-         else if (val.GetType() == typeof(UrlParameter))
+         else if (type == typeof(UrlParameter))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
          else if (constraint)
-            stringVal = String.Concat("<span class='keyword'>New</span> ", val.GetType().FullName, "()");
+            stringVal = String.Concat("<span class='keyword'>New</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
 
          else
             stringVal = val.ToString();
@@ -337,7 +350,7 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      static void AppendTopComments(StringBuilder sb, string lineCommentChars) { 
+      void AppendTopComments(StringBuilder sb, string lineCommentChars) { 
 
          Assembly thisAssembly = Assembly.GetExecutingAssembly();
          AssemblyName name = thisAssembly.GetName();
@@ -348,6 +361,11 @@ namespace MvcCodeRouting {
             .AppendLine()
             .Append(lineCommentChars)
             .Append(" <a href='http://mvccoderouting.codeplex.com/'>http://mvccoderouting.codeplex.com/</a>")
+            .AppendLine()
+            .Append(lineCommentChars)
+            .Append(" Format: <a" + (this.format == "csharp" ? " class='self'" : " href='?format=csharp'"))
+            .Append(">C#</a> - <a" + (this.format == "vb" ? " class='self'" : " href='?format=vb'"))
+            .Append(">Visual Basic</a>")
             .Append("</span>")
             .AppendLine()
             .AppendLine();
@@ -361,7 +379,8 @@ namespace MvcCodeRouting {
             .AppendLine(".comment, .comment a { color: #008000; }")
             .AppendLine(".string { color: #ac1414; }")
             .AppendLine(".keyword { color: #0026fd; }")
-            .AppendLine(".type { color: 2b91af; }")
+            .AppendLine(".type { color: #2b91af; }")
+            .AppendLine("a.self { font-weight: bold; }")
             .Append("</style>")
             .Append("</head>")
             ;
