@@ -43,18 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account\AccountController.cs" />
-    <Compile Include="Admin\AdminController.cs" />
-    <Compile Include="Admin\Tasks\MaintenanceController.cs" />
-    <Compile Include="Admin\UserController.cs" />
-    <Compile Include="Api\CrudController.cs" />
-    <Compile Include="Api\RoleController.cs" />
-    <Compile Include="Api\UserController.cs" />
+    <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Admin\AdminController.cs" />
+    <Compile Include="Controllers\Admin\Tasks\MaintenanceController.cs" />
+    <Compile Include="Controllers\Admin\UserController.cs" />
+    <Compile Include="Controllers\Api\CrudController.cs" />
+    <Compile Include="Controllers\Api\RoleController.cs" />
+    <Compile Include="Controllers\Api\UserController.cs" />
+    <Compile Include="Controllers\Book\BookController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Home\HomeController.cs" />
-    <Compile Include="User\UserController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />

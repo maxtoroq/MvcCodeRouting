@@ -61,6 +61,25 @@ namespace MvcCodeRouting {
          this.IsCatchAll = routeAttr.CatchAll;
       }
 
+      public RouteParameterInfo(PropertyInfo property, IDictionary<Type, string> defaultConstraints) {
+
+         Type propertyType = property.PropertyType;
+         bool isNullableValueType = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+         this.Name = property.Name;
+
+         var routeAttr = (FromRouteAttribute)Attribute.GetCustomAttribute(property, typeof(FromRouteAttribute));
+
+         string constr = routeAttr.Constraint;
+
+         if (constr == null) {
+            Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(propertyType) : propertyType;
+            defaultConstraints.TryGetValue(t, out constr);
+         }
+
+         this.Constraint = constr;
+      }
+
       public bool Equals(RouteParameterInfo other) {
 
          if (other == null)

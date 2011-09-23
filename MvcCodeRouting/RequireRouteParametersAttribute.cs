@@ -33,9 +33,9 @@ namespace MvcCodeRouting {
 
          CodeRoute codeRoute = controllerContext.RouteData.Route as CodeRoute;
 
-         if (codeRoute != null && codeRoute.BaseRouteTokens.Count > 0) {
-            for (int i = 0; i < codeRoute.BaseRouteTokens.Count; i++) 
-               routeValues.Remove(codeRoute.BaseRouteTokens[i]);
+         if (codeRoute != null && codeRoute.NonActionParameterTokens.Count > 0) {
+            for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) 
+               routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
          }
 
          var parameters =

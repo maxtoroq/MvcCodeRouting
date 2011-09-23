@@ -75,7 +75,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Not sure if won't be used in the future")]
+      [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Not sure if won't be used in the future.")]
       public string UrlTemplate {
          get {
             return String.Join("/",

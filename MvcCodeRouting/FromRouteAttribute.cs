@@ -18,12 +18,12 @@ using System.Web.Mvc;
 
 namespace MvcCodeRouting {
    
-   [AttributeUsage(AttributeTargets.Parameter)]
+   [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder {
 
       public string Constraint { get; set; }
 
-      [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework")]
+      [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
       public bool CatchAll { get; set; }
 
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {

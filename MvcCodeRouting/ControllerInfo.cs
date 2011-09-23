@@ -33,6 +33,7 @@ namespace MvcCodeRouting {
 
       ReadOnlyCollection<string> _NamespaceRouteParts;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
+      RouteParameterInfoCollection _RouteParameters;
       string _Name;
 
       public Type Type { get; private set; }
@@ -114,10 +115,28 @@ namespace MvcCodeRouting {
          }
       }
 
+      public RouteParameterInfoCollection RouteParameters {
+         get {
+            if (_RouteParameters == null) {
+
+               // TODO: Properties in base class should come first
+
+               _RouteParameters = new RouteParameterInfoCollection(
+                  Type.GetProperties()
+                     .Where(p => Attribute.IsDefined(p, typeof(FromRouteAttribute)))
+                     .Select(p => new RouteParameterInfo(p, settings.DefaultConstraints))
+                     .ToList()
+               );
+            }
+            return _RouteParameters;
+         }
+      }
+
       public string UrlTemplate {
          get {
             return String.Join("/", ControllerBaseRouteSegments
                .Concat((!IsRootController) ? new[] { "{controller}" } : new string[0])
+               .Concat(RouteParameters.Select(p => p.RouteSegment))
             );
          }
       }
@@ -126,6 +145,7 @@ namespace MvcCodeRouting {
          get {
             return String.Join("/", ControllerBaseRouteSegments
                .Concat((!IsRootController) ? new[] { Name } : new string[0])
+               .Concat(RouteParameters.Select(p => p.RouteSegment))
             );
          }
       }

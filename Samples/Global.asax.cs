@@ -23,12 +23,10 @@ namespace Samples {
 
       void RegisterRoutes(RouteCollection routes) {
 
-         routes.RouteExistingFiles = true;
-
          routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
          routes.MapCodeRoutes(
-            rootNamespace: typeof(MvcApplication).Namespace
+            rootNamespace: typeof(Controllers.HomeController).Namespace
          );
       }
 

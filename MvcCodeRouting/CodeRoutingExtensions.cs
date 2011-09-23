@@ -25,6 +25,8 @@ namespace MvcCodeRouting {
 
    public static class CodeRoutingExtensions {
 
+      // TODO: Bind controller route properties
+
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
 
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace) {

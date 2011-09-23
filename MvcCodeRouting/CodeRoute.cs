@@ -28,7 +28,7 @@ namespace MvcCodeRouting {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
 
-      public Collection<string> BaseRouteTokens { get; private set; }
+      public Collection<string> NonActionParameterTokens { get; private set; }
 
       internal static CodeRoute Create(IEnumerable<ActionInfo> actions) {
 
@@ -48,7 +48,7 @@ namespace MvcCodeRouting {
          segments.Add("{action}");
 
          bool hardcodeAction = actionNames.Count == 1
-            && !(count == 1 && first.IsDefaultAction);
+            && !first.IsDefaultAction;
 
          if (hardcodeAction)
             segments[1] = first.Name;
@@ -89,7 +89,7 @@ namespace MvcCodeRouting {
          if (!hardcodeAction || actionNames.Count > 1)
             constraints.Add("action", String.Join("|", actionNames));
 
-         foreach (var param in parameters.Where(p => p.Constraint != null)) {
+         foreach (var param in first.Controller.RouteParameters.Concat(parameters).Where(p => p.Constraint != null)) {
 
             string regex = param.Constraint;
 
@@ -107,21 +107,24 @@ namespace MvcCodeRouting {
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.ControllerBaseRouteSegments.Where(s => !s.Contains('{'))) }
          };
 
-         string[] baseRouteTokens = (!String.IsNullOrEmpty(first.Controller.BaseRoute)) ? 
-            TokenPattern.Matches(first.Controller.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value).ToArray()
-            : new string[0];
+         List<string> nonActionParameterTokens = new List<string>();
 
-         return new CodeRoute(url, baseRouteTokens) { 
+         if (!String.IsNullOrEmpty(first.Controller.BaseRoute)) 
+            nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
+
+         nonActionParameterTokens.AddRange(first.Controller.RouteParameters.Select(p => p.Name));
+
+         return new CodeRoute(url, nonActionParameterTokens.ToArray()) { 
             Constraints = constraints,
             DataTokens = dataTokens,
             Defaults = defaults
          };
       }
 
-      private CodeRoute(string url, string[] baseRouteTokens)
+      private CodeRoute(string url, string[] nonActionParameterTokens)
          : base(url, new MvcRouteHandler()) {
 
-         this.BaseRouteTokens = new Collection<string>(baseRouteTokens);
+         this.NonActionParameterTokens = new Collection<string>(nonActionParameterTokens);
       }
 
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
