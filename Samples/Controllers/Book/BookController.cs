@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using MvcCodeRouting;
 
 namespace Samples.Controllers.Book {
@@ -12,8 +13,15 @@ namespace Samples.Controllers.Book {
       [FromRoute]
       public int BookId { get; set; }
 
+      protected override void Initialize(RequestContext requestContext) {
+         
+         base.Initialize(requestContext);
+
+         this.BindRouteProperties();
+      }
+
       public ActionResult Index() {
-         throw new NotImplementedException();
+         return Content(this.BookId.ToString());
       }
 
       [HttpDelete]

@@ -38,6 +38,8 @@ namespace MvcCodeRouting {
                routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
          }
 
+         // TODO: Cache parameters
+
          var parameters =
             (from p in methodInfo.GetParameters()
              where Attribute.IsDefined(p, typeof(FromRouteAttribute))

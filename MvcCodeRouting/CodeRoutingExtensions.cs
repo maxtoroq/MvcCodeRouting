@@ -20,12 +20,11 @@ using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web;
 
 namespace MvcCodeRouting {
 
    public static class CodeRoutingExtensions {
-
-      // TODO: Bind controller route properties
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
 
@@ -228,6 +227,11 @@ namespace MvcCodeRouting {
          return finalGrouping;
       }
 
+      /// <summary>
+      /// Enables namespace-aware views location.
+      /// </summary>
+      /// <param name="engines">The view engine collection.</param>
+      /// <remarks>Always call after you are done adding view engines.</remarks>
       public static void EnableCodeRouting(this ViewEngineCollection engines) {
 
          if (engines == null) throw new ArgumentNullException("engines");
@@ -241,6 +245,37 @@ namespace MvcCodeRouting {
 
             engines[i] = new ViewEngineWrapper(engine);
          }
+      }
+
+      public static void BindRouteProperties(this ControllerBase controller) {
+
+         // TODO: Cache controllerMetadata and properties
+
+         var type = controller.GetType();
+         var metadataProvider = new EmptyModelMetadataProvider();
+         var controllerMetadata = metadataProvider.GetMetadataForType(null, type);
+         var modelState = new ModelStateDictionary();
+
+         var properties =
+            (from p in type.GetProperties()
+             where Attribute.IsDefined(p, typeof(FromRouteAttribute))
+             select p.Name).ToArray();
+
+         controllerMetadata.Model = controller;
+
+         ModelBindingContext bindingContext = new ModelBindingContext {
+            FallbackToEmptyPrefix = true,
+            ModelMetadata = controllerMetadata,
+            ModelState = modelState,
+            PropertyFilter = (p) => properties.Contains(p, StringComparer.Ordinal),
+            ValueProvider = new RouteDataValueProvider(controller.ControllerContext)
+         };
+
+         var modelBinder = new DefaultModelBinder();
+         modelBinder.BindModel(controller.ControllerContext, bindingContext);
+
+         if (!modelState.IsValid) 
+            throw new HttpException(404, "Not Found");
       }
    }
 }
