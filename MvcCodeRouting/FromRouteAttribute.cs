@@ -26,15 +26,15 @@ namespace MvcCodeRouting {
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
       public bool CatchAll { get; set; }
 
+      public override IModelBinder GetBinder() {
+         return this;
+      }
+
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
          bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
 
          return ModelBinders.Binders.DefaultBinder.BindModel(controllerContext, bindingContext);
-      }
-
-      public override IModelBinder GetBinder() {
-         return this;
       }
    }
 }

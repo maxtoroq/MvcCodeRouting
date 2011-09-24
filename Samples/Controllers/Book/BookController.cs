@@ -30,7 +30,7 @@ namespace Samples.Controllers.Book {
       }
 
       public ActionResult Chapter([FromRoute]int chapterId, [FromRoute]int page = 1) {
-         throw new NotImplementedException();
+         return Content(chapterId.ToString());
       }
    }
 }

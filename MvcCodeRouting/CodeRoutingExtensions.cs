@@ -13,20 +13,21 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web;
 
 namespace MvcCodeRouting {
 
    public static class CodeRoutingExtensions {
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
+      static readonly ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>> controllerDataCache = new ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>>();
 
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace) {
          return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), rootNamespace);
@@ -247,32 +248,43 @@ namespace MvcCodeRouting {
          }
       }
 
+      /// <summary>
+      /// Binds controller properties decorated with <see cref="FromRouteAttribute"/>
+      /// using the current route values.
+      /// </summary>
+      /// <param name="controller">The controller to bind.</param>
+      /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
       public static void BindRouteProperties(this ControllerBase controller) {
 
-         // TODO: Cache controllerMetadata and properties
+         if (controller == null) throw new ArgumentNullException("controller");
 
-         var type = controller.GetType();
-         var metadataProvider = new EmptyModelMetadataProvider();
-         var controllerMetadata = metadataProvider.GetMetadataForType(null, type);
+         var controllerData = controllerDataCache.GetOrAdd(controller.GetType(), (type) => {
+
+            var metadataProvider = new EmptyModelMetadataProvider();
+            var controllerMetadata = metadataProvider.GetMetadataForType(null, type);
+
+            var properties =
+               (from p in type.GetProperties()
+                where Attribute.IsDefined(p, typeof(FromRouteAttribute))
+                select p.Name).ToArray();
+
+            return Tuple.Create(controllerMetadata, properties);
+         });
+
+         var metadata = controllerData.Item1;
+         metadata.Model = controller;
+
          var modelState = new ModelStateDictionary();
-
-         var properties =
-            (from p in type.GetProperties()
-             where Attribute.IsDefined(p, typeof(FromRouteAttribute))
-             select p.Name).ToArray();
-
-         controllerMetadata.Model = controller;
 
          ModelBindingContext bindingContext = new ModelBindingContext {
             FallbackToEmptyPrefix = true,
-            ModelMetadata = controllerMetadata,
+            ModelMetadata = metadata,
             ModelState = modelState,
-            PropertyFilter = (p) => properties.Contains(p, StringComparer.Ordinal),
+            PropertyFilter = (p) => controllerData.Item2.Contains(p, StringComparer.Ordinal),
             ValueProvider = new RouteDataValueProvider(controller.ControllerContext)
          };
 
-         var modelBinder = new DefaultModelBinder();
-         modelBinder.BindModel(controller.ControllerContext, bindingContext);
+         ModelBinders.Binders.DefaultBinder.BindModel(controller.ControllerContext, bindingContext);
 
          if (!modelState.IsValid) 
             throw new HttpException(404, "Not Found");

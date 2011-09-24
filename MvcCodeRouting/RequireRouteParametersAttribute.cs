@@ -19,12 +19,15 @@ using System.Text;
 using System.Web.Mvc;
 using System.Reflection;
 using System.Web.Routing;
+using System.Collections.Concurrent;
 
 namespace MvcCodeRouting {
    
    [AttributeUsage(AttributeTargets.Method)]
    public sealed class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
-      
+
+      static readonly ConcurrentDictionary<MethodInfo, string[]> actionDataCache = new ConcurrentDictionary<MethodInfo, string[]>();
+
       public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo) {
          
          var routeValues = new RouteValueDictionary(controllerContext.RouteData.Values);
@@ -33,17 +36,16 @@ namespace MvcCodeRouting {
 
          CodeRoute codeRoute = controllerContext.RouteData.Route as CodeRoute;
 
-         if (codeRoute != null && codeRoute.NonActionParameterTokens.Count > 0) {
+         if (codeRoute != null) {
             for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) 
                routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
          }
-
-         // TODO: Cache parameters
-
-         var parameters =
-            (from p in methodInfo.GetParameters()
+         
+         string[] parameters = actionDataCache.GetOrAdd(methodInfo, (m) =>
+            (from p in m.GetParameters()
              where Attribute.IsDefined(p, typeof(FromRouteAttribute))
-             select p.Name).ToArray();
+             select p.Name).ToArray()
+         );
 
          return parameters.All(p => routeValues.Keys.Contains(p, StringComparer.OrdinalIgnoreCase))
             && routeValues.Keys.All(k => parameters.Contains(k, StringComparer.OrdinalIgnoreCase));
