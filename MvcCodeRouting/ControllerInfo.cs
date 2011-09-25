@@ -119,14 +119,26 @@ namespace MvcCodeRouting {
          get {
             if (_RouteParameters == null) {
 
-               // TODO: Properties in base class should come first
+               var types = new List<Type>();
 
-               _RouteParameters = new RouteParameterInfoCollection(
-                  Type.GetProperties()
-                     .Where(p => Attribute.IsDefined(p, typeof(FromRouteAttribute)))
-                     .Select(p => new RouteParameterInfo(p, settings.DefaultConstraints))
-                     .ToList()
-               );
+               for (Type t = this.Type; t != null; t = t.BaseType) 
+                  types.Add(t);
+
+               types.Reverse();
+
+               var list = new List<RouteParameterInfo>();
+
+               foreach (var type in types) {
+                  list.AddRange(
+                     from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
+                     where p.IsDefined(typeof(FromRouteAttribute), inherit: false)
+                     let rp = new RouteParameterInfo(p, settings.DefaultConstraints)
+                     where !list.Any(item => RouteParameterInfo.NameEquals(item.Name, rp.Name))
+                     select rp
+                  );
+               }
+
+               _RouteParameters = new RouteParameterInfoCollection(list);
             }
             return _RouteParameters;
          }
