@@ -34,7 +34,6 @@ namespace MvcCodeRouting {
          if (actions == null) throw new ArgumentNullException("actions");
 
          ActionInfo first = actions.First();
-         int count = actions.Count();
          var controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
          var actionNames = actions.Select(a => a.Name).Distinct().ToList();
 
