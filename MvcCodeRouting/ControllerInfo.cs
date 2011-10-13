@@ -27,6 +27,8 @@ namespace MvcCodeRouting {
    class ControllerInfo {
 
       static readonly Type baseType = typeof(ControllerBase);
+      const string RootController = "Home";
+      const string DefaultAction = "Index";
 
       readonly CodeRoutingSettings settings;
       readonly string rootNamespace;
@@ -67,9 +69,9 @@ namespace MvcCodeRouting {
 
       public bool IsRootController {
          get {
-            return !String.IsNullOrWhiteSpace(settings.RootController)
+            return !String.IsNullOrWhiteSpace(RootController)
                && NamespaceRouteParts.Count == 0
-               && NameEquals(Name, settings.RootController);
+               && NameEquals(Name, RootController);
          }
       }
 
@@ -186,7 +188,7 @@ namespace MvcCodeRouting {
          this.rootNamespace = rootNamespace;
          this.BaseRoute = baseRoute;
          this.settings = settings;
-         this.DefaultActionName = settings.DefaultAction;
+         this.DefaultActionName = DefaultAction;
       }
 
       public IEnumerable<ActionInfo> GetActions() {

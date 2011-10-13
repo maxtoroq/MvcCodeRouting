@@ -28,9 +28,6 @@ namespace MvcCodeRouting {
       readonly IDictionary<Type, string> _DefaultConstraints;
       readonly Collection<Type> _IgnoredControllers;
 
-      public string RootController { get; set; }
-      public string DefaultAction { get; set; }
-
       public IDictionary<Type, string> DefaultConstraints {
          get { return _DefaultConstraints; }
       }
@@ -51,9 +48,6 @@ namespace MvcCodeRouting {
       public Func<MethodInfo, string> ActionNameExtractor { get; set; }
 
       public CodeRoutingSettings() {
-
-         this.RootController = "Home";
-         this.DefaultAction = "Index";
 
          _IgnoredControllers = new Collection<Type>();
 
