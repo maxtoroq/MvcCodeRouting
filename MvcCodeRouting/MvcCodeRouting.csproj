@@ -53,8 +53,14 @@
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="ControllerInfo.cs" />
     <Compile Include="DataTokenKeys.cs" />
+    <Compile Include="DescriptedActionInfo.cs" />
+    <Compile Include="DescriptedActionParameterInfo.cs" />
     <Compile Include="FromRouteAttribute.cs" />
+    <Compile Include="ActionParameterInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectedActionInfo.cs" />
+    <Compile Include="ReflectedActionParameterInfo.cs" />
+    <Compile Include="RegisterInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteParameterInfo.cs" />

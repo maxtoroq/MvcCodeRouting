@@ -14,57 +14,59 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 
 namespace MvcCodeRouting {
-   
-   [DebuggerDisplay("{ActionUrl}")]
-   class ActionInfo {
 
-      readonly CodeRoutingSettings settings;
+   [DebuggerDisplay("{ActionUrl}")]
+   abstract class ActionInfo : ICustomAttributeProvider {
+
       string _Name;
+      Collection<ActionParameterInfo> _Parameters;
       RouteParameterInfoCollection _RouteParameters;
 
-      public MethodInfo Method { get; private set; }
       public ControllerInfo Controller { get; private set; }
+      public abstract string OriginalName { get; }
+      public virtual string MethodName { get { return OriginalName; } }
+      public virtual Type DeclaringType { get { return Controller.Type; } }
 
-      public string Name { 
+      public string Name {
          get {
             if (_Name == null) {
-               ActionNameAttribute nameAttr = Attribute.GetCustomAttribute(Method, typeof(ActionNameAttribute)) as ActionNameAttribute;
-
-               string actionName = (nameAttr != null) ? nameAttr.Name
-                  : (settings.ActionNameExtractor != null) ? settings.ActionNameExtractor(Method)
-                  : Method.Name;
-
-               _Name = settings.RouteFormatter(actionName, RouteSegmentType.Action);
-               CodeRoutingSettings.CheckCaseFormattingOnly(actionName, _Name, RouteSegmentType.Action);
+               _Name = Controller.RegisterInfo.Settings.RouteFormatter(OriginalName, RouteSegmentType.Action);
+               CodeRoutingSettings.CheckCaseFormattingOnly(OriginalName, _Name, RouteSegmentType.Action);
             }
             return _Name;
-         } 
+         }
+      }
+
+      public Collection<ActionParameterInfo> Parameters {
+         get {
+            if (_Parameters == null) 
+               _Parameters = new Collection<ActionParameterInfo>(GetParameters());
+            return _Parameters;
+         }
       }
 
       public RouteParameterInfoCollection RouteParameters {
          get {
             if (_RouteParameters == null) {
                _RouteParameters = new RouteParameterInfoCollection(
-                  Method.GetParameters()
-                     .Where(p => Attribute.IsDefined(p, typeof(FromRouteAttribute)))
-                     .Select(p => new RouteParameterInfo(p, settings.DefaultConstraints))
-                     .ToList()
+                  (from p in Parameters
+                   where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
+                   select new RouteParameterInfo(p))
+                  .ToList()
                );
+
+               CheckCatchAllParamIsLast(_RouteParameters);
             }
             return _RouteParameters;
          }
-      }
-
-      public bool HasRequireRouteParametersAttribute {
-         get { return Attribute.IsDefined(Method, typeof(RequireRouteParametersAttribute)); }
       }
 
       public bool IsDefaultAction {
@@ -72,16 +74,6 @@ namespace MvcCodeRouting {
             return RouteParameters.Count == 0
                && Controller.DefaultActionName != null
                && NameEquals(Name, Controller.DefaultActionName);
-         }
-      }
-
-      [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Not sure if won't be used in the future.")]
-      public string UrlTemplate {
-         get {
-            return String.Join("/",
-               (new[] { Controller.UrlTemplate, "{action}" }).Where(s => !String.IsNullOrEmpty(s))
-               .Concat(RouteParameters.Select(r => r.RouteSegment))
-            );
          }
       }
 
@@ -94,20 +86,19 @@ namespace MvcCodeRouting {
          }
       }
 
+      public bool HasRequireRouteParametersAttribute {
+         get { return IsDefined(typeof(RequireRouteParametersAttribute), inherit: true); }
+      }
+
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public ActionInfo(MethodInfo method, ControllerInfo controller, CodeRoutingSettings settings) {
-
-         this.Method = method;
+      public ActionInfo(ControllerInfo controller) {
          this.Controller = controller;
-         this.settings = settings;
-
-         CheckCatchAllParamIsLast(this.RouteParameters, this.Method);
       }
 
-      static void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters, MethodInfo method) {
+      void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters) {
 
          for (int i = 0; i < parameters.Count; i++) {
 
@@ -118,10 +109,15 @@ namespace MvcCodeRouting {
                   String.Format(CultureInfo.InvariantCulture,
                      "A catch-all parameter must be the last route parameter of the action method (parameter {0} on {1}).",
                      param.Name,
-                     String.Concat(method.DeclaringType.FullName, ".", method.Name, "(", String.Join(", ", method.GetParameters().Select(p => p.ParameterType.Name)), ")")
+                     String.Concat(this.DeclaringType.FullName, ".", this.MethodName, "(", String.Join(", ", this.Parameters.Select(p => p.Type.Name)), ")")
                   )
                );
          }
       }
+
+      protected abstract ActionParameterInfo[] GetParameters();
+      public abstract object[] GetCustomAttributes(bool inherit);
+      public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
+      public abstract bool IsDefined(Type attributeType, bool inherit);
    }
 }

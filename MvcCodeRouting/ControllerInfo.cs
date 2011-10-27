@@ -20,18 +20,22 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
+using System.Runtime.Serialization;
+using System.Security;
 
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ControllerUrl}")]
    class ControllerInfo {
 
-      static readonly Type baseType = typeof(ControllerBase);
+      static readonly Type baseType = typeof(Controller);
+      static readonly Func<Controller, IActionInvoker> createActionInvoker;
+      static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
+
       const string RootController = "Home";
       const string DefaultAction = "Index";
 
-      readonly CodeRoutingSettings settings;
-      readonly string rootNamespace;
+      readonly ControllerDescriptor controllerDescr;
 
       ReadOnlyCollection<string> _NamespaceRouteParts;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
@@ -39,14 +43,16 @@ namespace MvcCodeRouting {
       string _Name;
 
       public Type Type { get; private set; }
+      public RegisterInfo RegisterInfo { get; private set; }
       public string DefaultActionName { get; private set; }
-      public string BaseRoute { get; private set; }
 
       public string Name {
          get {
             if (_Name == null) {
-               string controllerName = Type.Name.Substring(0, Type.Name.Length - 10);
-               _Name = settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
+               string controllerName = (controllerDescr != null) ? controllerDescr.ControllerName 
+                  : Type.Name.Substring(0, Type.Name.Length - 10);
+                  
+               _Name = RegisterInfo.Settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
                CodeRoutingSettings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
             }
             return _Name;
@@ -55,15 +61,15 @@ namespace MvcCodeRouting {
 
       public bool IsInRootNamespace {
          get {
-            return Type.Namespace == rootNamespace
+            return Type.Namespace == RegisterInfo.RootNamespace
                || IsInSubNamespace;
          }
       }
 
       public bool IsInSubNamespace {
          get {
-            return Type.Namespace.Length > rootNamespace.Length
-               && Type.Namespace.StartsWith(rootNamespace + ".", StringComparison.Ordinal);
+            return Type.Namespace.Length > RegisterInfo.RootNamespace.Length
+               && Type.Namespace.StartsWith(RegisterInfo.RootNamespace + ".", StringComparison.Ordinal);
          }
       }
 
@@ -75,6 +81,12 @@ namespace MvcCodeRouting {
          }
       }
 
+      public bool IsIgnored {
+         get {
+            return RegisterInfo.Settings.IgnoredControllers.Contains(Type);
+         }
+      }
+
       public ReadOnlyCollection<string> NamespaceRouteParts {
          get {
             if (_NamespaceRouteParts == null) {
@@ -82,7 +94,7 @@ namespace MvcCodeRouting {
 
                if (IsInSubNamespace) {
                   namespaceParts.AddRange(
-                     Type.Namespace.Remove(0, rootNamespace.Length + 1).Split('.')
+                     Type.Namespace.Remove(0, RegisterInfo.RootNamespace.Length + 1).Split('.')
                   );
 
                   if (namespaceParts.Count > 0 && NameEquals(namespaceParts.Last(), Name))
@@ -98,16 +110,16 @@ namespace MvcCodeRouting {
       public ReadOnlyCollection<string> ControllerBaseRouteSegments {
          get {
             if (_ControllerBaseRouteSegments == null) {
-               string[] nsSegments = NamespaceRouteParts.Select(s => settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
+               string[] nsSegments = NamespaceRouteParts.Select(s => RegisterInfo.Settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
 
                for (int i = 0; i < nsSegments.Length; i++)
                   CodeRoutingSettings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
 
-               if (String.IsNullOrEmpty(BaseRoute)) {
+               if (String.IsNullOrEmpty(RegisterInfo.BaseRoute)) {
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(nsSegments);
                } else {
                   var segments = new List<string>();
-                  segments.AddRange(BaseRoute.Split('/'));
+                  segments.AddRange(RegisterInfo.BaseRoute.Split('/'));
                   segments.AddRange(nsSegments);
 
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(segments);
@@ -133,8 +145,8 @@ namespace MvcCodeRouting {
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(typeof(FromRouteAttribute), inherit: false)
-                     let rp = new RouteParameterInfo(p, settings.DefaultConstraints)
+                     where p.IsDefined(typeof(FromRouteAttribute), inherit: false /* [1] */)
+                     let rp = new RouteParameterInfo(p, RegisterInfo.Settings.DefaultConstraints)
                      where !list.Any(item => RouteParameterInfo.NameEquals(item.Name, rp.Name))
                      select rp
                   );
@@ -143,6 +155,8 @@ namespace MvcCodeRouting {
                _RouteParameters = new RouteParameterInfoCollection(list);
             }
             return _RouteParameters;
+
+            // [1] Procesing each type of the hierarchy one by one, hence inherit: false.
          }
       }
 
@@ -164,17 +178,31 @@ namespace MvcCodeRouting {
          }
       }
 
-      public static IEnumerable<ControllerInfo> GetControllers(Assembly assembly, string rootNamespace, string baseRoute, CodeRoutingSettings settings) {
+      static ControllerInfo() {
+
+         try {
+            createActionInvoker =
+                  (Func<Controller, IActionInvoker>)
+                     Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), baseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
+
+            getControllerDescriptor =
+               (Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>)
+                  Delegate.CreateDelegate(typeof(Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>), typeof(ControllerActionInvoker).GetMethod("GetControllerDescriptor", BindingFlags.NonPublic | BindingFlags.Instance));
+         
+         } catch (MethodAccessException) { }
+      }
+
+      public static IEnumerable<ControllerInfo> GetControllers(RegisterInfo registerInfo) {
 
          return
-            from t in assembly.GetTypes()
+            from t in registerInfo.Assembly.GetTypes()
             where t.IsPublic
               && !t.IsAbstract
               && baseType.IsAssignableFrom(t)
               && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
-              && !settings.IgnoredControllers.Contains(t)
-            let controllerInfo = new ControllerInfo(t, rootNamespace, baseRoute, settings)
+            let controllerInfo = new ControllerInfo(t, registerInfo)
             where controllerInfo.IsInRootNamespace
+               && !controllerInfo.IsIgnored
             select controllerInfo;
       }
 
@@ -182,28 +210,65 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public ControllerInfo(Type type, string rootNamespace, string baseRoute, CodeRoutingSettings settings) {
-
+      public ControllerInfo(Type type, RegisterInfo registerInfo) {
+         
          this.Type = type;
-         this.rootNamespace = rootNamespace;
-         this.BaseRoute = baseRoute;
-         this.settings = settings;
+         this.RegisterInfo = registerInfo;
          this.DefaultActionName = DefaultAction;
+
+         if (createActionInvoker != null) {
+            
+            Controller instance = null;
+
+            try {
+               instance = (Controller)FormatterServices.GetUninitializedObject(this.Type);
+            } catch (SecurityException) { }
+
+            if (instance != null) {
+
+               ControllerActionInvoker actionInvoker = createActionInvoker(instance) as ControllerActionInvoker;
+
+               if (actionInvoker != null)
+                  this.controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
+            } 
+         }
       }
 
       public IEnumerable<ActionInfo> GetActions() {
 
-         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(this.Type);
+         IEnumerable<ActionInfo> actions;
 
-         var actions =
-             from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-             where !m.IsSpecialName
-                && baseType.IsAssignableFrom(m.DeclaringType)
-                && !Attribute.IsDefined(m, typeof(NonActionAttribute))
-                && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
-             select new ActionInfo(m, this, this.settings);
+         if (this.controllerDescr != null)
+            actions = GetActions(this.controllerDescr);
+         else
+            actions = GetActions(this.Type);
 
          CheckOverloads(actions);
+
+         return actions;
+      }
+
+      IEnumerable<ActionInfo> GetActions(ControllerDescriptor controllerDescr) {
+
+         var actions =
+            from a in controllerDescr.GetCanonicalActions()
+            where !a.IsDefined(typeof(NonActionAttribute), inherit: true)
+            select new DescriptedActionInfo(a, this);
+         
+         return actions;
+      }
+
+      IEnumerable<ActionInfo> GetActions(Type controllerType) {
+
+         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(controllerType);
+
+         var actions =
+             from m in controllerType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+             where !m.IsSpecialName
+                && baseType.IsAssignableFrom(m.DeclaringType)
+                && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
+                && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
+             select new ReflectedActionInfo(m, this);
 
          return actions;
       }
@@ -232,7 +297,7 @@ namespace MvcCodeRouting {
                String.Format(CultureInfo.InvariantCulture,
                   "The following action methods must be decorated with the {0} for disambiguation: {1}.",
                   typeof(RequireRouteParametersAttribute).FullName,
-                  String.Join(", ", first.Select(a => String.Concat(a.Method.DeclaringType.FullName, ".", a.Method.Name, "(", String.Join(", ", a.Method.GetParameters().Select(p => p.ParameterType.Name)), ")")))
+                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
          }
@@ -252,7 +317,7 @@ namespace MvcCodeRouting {
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
                   "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
-                  String.Concat(first.Key.Controller.Type.FullName, ".", first.First().Method.Name)
+                  String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
                )
             );
          }

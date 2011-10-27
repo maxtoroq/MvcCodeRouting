@@ -55,10 +55,15 @@ namespace MvcCodeRouting {
          if (assembly == null) throw new ArgumentNullException("assembly");
          if (rootNamespace == null) throw new ArgumentNullException("rootNamespace");
 
-         if (settings == null)
-            settings = new CodeRoutingSettings();
+         // TODO: Make rootNamespace optional
 
-         var actions = ControllerInfo.GetControllers(assembly, rootNamespace, baseRoute, settings)
+         var registerInfo = new RegisterInfo(assembly) { 
+            BaseRoute = baseRoute, 
+            RootNamespace = rootNamespace, 
+            Settings = settings 
+         };
+
+         var actions = ControllerInfo.GetControllers(registerInfo)
             .SelectMany(c => c.GetActions());
 
          registeredActions.AddRange(actions);
@@ -80,7 +85,7 @@ namespace MvcCodeRouting {
 
          var controllersByBaseRoute = 
             from c in actions.Select(a => a.Controller).Distinct()
-            group c by c.BaseRoute into g
+            group c by c.RegisterInfo.BaseRoute into g
             select g;
 
          foreach (var g in controllersByBaseRoute) {
@@ -130,7 +135,7 @@ namespace MvcCodeRouting {
 
          var groupedActions =
             (from a in actions
-             let declaringType1 = a.Method.DeclaringType
+             let declaringType1 = a.DeclaringType
              let declaringType = (declaringType1.IsGenericType) ?
                 declaringType1.GetGenericTypeDefinition()
                 : declaringType1
@@ -265,7 +270,7 @@ namespace MvcCodeRouting {
 
             var properties =
                (from p in type.GetProperties()
-                where Attribute.IsDefined(p, typeof(FromRouteAttribute))
+                where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
                 select p.Name).ToArray();
 
             return Tuple.Create(controllerMetadata, properties);

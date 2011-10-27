@@ -37,24 +37,20 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public RouteParameterInfo(ParameterInfo param, IDictionary<Type, string> defaultConstraints) {
+      public RouteParameterInfo(ActionParameterInfo actionParam) {
 
-         Type paramType = param.ParameterType;
-         bool isNullableValueType = paramType.IsGenericType && paramType.GetGenericTypeDefinition() == typeof(Nullable<>);
+         this.Name = actionParam.Name;
+         this.IsOptional = actionParam.IsOptional;
 
-         this.Name = param.Name;
-
-         this.IsOptional = param.IsOptional
-            || Attribute.IsDefined(param, typeof(DefaultValueAttribute))
-            || isNullableValueType;
-
-         var routeAttr = (FromRouteAttribute)Attribute.GetCustomAttribute(param, typeof(FromRouteAttribute));
+         var routeAttr = actionParam.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+            .Cast<FromRouteAttribute>()
+            .Single();
 
          string constr = routeAttr.Constraint;
 
          if (constr == null) {
-            Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(paramType) : paramType;
-            defaultConstraints.TryGetValue(t, out constr);
+            Type t = (actionParam.IsNullableValueType) ? Nullable.GetUnderlyingType(actionParam.Type) : actionParam.Type;
+            actionParam.Action.Controller.RegisterInfo.Settings.DefaultConstraints.TryGetValue(t, out constr);
          }
 
          this.Constraint = constr;
@@ -68,7 +64,9 @@ namespace MvcCodeRouting {
 
          this.Name = property.Name;
 
-         var routeAttr = (FromRouteAttribute)Attribute.GetCustomAttribute(property, typeof(FromRouteAttribute));
+         var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+            .Cast<FromRouteAttribute>()
+            .Single();
 
          string constr = routeAttr.Constraint;
 

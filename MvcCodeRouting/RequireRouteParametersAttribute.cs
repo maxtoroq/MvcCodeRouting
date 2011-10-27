@@ -43,7 +43,7 @@ namespace MvcCodeRouting {
          
          string[] parameters = actionDataCache.GetOrAdd(methodInfo, (m) =>
             (from p in m.GetParameters()
-             where Attribute.IsDefined(p, typeof(FromRouteAttribute))
+             where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
              select p.Name).ToArray()
          );
 

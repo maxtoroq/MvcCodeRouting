@@ -45,8 +45,6 @@ namespace MvcCodeRouting {
          set { _RouteFormatter = value; }
       }
 
-      public Func<MethodInfo, string> ActionNameExtractor { get; set; }
-
       public CodeRoutingSettings() {
 
          _IgnoredControllers = new Collection<Type>();

@@ -12,13 +12,8 @@ namespace Samples {
 
       void Application_Start() {
 
-         try {
-            RegisterRoutes(RouteTable.Routes);
-            RegisterViewEngines(ViewEngines.Engines);
-         } catch {
-            HttpRuntime.UnloadAppDomain();
-            throw;
-         }
+         RegisterRoutes(RouteTable.Routes);
+         RegisterViewEngines(ViewEngines.Engines);
       }
 
       void RegisterRoutes(RouteCollection routes) {
