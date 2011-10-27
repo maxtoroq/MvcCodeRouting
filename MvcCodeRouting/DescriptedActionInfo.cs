@@ -29,19 +29,12 @@ namespace MvcCodeRouting {
       public override string OriginalName {
          get {
             if (_OriginalName == null) {
-               
-               if (reflectedActionDescr != null) {
+               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
+                  .Cast<ActionNameAttribute>()
+                  .SingleOrDefault();
 
-                  ActionNameAttribute nameAttr = reflectedActionDescr.MethodInfo.GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
-                     .Cast<ActionNameAttribute>()
-                     .SingleOrDefault();
-
-                  if (nameAttr != null) 
-                     _OriginalName = nameAttr.Name;
-               }
-
-               if (_OriginalName == null)
-                  _OriginalName = actionDescr.ActionName;
+               _OriginalName = (nameAttr != null) ? 
+                  nameAttr.Name : actionDescr.ActionName;
             }
             return _OriginalName;
          }
