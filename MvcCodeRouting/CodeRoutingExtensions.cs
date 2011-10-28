@@ -291,8 +291,17 @@ namespace MvcCodeRouting {
 
          ModelBinders.Binders.DefaultBinder.BindModel(controller.ControllerContext, bindingContext);
 
-         if (!modelState.IsValid) 
-            throw new HttpException(404, "Not Found");
+         if (!modelState.IsValid) {
+            ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First(); 
+            
+            int statusCode = 404;
+            string message = "Not Found";
+
+            if (error.Exception != null)
+               throw new HttpException(statusCode, message, error.Exception);
+
+            throw new HttpException(statusCode, message);
+         }
       }
    }
 }

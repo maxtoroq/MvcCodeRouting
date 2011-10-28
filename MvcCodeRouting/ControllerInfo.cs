@@ -39,7 +39,7 @@ namespace MvcCodeRouting {
 
       ReadOnlyCollection<string> _NamespaceRouteParts;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
-      RouteParameterInfoCollection _RouteParameters;
+      RouteParameterInfoCollection _RouteProperties;
       string _Name;
 
       public Type Type { get; private set; }
@@ -129,9 +129,9 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RouteParameterInfoCollection RouteParameters {
+      public RouteParameterInfoCollection RouteProperties {
          get {
-            if (_RouteParameters == null) {
+            if (_RouteProperties == null) {
 
                var types = new List<Type>();
 
@@ -152,9 +152,9 @@ namespace MvcCodeRouting {
                   );
                }
 
-               _RouteParameters = new RouteParameterInfoCollection(list);
+               _RouteProperties = new RouteParameterInfoCollection(list);
             }
-            return _RouteParameters;
+            return _RouteProperties;
 
             // [1] Procesing each type of the hierarchy one by one, hence inherit: false.
          }
@@ -164,7 +164,7 @@ namespace MvcCodeRouting {
          get {
             return String.Join("/", ControllerBaseRouteSegments
                .Concat((!IsRootController) ? new[] { "{controller}" } : new string[0])
-               .Concat(RouteParameters.Select(p => p.RouteSegment))
+               .Concat(RouteProperties.Select(p => p.RouteSegment))
             );
          }
       }
@@ -173,7 +173,7 @@ namespace MvcCodeRouting {
          get {
             return String.Join("/", ControllerBaseRouteSegments
                .Concat((!IsRootController) ? new[] { Name } : new string[0])
-               .Concat(RouteParameters.Select(p => p.RouteSegment))
+               .Concat(RouteProperties.Select(p => p.RouteSegment))
             );
          }
       }

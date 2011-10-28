@@ -87,7 +87,7 @@ namespace MvcCodeRouting {
          if (!hardcodeAction || actionNames.Count > 1)
             constraints.Add("action", String.Join("|", actionNames));
 
-         foreach (var param in first.Controller.RouteParameters.Concat(parameters).Where(p => p.Constraint != null)) {
+         foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 
             string regex = param.Constraint;
 
@@ -105,12 +105,12 @@ namespace MvcCodeRouting {
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.ControllerBaseRouteSegments.Where(s => !s.Contains('{'))) }
          };
 
-         List<string> nonActionParameterTokens = new List<string>();
+         var nonActionParameterTokens = new List<string>();
 
          if (!String.IsNullOrEmpty(first.Controller.RegisterInfo.BaseRoute)) 
             nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.RegisterInfo.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
 
-         nonActionParameterTokens.AddRange(first.Controller.RouteParameters.Select(p => p.Name));
+         nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
          return new CodeRoute(url, nonActionParameterTokens.ToArray()) { 
             Constraints = constraints,
