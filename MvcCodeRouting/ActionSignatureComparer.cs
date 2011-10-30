@@ -41,7 +41,7 @@ namespace MvcCodeRouting {
             if (y.RouteParameters.Count - 1 >= i) {
                var p2 = y.RouteParameters[i];
 
-               if (!RouteParameterInfo.NameEquals(p.Name, p2.Name)
+               if (!TokenInfo.NameEquals(p.Name, p2.Name)
                   || p.Constraint != p2.Constraint)
                   return false;
             }

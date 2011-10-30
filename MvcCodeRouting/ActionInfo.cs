@@ -28,7 +28,7 @@ namespace MvcCodeRouting {
 
       string _Name;
       Collection<ActionParameterInfo> _Parameters;
-      RouteParameterInfoCollection _RouteParameters;
+      TokenInfoCollection _RouteParameters;
 
       public ControllerInfo Controller { get; private set; }
       public abstract string OriginalName { get; }
@@ -38,7 +38,7 @@ namespace MvcCodeRouting {
       public string Name {
          get {
             if (_Name == null) {
-               _Name = Controller.RegisterInfo.Settings.RouteFormatter(OriginalName, RouteSegmentType.Action);
+               _Name = Controller.Register.Settings.RouteFormatter(OriginalName, RouteSegmentType.Action);
                CodeRoutingSettings.CheckCaseFormattingOnly(OriginalName, _Name, RouteSegmentType.Action);
             }
             return _Name;
@@ -53,13 +53,13 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RouteParameterInfoCollection RouteParameters {
+      public TokenInfoCollection RouteParameters {
          get {
             if (_RouteParameters == null) {
-               _RouteParameters = new RouteParameterInfoCollection(
+               _RouteParameters = new TokenInfoCollection(
                   (from p in Parameters
-                   where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
-                   select new RouteParameterInfo(p))
+                   where p.FromRouteAttribute != null
+                   select CreateTokenInfo(p))
                   .ToList()
                );
 
@@ -94,11 +94,35 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
+      static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {
+
+         string name = actionParam.Name;
+         bool isOptional = actionParam.IsOptional;
+
+         var routeAttr = actionParam.FromRouteAttribute;
+
+         string constraint = routeAttr.Constraint;
+
+         if (constraint == null) {
+            Type t = (actionParam.IsNullableValueType) ? Nullable.GetUnderlyingType(actionParam.Type) : actionParam.Type;
+            actionParam.Action.Controller.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
+         }
+
+         bool isCatchAll = routeAttr.CatchAll;
+
+         return new TokenInfo(name, constraint, isOptional, isCatchAll);
+      }
+
       public ActionInfo(ControllerInfo controller) {
          this.Controller = controller;
       }
 
-      void CheckCatchAllParamIsLast(IList<RouteParameterInfo> parameters) {
+      protected abstract ActionParameterInfo[] GetParameters();
+      public abstract object[] GetCustomAttributes(bool inherit);
+      public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
+      public abstract bool IsDefined(Type attributeType, bool inherit);
+
+      void CheckCatchAllParamIsLast(IList<TokenInfo> parameters) {
 
          for (int i = 0; i < parameters.Count; i++) {
 
@@ -114,10 +138,5 @@ namespace MvcCodeRouting {
                );
          }
       }
-
-      protected abstract ActionParameterInfo[] GetParameters();
-      public abstract object[] GetCustomAttributes(bool inherit);
-      public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
-      public abstract bool IsDefined(Type attributeType, bool inherit);
    }
 }

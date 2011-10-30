@@ -24,7 +24,7 @@ using System.Collections.ObjectModel;
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{RouteSegment}")]
-   class RouteParameterInfo : IEquatable<RouteParameterInfo> {
+   class TokenInfo : IEquatable<TokenInfo> {
 
       public string Name { get; private set; }
       public string Constraint { get; private set; }
@@ -37,48 +37,29 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public RouteParameterInfo(ActionParameterInfo actionParam) {
-
-         this.Name = actionParam.Name;
-         this.IsOptional = actionParam.IsOptional;
-
-         var routeAttr = actionParam.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
-            .Cast<FromRouteAttribute>()
-            .Single();
-
-         string constr = routeAttr.Constraint;
-
-         if (constr == null) {
-            Type t = (actionParam.IsNullableValueType) ? Nullable.GetUnderlyingType(actionParam.Type) : actionParam.Type;
-            actionParam.Action.Controller.RegisterInfo.Settings.DefaultConstraints.TryGetValue(t, out constr);
-         }
-
-         this.Constraint = constr;
-         this.IsCatchAll = routeAttr.CatchAll;
+      public TokenInfo(string name) {
+         this.Name = name;
       }
 
-      public RouteParameterInfo(PropertyInfo property, IDictionary<Type, string> defaultConstraints) {
-
-         Type propertyType = property.PropertyType;
-         bool isNullableValueType = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-
-         this.Name = property.Name;
-
-         var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
-            .Cast<FromRouteAttribute>()
-            .Single();
-
-         string constr = routeAttr.Constraint;
-
-         if (constr == null) {
-            Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(propertyType) : propertyType;
-            defaultConstraints.TryGetValue(t, out constr);
-         }
-
-         this.Constraint = constr;
+      public TokenInfo(string name, string constraint) 
+         : this(name) {
+         
+         this.Constraint = constraint;
       }
 
-      public bool Equals(RouteParameterInfo other) {
+      public TokenInfo(string name, string constraint, bool isOptional) 
+         : this(name, constraint) {
+         
+         this.IsOptional = isOptional;
+      }
+
+      public TokenInfo(string name, string constraint, bool isOptional, bool isCatchAll) 
+         : this(name, constraint, isOptional) {
+         
+         this.IsCatchAll = isCatchAll;
+      }
+
+      public bool Equals(TokenInfo other) {
 
          if (other == null)
             return false;
@@ -89,7 +70,7 @@ namespace MvcCodeRouting {
       }
 
       public override bool Equals(object obj) {
-         return Equals(obj as RouteParameterInfo);
+         return Equals(obj as TokenInfo);
       }
 
       public override int GetHashCode() {

@@ -63,8 +63,8 @@
     <Compile Include="RegisterInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
     <Compile Include="RouteDebugHandler.cs" />
-    <Compile Include="RouteParameterInfo.cs" />
-    <Compile Include="RouteParameterInfoCollection.cs" />
+    <Compile Include="TokenInfo.cs" />
+    <Compile Include="TokenInfoCollection.cs" />
     <Compile Include="RouteSegmentType.cs" />
     <Compile Include="ViewEngineWrapper.cs" />
   </ItemGroup>

@@ -39,11 +39,11 @@ namespace MvcCodeRouting {
 
       ReadOnlyCollection<string> _NamespaceRouteParts;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
-      RouteParameterInfoCollection _RouteProperties;
+      TokenInfoCollection _RouteProperties;
       string _Name;
 
       public Type Type { get; private set; }
-      public RegisterInfo RegisterInfo { get; private set; }
+      public RegisterInfo Register { get; private set; }
       public string DefaultActionName { get; private set; }
 
       public string Name {
@@ -52,7 +52,7 @@ namespace MvcCodeRouting {
                string controllerName = (controllerDescr != null) ? controllerDescr.ControllerName 
                   : Type.Name.Substring(0, Type.Name.Length - 10);
                   
-               _Name = RegisterInfo.Settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
+               _Name = Register.Settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
                CodeRoutingSettings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
             }
             return _Name;
@@ -61,15 +61,15 @@ namespace MvcCodeRouting {
 
       public bool IsInRootNamespace {
          get {
-            return Type.Namespace == RegisterInfo.RootNamespace
+            return Type.Namespace == Register.RootNamespace
                || IsInSubNamespace;
          }
       }
 
       public bool IsInSubNamespace {
          get {
-            return Type.Namespace.Length > RegisterInfo.RootNamespace.Length
-               && Type.Namespace.StartsWith(RegisterInfo.RootNamespace + ".", StringComparison.Ordinal);
+            return Type.Namespace.Length > Register.RootNamespace.Length
+               && Type.Namespace.StartsWith(Register.RootNamespace + ".", StringComparison.Ordinal);
          }
       }
 
@@ -83,7 +83,7 @@ namespace MvcCodeRouting {
 
       public bool IsIgnored {
          get {
-            return RegisterInfo.Settings.IgnoredControllers.Contains(Type);
+            return Register.Settings.IgnoredControllers.Contains(Type);
          }
       }
 
@@ -94,7 +94,7 @@ namespace MvcCodeRouting {
 
                if (IsInSubNamespace) {
                   namespaceParts.AddRange(
-                     Type.Namespace.Remove(0, RegisterInfo.RootNamespace.Length + 1).Split('.')
+                     Type.Namespace.Remove(0, Register.RootNamespace.Length + 1).Split('.')
                   );
 
                   if (namespaceParts.Count > 0 && NameEquals(namespaceParts.Last(), Name))
@@ -110,16 +110,16 @@ namespace MvcCodeRouting {
       public ReadOnlyCollection<string> ControllerBaseRouteSegments {
          get {
             if (_ControllerBaseRouteSegments == null) {
-               string[] nsSegments = NamespaceRouteParts.Select(s => RegisterInfo.Settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
+               string[] nsSegments = NamespaceRouteParts.Select(s => Register.Settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
 
                for (int i = 0; i < nsSegments.Length; i++)
                   CodeRoutingSettings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
 
-               if (String.IsNullOrEmpty(RegisterInfo.BaseRoute)) {
+               if (String.IsNullOrEmpty(Register.BaseRoute)) {
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(nsSegments);
                } else {
                   var segments = new List<string>();
-                  segments.AddRange(RegisterInfo.BaseRoute.Split('/'));
+                  segments.AddRange(Register.BaseRoute.Split('/'));
                   segments.AddRange(nsSegments);
 
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(segments);
@@ -129,7 +129,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RouteParameterInfoCollection RouteProperties {
+      public TokenInfoCollection RouteProperties {
          get {
             if (_RouteProperties == null) {
 
@@ -140,19 +140,19 @@ namespace MvcCodeRouting {
 
                types.Reverse();
 
-               var list = new List<RouteParameterInfo>();
+               var list = new List<TokenInfo>();
 
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
                      where p.IsDefined(typeof(FromRouteAttribute), inherit: false /* [1] */)
-                     let rp = new RouteParameterInfo(p, RegisterInfo.Settings.DefaultConstraints)
-                     where !list.Any(item => RouteParameterInfo.NameEquals(item.Name, rp.Name))
+                     let rp = CreateTokenInfo(p)
+                     where !list.Any(item => TokenInfo.NameEquals(item.Name, rp.Name))
                      select rp
                   );
                }
 
-               _RouteProperties = new RouteParameterInfoCollection(list);
+               _RouteProperties = new TokenInfoCollection(list);
             }
             return _RouteProperties;
 
@@ -182,8 +182,8 @@ namespace MvcCodeRouting {
 
          try {
             createActionInvoker =
-                  (Func<Controller, IActionInvoker>)
-                     Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), baseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
+               (Func<Controller, IActionInvoker>)
+                  Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), baseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
 
             getControllerDescriptor =
                (Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>)
@@ -210,10 +210,60 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
+      static void CheckOverloads(IEnumerable<ActionInfo> actions) {
+
+         var overloadedActions =
+            (from a in actions
+             where a.RouteParameters.Count > 0
+             group a by new { a.Controller, a.Name } into g
+             where g.Count() > 1
+             select g).ToList();
+
+         var withoutRequiredAttr =
+            (from g in overloadedActions
+             let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
+             where distinctParamCount.Count() > 1
+             let bad = g.Where(a => !a.HasRequireRouteParametersAttribute)
+             where bad.Count() > 0
+             select bad).ToList();
+
+         if (withoutRequiredAttr.Count > 0) {
+            var first = withoutRequiredAttr.First();
+
+            throw new InvalidOperationException(
+               String.Format(CultureInfo.InvariantCulture,
+                  "The following action methods must be decorated with the {0} for disambiguation: {1}.",
+                  typeof(RequireRouteParametersAttribute).FullName,
+                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
+               )
+            );
+         }
+
+         var overloadsComparer = new ActionSignatureComparer();
+
+         var overloadsWithDifferentParameters =
+            (from g in overloadedActions
+             let ordered = g.OrderByDescending(a => a.RouteParameters.Count).ToArray()
+             let first = ordered.First()
+             where !ordered.Skip(1).All(a => overloadsComparer.Equals(first, a))
+             select g).ToList();
+
+         if (overloadsWithDifferentParameters.Count > 0) {
+            var first = overloadsWithDifferentParameters.First();
+
+            throw new InvalidOperationException(
+               String.Format(CultureInfo.InvariantCulture,
+                  "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
+                  String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
+               )
+            );
+         }
+      }
+
       public ControllerInfo(Type type, RegisterInfo registerInfo) {
          
          this.Type = type;
-         this.RegisterInfo = registerInfo;
+         this.Register = registerInfo;
          this.DefaultActionName = DefaultAction;
 
          if (createActionInvoker != null) {
@@ -273,54 +323,25 @@ namespace MvcCodeRouting {
          return actions;
       }
 
-      static void CheckOverloads(IEnumerable<ActionInfo> actions) {
+      TokenInfo CreateTokenInfo(PropertyInfo property) {
 
-         var overloadedActions =
-            (from a in actions
-             where a.RouteParameters.Count > 0
-             group a by new { a.Controller, a.Name } into g
-             where g.Count() > 1
-             select g).ToList();
+         Type propertyType = property.PropertyType;
+         bool isNullableValueType = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
 
-         var withoutRequiredAttr =
-            (from g in overloadedActions
-             let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
-             where distinctParamCount.Count() > 1
-             let bad = g.Where(a => !a.HasRequireRouteParametersAttribute)
-             where bad.Count() > 0
-             select bad).ToList();
+         string name = property.Name;
 
-         if (withoutRequiredAttr.Count > 0) {
-            var first = withoutRequiredAttr.First();
+         var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+            .Cast<FromRouteAttribute>()
+            .Single();
 
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "The following action methods must be decorated with the {0} for disambiguation: {1}.",
-                  typeof(RequireRouteParametersAttribute).FullName,
-                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
-               )
-            );
+         string constraint = routeAttr.Constraint;
+
+         if (constraint == null) {
+            Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(propertyType) : propertyType;
+            this.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
          }
 
-         var overloadsComparer = new ActionSignatureComparer();
-
-         var overloadsWithDifferentParameters =
-            (from g in overloadedActions
-             let ordered = g.OrderByDescending(a => a.RouteParameters.Count).ToArray()
-             let first = ordered.First()
-             where !ordered.Skip(1).All(a => overloadsComparer.Equals(first, a))
-             select g).ToList();
-
-         if (overloadsWithDifferentParameters.Count > 0) {
-            var first = overloadsWithDifferentParameters.First();
-
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
-                  String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
-               )
-            );
-         }
+         return new TokenInfo(name, constraint);
       }
    }
 }

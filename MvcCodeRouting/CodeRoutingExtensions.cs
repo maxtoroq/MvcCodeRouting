@@ -85,7 +85,7 @@ namespace MvcCodeRouting {
 
          var controllersByBaseRoute = 
             from c in actions.Select(a => a.Controller).Distinct()
-            group c by c.RegisterInfo.BaseRoute into g
+            group c by c.Register.BaseRoute into g
             select g;
 
          foreach (var g in controllersByBaseRoute) {

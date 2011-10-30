@@ -107,8 +107,8 @@ namespace MvcCodeRouting {
 
          var nonActionParameterTokens = new List<string>();
 
-         if (!String.IsNullOrEmpty(first.Controller.RegisterInfo.BaseRoute)) 
-            nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.RegisterInfo.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
+         if (!String.IsNullOrEmpty(first.Controller.Register.BaseRoute)) 
+            nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.Register.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 

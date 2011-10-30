@@ -24,6 +24,9 @@ namespace MvcCodeRouting {
    
    abstract class ActionParameterInfo : ICustomAttributeProvider {
 
+      FromRouteAttribute _FromRouteAttribute;
+      bool _FromRouteAttributeInit;
+
       public ActionInfo Action { get; private set; }
       public abstract string Name { get; }
       public abstract Type Type { get; }
@@ -32,6 +35,18 @@ namespace MvcCodeRouting {
       public bool IsNullableValueType { 
          get {
             return Type.IsGenericType && Type.GetGenericTypeDefinition() == typeof(Nullable<>);
+         }
+      }
+
+      public FromRouteAttribute FromRouteAttribute {
+         get {
+            if (!_FromRouteAttributeInit) {
+               _FromRouteAttribute = GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+                  .Cast<FromRouteAttribute>()
+                  .SingleOrDefault();
+               _FromRouteAttributeInit = true;
+            }
+            return _FromRouteAttribute;
          }
       }
 

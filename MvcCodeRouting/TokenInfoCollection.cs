@@ -20,12 +20,12 @@ using System.Collections.ObjectModel;
 
 namespace MvcCodeRouting {
 
-   class RouteParameterInfoCollection : ReadOnlyCollection<RouteParameterInfo>, IEquatable<RouteParameterInfoCollection> {
+   class TokenInfoCollection : ReadOnlyCollection<TokenInfo>, IEquatable<TokenInfoCollection> {
 
-      public RouteParameterInfoCollection(IList<RouteParameterInfo> list)
+      public TokenInfoCollection(IList<TokenInfo> list)
          : base(list) { }
 
-      public bool Equals(RouteParameterInfoCollection other) {
+      public bool Equals(TokenInfoCollection other) {
 
          if (other == null)
             return false;
@@ -42,7 +42,7 @@ namespace MvcCodeRouting {
       }
 
       public override bool Equals(object obj) {
-         return Equals(obj as RouteParameterInfoCollection);
+         return Equals(obj as TokenInfoCollection);
       }
 
       public override int GetHashCode() {
