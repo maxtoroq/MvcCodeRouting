@@ -41,6 +41,7 @@ namespace MvcCodeRouting {
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
       TokenInfoCollection _RouteProperties;
       string _Name;
+      string _LastNamespaceSegment;
 
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
@@ -59,17 +60,42 @@ namespace MvcCodeRouting {
          }
       }
 
+      public string Namespace {
+         get {
+            return Type.Namespace ?? "";
+         }
+      }
+
+      public string LastNamespaceSegment {
+         get {
+            if (_LastNamespaceSegment == null) {
+               if (!String.IsNullOrEmpty(Namespace)) {
+                  _LastNamespaceSegment = Namespace.Split('.').Last();
+               } else {
+                  _LastNamespaceSegment = "";
+               }
+            }
+            return _LastNamespaceSegment;
+         }
+      }
+
       public bool IsInRootNamespace {
          get {
-            return Type.Namespace == Register.RootNamespace
+            return Namespace == Register.RootNamespace
                || IsInSubNamespace;
          }
       }
 
       public bool IsInSubNamespace {
          get {
-            return Type.Namespace.Length > Register.RootNamespace.Length
-               && Type.Namespace.StartsWith(Register.RootNamespace + ".", StringComparison.Ordinal);
+            return Namespace.Length > Register.RootNamespace.Length
+               && Namespace.StartsWith(Register.RootNamespace + ".", StringComparison.Ordinal);
+         }
+      }
+
+      public bool IsDefaultController {
+         get {
+            return NameEquals(Name, LastNamespaceSegment);
          }
       }
 
@@ -80,13 +106,7 @@ namespace MvcCodeRouting {
                && NameEquals(Name, RootController);
          }
       }
-
-      public bool IsIgnored {
-         get {
-            return Register.Settings.IgnoredControllers.Contains(Type);
-         }
-      }
-
+      
       public ReadOnlyCollection<string> NamespaceRouteParts {
          get {
             if (_NamespaceRouteParts == null) {
@@ -94,7 +114,7 @@ namespace MvcCodeRouting {
 
                if (IsInSubNamespace) {
                   namespaceParts.AddRange(
-                     Type.Namespace.Remove(0, Register.RootNamespace.Length + 1).Split('.')
+                     Namespace.Remove(0, Register.RootNamespace.Length + 1).Split('.')
                   );
 
                   if (namespaceParts.Count > 0 && NameEquals(namespaceParts.Last(), Name))
@@ -177,7 +197,7 @@ namespace MvcCodeRouting {
             );
          }
       }
-
+      
       static ControllerInfo() {
 
          try {
@@ -194,15 +214,76 @@ namespace MvcCodeRouting {
 
       public static IEnumerable<ControllerInfo> GetControllers(RegisterInfo registerInfo) {
 
+         Type[] controllerTypes =
+            (from t in registerInfo.Assembly.GetTypes()
+             where t.IsPublic
+               && !t.IsAbstract
+               && baseType.IsAssignableFrom(t)
+               && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
+               && !registerInfo.Settings.IgnoredControllers.Contains(t)
+             select t).ToArray();
+
+         if (controllerTypes.Length == 0)
+            return Enumerable.Empty<ControllerInfo>();
+
+         if (registerInfo.RootNamespace == null) {
+
+            var controllersByDepth =
+               from t in controllerTypes
+               let ns = t.Namespace ?? ""
+               let cinfo = new { Type = t, Namespace = ns, Depth = ns.Split('.').Length }
+               group cinfo by cinfo.Depth into g
+               select g;
+
+            int minDepth = controllersByDepth.Min(g => g.Key);
+
+            string[] minDepthNamespaces =
+               (from g in controllersByDepth
+                where g.Key == minDepth
+                from t in g
+                select t.Namespace)
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+
+            Func<RegisterInfo, string, RegisterInfo> setRootNamespace = (r, ns) => {
+               r.RootNamespace = ns;
+               return r;
+            };
+
+            RegisterInfo regClone = registerInfo.Clone();
+
+            var minDepthControllers =
+               from c in controllersByDepth.SelectMany(g => g)
+               where minDepthNamespaces.Contains(c.Namespace, StringComparer.Ordinal)
+               let reg1 = setRootNamespace(regClone, c.Namespace)
+               let cinfo1 = new ControllerInfo(c.Type, reg1)
+               let reg = (cinfo1.IsDefaultController) ?
+                  setRootNamespace(reg1, String.Join(".", cinfo1.Namespace.Split('.').Reverse().Skip(1).Reverse()) ?? "")
+                  : reg1
+               let cinfo = (cinfo1.IsDefaultController) ?
+                  new ControllerInfo(cinfo1.Type, reg)
+                  : cinfo1
+               select cinfo;
+
+            string[] possibleRootNamespaces = minDepthControllers
+               .Select(c => c.Register.RootNamespace)
+               .Distinct(StringComparer.Ordinal)
+               .ToArray();
+            
+            string firstMinDepthNs = possibleRootNamespaces.OrderBy(ns => ns.Split('.').Length).First();
+
+            regClone.RootNamespace = firstMinDepthNs;
+
+            if (!controllerTypes.All(t => new ControllerInfo(t, regClone).IsInRootNamespace))
+               throw new InvalidOperationException("Found controllers in more than one namespace hierarchy. Disambiguate using the rootNamespace parameter.");
+
+            registerInfo.RootNamespace = firstMinDepthNs;
+         }
+
          return
-            from t in registerInfo.Assembly.GetTypes()
-            where t.IsPublic
-              && !t.IsAbstract
-              && baseType.IsAssignableFrom(t)
-              && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
+            from t in controllerTypes
             let controllerInfo = new ControllerInfo(t, registerInfo)
             where controllerInfo.IsInRootNamespace
-               && !controllerInfo.IsIgnored
             select controllerInfo;
       }
 

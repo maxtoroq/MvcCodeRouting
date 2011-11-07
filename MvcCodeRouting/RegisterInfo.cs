@@ -43,5 +43,14 @@ namespace MvcCodeRouting {
 
          this.Assembly = assembly;
       }
+
+      public RegisterInfo Clone() {
+
+         return new RegisterInfo(this.Assembly) {
+            RootNamespace = this.RootNamespace,
+            BaseRoute = this.BaseRoute,
+            Settings = this.Settings,
+         };
+      }
    }
 }

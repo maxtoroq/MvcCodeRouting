@@ -100,7 +100,7 @@ namespace MvcCodeRouting {
          constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
 
          var dataTokens = new RouteValueDictionary { 
-            { DataTokenKeys.Namespaces, new string[1] { first.Controller.Type.Namespace } },
+            { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
             { DataTokenKeys.ControllerBaseRoute, String.Join("/", first.Controller.ControllerBaseRouteSegments) },
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.ControllerBaseRouteSegments.Where(s => !s.Contains('{'))) }
          };

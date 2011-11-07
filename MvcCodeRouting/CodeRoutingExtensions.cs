@@ -29,33 +29,38 @@ namespace MvcCodeRouting {
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
       static readonly ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>> controllerDataCache = new ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>>();
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), rootNamespace);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly());
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string rootNamespace, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), rootNamespace, settings);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), null, settings);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace) {
-         return MapCodeRoutes(routes, assembly, rootNamespace, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly) {
+         return MapCodeRoutes(routes, assembly, (string)null);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, assembly, rootNamespace, null, settings);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute) {
+         return MapCodeRoutes(routes, assembly, baseRoute, (string)null);
+      }
+      
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, string rootNamespace) {
+         return MapCodeRoutes(routes, assembly, baseRoute, rootNamespace, null);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, string baseRoute) {
-         return MapCodeRoutes(routes, assembly, rootNamespace, baseRoute, (CodeRoutingSettings)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, assembly, null, settings);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string rootNamespace, string baseRoute, CodeRoutingSettings settings) {
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, assembly, baseRoute, null, settings);
+      }
+
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, string rootNamespace, CodeRoutingSettings settings) {
 
          if (routes == null) throw new ArgumentNullException("routes");
          if (assembly == null) throw new ArgumentNullException("assembly");
-         if (rootNamespace == null) throw new ArgumentNullException("rootNamespace");
-
-         // TODO: Make rootNamespace optional
 
          var registerInfo = new RegisterInfo(assembly) { 
             BaseRoute = baseRoute, 
@@ -142,7 +147,7 @@ namespace MvcCodeRouting {
              group a by new {
                 Depth = a.Controller.ControllerBaseRouteSegments.Count
                 , a.Controller.IsRootController
-                , a.Controller.Type.Namespace
+                , a.Controller.Namespace
                 , DeclaringType = declaringType
                 , HasRouteParameters = (a.RouteParameters.Count > 0)
              } into g
