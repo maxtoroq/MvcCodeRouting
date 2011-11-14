@@ -20,7 +20,9 @@ namespace Samples {
 
          routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-         routes.MapCodeRoutes();
+         routes.MapCodeRoutes(
+            rootController: typeof(Controllers.HomeController)
+         );
       }
 
       void RegisterViewEngines(ViewEngineCollection viewEngines) {

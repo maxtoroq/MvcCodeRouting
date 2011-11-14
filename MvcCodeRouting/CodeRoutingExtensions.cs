@@ -29,42 +29,25 @@ namespace MvcCodeRouting {
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
       static readonly ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>> controllerDataCache = new ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>>();
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly());
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Type rootController) {
+         return MapCodeRoutes(routes, rootController, null);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, Assembly.GetCallingAssembly(), null, settings);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Type rootController, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, null, rootController, settings);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly) {
-         return MapCodeRoutes(routes, assembly, (string)null);
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseRoute, Type rootController) {
+         return MapCodeRoutes(routes, baseRoute, rootController, null);
       }
 
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute) {
-         return MapCodeRoutes(routes, assembly, baseRoute, (string)null);
-      }
-      
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, string rootNamespace) {
-         return MapCodeRoutes(routes, assembly, baseRoute, rootNamespace, null);
-      }
-
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, assembly, null, settings);
-      }
-
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, assembly, baseRoute, null, settings);
-      }
-
-      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Assembly assembly, string baseRoute, string rootNamespace, CodeRoutingSettings settings) {
+      public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
 
          if (routes == null) throw new ArgumentNullException("routes");
-         if (assembly == null) throw new ArgumentNullException("assembly");
+         if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerInfo = new RegisterInfo(assembly) { 
+         var registerInfo = new RegisterInfo(rootController) { 
             BaseRoute = baseRoute, 
-            RootNamespace = rootNamespace, 
             Settings = settings 
          };
 
@@ -73,7 +56,6 @@ namespace MvcCodeRouting {
 
          registeredActions.AddRange(actions);
 
-         CheckSingleRootController(registeredActions);
          CheckNoAmbiguousUrls(registeredActions);
 
          var groupedActions = GroupActions(actions);
@@ -84,30 +66,6 @@ namespace MvcCodeRouting {
             routes.Add(route);
 
          return codeRoutes;
-      }
-
-      static void CheckSingleRootController(IEnumerable<ActionInfo> actions) {
-
-         var controllersByBaseRoute = 
-            from c in actions.Select(a => a.Controller).Distinct()
-            group c by c.Register.BaseRoute into g
-            select g;
-
-         foreach (var g in controllersByBaseRoute) {
-
-            var rootControllers = g.Where(c => c.IsRootController).ToList();
-
-            if (rootControllers.Count > 1) {
-
-               throw new InvalidOperationException(
-                  String.Format(CultureInfo.InvariantCulture,
-                     "The root controller{0} is ambiguous between {1}.",
-                     (String.IsNullOrEmpty(g.Key)) ? "" : String.Concat(" for base route '" + g.Key, "'"),
-                     String.Join(" and ", rootControllers.Select(c => c.Type.FullName))
-                  )
-               );
-            }
-         }
       }
 
       static void CheckNoAmbiguousUrls(IEnumerable<ActionInfo> actions) {

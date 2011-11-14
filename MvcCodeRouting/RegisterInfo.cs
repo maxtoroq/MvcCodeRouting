@@ -24,8 +24,7 @@ namespace MvcCodeRouting {
 
       CodeRoutingSettings _Settings;
 
-      public Assembly Assembly { get; private set; }
-      public string RootNamespace { get; set; }
+      public Type RootController { get; private set; }
       public string BaseRoute { get; set; }
       
       public CodeRoutingSettings Settings {
@@ -37,20 +36,11 @@ namespace MvcCodeRouting {
          set { _Settings = value; }
       }
 
-      public RegisterInfo(Assembly assembly) {
+      public RegisterInfo(Type rootController) {
 
-         if (assembly == null) throw new ArgumentNullException("assembly");
+         if (rootController == null) throw new ArgumentNullException("rootController");
 
-         this.Assembly = assembly;
-      }
-
-      public RegisterInfo Clone() {
-
-         return new RegisterInfo(this.Assembly) {
-            RootNamespace = this.RootNamespace,
-            BaseRoute = this.BaseRoute,
-            Settings = this.Settings,
-         };
+         this.RootController = rootController;
       }
    }
 }
