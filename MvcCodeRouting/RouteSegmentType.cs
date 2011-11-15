@@ -19,9 +19,24 @@ using System.Text;
 
 namespace MvcCodeRouting {
    
+   /// <summary>
+   /// Represents the mapping source of a route segment.
+   /// </summary>
    public enum RouteSegmentType {
+      
+      /// <summary>
+      /// The segment maps to a namespace segment.
+      /// </summary>
       Namespace,
+      
+      /// <summary>
+      /// The segment maps to a controller name.
+      /// </summary>
       Controller,
+      
+      /// <summary>
+      /// The segment maps to an action name.
+      /// </summary>
       Action
    }
 }

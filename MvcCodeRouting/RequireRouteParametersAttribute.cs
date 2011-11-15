@@ -23,11 +23,27 @@ using System.Collections.Concurrent;
 
 namespace MvcCodeRouting {
    
+   /// <summary>
+   /// An <see cref="ActionMethodSelectorAttribute"/> for overloaded action methods, used 
+   /// to help the ASP.NET MVC runtime disambiguate and choose the appropriate overload.
+   /// </summary>
    [AttributeUsage(AttributeTargets.Method)]
    public sealed class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
 
       static readonly ConcurrentDictionary<MethodInfo, string[]> actionDataCache = new ConcurrentDictionary<MethodInfo, string[]>();
 
+      /// <summary>
+      /// Determines whether the action method selection is valid for the specified
+      /// controller context.
+      /// </summary>
+      /// <param name="controllerContext">The controller context.</param>
+      /// <param name="methodInfo">Information about the action method.</param>
+      /// <returns>
+      /// true if the <see cref="ControllerContext.RouteData"/> has values for
+      /// all parameters decorated with <see cref="FromRouteAttribute"/>, and if all keys
+      /// in <see cref="ControllerContext.RouteData"/> match any of the decorated parameters,
+      /// excluding controller, action and other non-parameter tokens.
+      /// </returns>
       public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo) {
          
          var routeValues = new RouteValueDictionary(controllerContext.RouteData.Values);

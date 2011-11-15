@@ -24,23 +24,60 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting {
 
+   /// <summary>
+   /// Extension methods for reflection-based route creation and related functionality.
+   /// </summary>
    public static class CodeRoutingExtensions {
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
       static readonly ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>> controllerDataCache = new ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>>();
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly.
+      /// </summary>
+      /// <param name="routes">A collection of routes for the application.</param>
+      /// <param name="rootController">The route controller for the application.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Type rootController) {
          return MapCodeRoutes(routes, rootController, null);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly.
+      /// </summary>
+      /// <param name="routes">A collection of routes for the application.</param>
+      /// <param name="rootController">The route controller for the application.</param>
+      /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, Type rootController, CodeRoutingSettings settings) {
          return MapCodeRoutes(routes, null, rootController, settings);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly, and prepends the
+      /// provided base route to the URL of each created route.
+      /// </summary>
+      /// <param name="routes">A collection of routes for the application.</param>
+      /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
+      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseRoute, Type rootController) {
          return MapCodeRoutes(routes, baseRoute, rootController, null);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly, and prepends the
+      /// provided base route to the url of each created route.
+      /// </summary>
+      /// <param name="routes">A collection of routes for the application.</param>
+      /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
+      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<Route> MapCodeRoutes(this RouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
 
          if (routes == null) throw new ArgumentNullException("routes");

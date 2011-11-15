@@ -22,14 +22,30 @@ using System.Reflection;
 
 namespace MvcCodeRouting {
 
+   /// <summary>
+   /// Serves representations of the routes in <see cref="RouteTable.Routes"/> 
+   /// for visualization and debugging purposes.
+   /// </summary>
    public class RouteDebugHandler : IHttpHandler {
 
       string format;
 
+      /// <summary>
+      /// Gets a value indicating whether another request can use the <see cref="IHttpHandler"/>
+      /// instance.
+      /// </summary>
       public bool IsReusable { get { return false; } }
 
+      /// <summary>
+      /// Gets or sets the default format that the handler should use.
+      /// Valid values are: "csharp", "vb".
+      /// </summary>
       public static string DefaultFormat { get; set; }
 
+      /// <summary>
+      /// Serves representations of the routes in <see cref="RouteTable.Routes"/>.
+      /// </summary>
+      /// <param name="context">The HTTP context.</param>
       public void ProcessRequest(HttpContext context) {
 
          var request = context.Request;

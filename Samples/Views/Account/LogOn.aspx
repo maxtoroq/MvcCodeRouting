@@ -3,6 +3,9 @@
 <asp:Content ContentPlaceHolderID="content" runat="server">
 
    <h1>Log On</h1>
+   <p>
+      Use admin/admin
+   </p>
 
    <%: Html.ValidationSummary() %>
 

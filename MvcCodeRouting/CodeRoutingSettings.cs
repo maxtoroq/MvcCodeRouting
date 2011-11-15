@@ -22,20 +22,39 @@ using System.Globalization;
 
 namespace MvcCodeRouting {
    
+   /// <summary>
+   /// Holds settings that customize the route creation process.
+   /// </summary>
    public class CodeRoutingSettings {
 
       Func<string, RouteSegmentType, string> _RouteFormatter;
       readonly IDictionary<Type, string> _DefaultConstraints;
       readonly Collection<Type> _IgnoredControllers;
 
+      /// <summary>
+      /// Gets default constraints used for tokens that represents action parameters
+      /// and controller properties.
+      /// </summary>
+      /// <remarks>
+      /// This dictionary includes default values for <see cref="Boolean"/>, <see cref="Guid"/>,
+      /// <see cref="Decimal"/>, <see cref="Double"/>, <see cref="Single"/>, <see cref="SByte"/>,
+      /// <see cref="Int16"/>, <see cref="Int32"/>, <see cref="Int64"/>, <see cref="Byte"/>,
+      /// <see cref="UInt16"/>, <see cref="UInt32"/> and <see cref="UInt64"/>.
+      /// </remarks>
       public IDictionary<Type, string> DefaultConstraints {
          get { return _DefaultConstraints; }
       }
 
+      /// <summary>
+      /// Gets a collection of controller types that must be ignored by the route creation process.
+      /// </summary>
       public Collection<Type> IgnoredControllers { 
          get { return _IgnoredControllers; } 
       }
 
+      /// <summary>
+      /// Gets or sets a delegate for custom route formatting.
+      /// </summary>
       public Func<string, RouteSegmentType, string> RouteFormatter {
          get {
             if (_RouteFormatter == null)
@@ -45,6 +64,9 @@ namespace MvcCodeRouting {
          set { _RouteFormatter = value; }
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class.
+      /// </summary>
       public CodeRoutingSettings() {
 
          _IgnoredControllers = new Collection<Type>();
