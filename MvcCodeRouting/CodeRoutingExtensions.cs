@@ -71,7 +71,7 @@ namespace MvcCodeRouting {
       /// <summary>
       /// Creates routes for the specified root controller and all other controllers
       /// in the same namespace or any sub-namespace, in the same assembly, and prepends the
-      /// provided base route to the url of each created route.
+      /// provided base route to the URL of each created route.
       /// </summary>
       /// <param name="routes">A collection of routes for the application.</param>
       /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
@@ -88,8 +88,9 @@ namespace MvcCodeRouting {
             Settings = settings 
          };
 
-         var actions = ControllerInfo.GetControllers(registerInfo)
-            .SelectMany(c => c.GetActions());
+         ActionInfo[] actions = ControllerInfo.GetControllers(registerInfo)
+            .SelectMany(c => c.GetActions())
+            .ToArray();
 
          registeredActions.AddRange(actions);
 
@@ -97,9 +98,9 @@ namespace MvcCodeRouting {
 
          var groupedActions = GroupActions(actions);
 
-         var codeRoutes = groupedActions.Select(g => CodeRoute.Create(g)).ToArray();
+         CodeRoute[] codeRoutes = groupedActions.Select(g => CodeRoute.Create(g)).ToArray();
          
-         foreach (var route in codeRoutes)
+         foreach (CodeRoute route in codeRoutes)
             routes.Add(route);
 
          return codeRoutes;

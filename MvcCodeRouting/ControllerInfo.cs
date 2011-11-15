@@ -193,6 +193,9 @@ namespace MvcCodeRouting {
 
       public static IEnumerable<ControllerInfo> GetControllers(RegisterInfo registerInfo) {
 
+         if (!IsController(registerInfo.RootController))
+            throw new InvalidOperationException("The specified root controller is not a valid controller type.");
+
          ControllerInfo[] controllers =
             (from t in registerInfo.RootController.Assembly.GetTypes()
              where IsController(t)
