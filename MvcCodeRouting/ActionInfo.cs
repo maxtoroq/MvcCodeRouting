@@ -38,7 +38,7 @@ namespace MvcCodeRouting {
       public string Name {
          get {
             if (_Name == null) {
-               _Name = Controller.Register.Settings.RouteFormatter(OriginalName, RouteSegmentType.Action);
+               _Name = Controller.Register.Settings.RouteFormatter(new RouteFormatterArgs(OriginalName, RouteSegmentType.Action, Controller.Type));
                CodeRoutingSettings.CheckCaseFormattingOnly(OriginalName, _Name, RouteSegmentType.Action);
             }
             return _Name;

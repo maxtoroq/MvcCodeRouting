@@ -52,7 +52,7 @@ namespace MvcCodeRouting {
                string controllerName = (controllerDescr != null) ? controllerDescr.ControllerName 
                   : Type.Name.Substring(0, Type.Name.Length - 10);
                   
-               _Name = Register.Settings.RouteFormatter(controllerName, RouteSegmentType.Controller);
+               _Name = Register.Settings.RouteFormatter(new RouteFormatterArgs(controllerName, RouteSegmentType.Controller, Type));
                CodeRoutingSettings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
             }
             return _Name;
@@ -108,7 +108,7 @@ namespace MvcCodeRouting {
       public ReadOnlyCollection<string> ControllerBaseRouteSegments {
          get {
             if (_ControllerBaseRouteSegments == null) {
-               string[] nsSegments = NamespaceRouteParts.Select(s => Register.Settings.RouteFormatter(s, RouteSegmentType.Namespace)).ToArray();
+               string[] nsSegments = NamespaceRouteParts.Select(s => Register.Settings.RouteFormatter(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type))).ToArray();
 
                for (int i = 0; i < nsSegments.Length; i++)
                   CodeRoutingSettings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);

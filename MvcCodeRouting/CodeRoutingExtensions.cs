@@ -141,7 +141,7 @@ namespace MvcCodeRouting {
                 declaringType1.GetGenericTypeDefinition()
                 : declaringType1
              group a by new {
-                Depth = a.Controller.ControllerBaseRouteSegments.Count
+                Depth = a.Controller.NamespaceRouteParts.Count
                 , a.Controller.IsRootController
                 , a.Controller.Namespace
                 , DeclaringType = declaringType

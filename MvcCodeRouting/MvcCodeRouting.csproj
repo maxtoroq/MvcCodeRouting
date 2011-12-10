@@ -63,6 +63,7 @@
     <Compile Include="RegisterInfo.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
     <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="TokenInfo.cs" />
     <Compile Include="TokenInfoCollection.cs" />
     <Compile Include="RouteSegmentType.cs" />

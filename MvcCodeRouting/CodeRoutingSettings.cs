@@ -27,7 +27,7 @@ namespace MvcCodeRouting {
    /// </summary>
    public class CodeRoutingSettings {
 
-      Func<string, RouteSegmentType, string> _RouteFormatter;
+      Func<RouteFormatterArgs, string> _RouteFormatter;
       readonly IDictionary<Type, string> _DefaultConstraints;
       readonly Collection<Type> _IgnoredControllers;
 
@@ -55,10 +55,10 @@ namespace MvcCodeRouting {
       /// <summary>
       /// Gets or sets a delegate for custom route formatting.
       /// </summary>
-      public Func<string, RouteSegmentType, string> RouteFormatter {
+      public Func<RouteFormatterArgs, string> RouteFormatter {
          get {
             if (_RouteFormatter == null)
-               _RouteFormatter = (s, t) => s;
+               _RouteFormatter = (args) => args.OriginalSegment;
             return _RouteFormatter;
          }
          set { _RouteFormatter = value; }
