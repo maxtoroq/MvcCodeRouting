@@ -141,9 +141,10 @@ namespace MvcCodeRouting {
                 declaringType1.GetGenericTypeDefinition()
                 : declaringType1
              group a by new {
-                Depth = a.Controller.NamespaceRouteParts.Count
+                Depth = a.Controller.NamespaceRouteSegments.Count
                 , a.Controller.IsRootController
                 , a.Controller.Namespace
+                , NamespaceRouteSegments = String.Join("/", a.Controller.NamespaceRouteSegments)
                 , DeclaringType = declaringType
                 , HasRouteParameters = (a.RouteParameters.Count > 0)
              } into g
@@ -174,7 +175,7 @@ namespace MvcCodeRouting {
 
                      var maxParamCounts =
                         (from a in signatureCompat
-                         group a by a.Name into g
+                         group a by a.ActionRouteSegment into g
                          select g.Select(a => a.RouteParameters.Count).Max()
                         ).Distinct().ToArray();
 
@@ -182,7 +183,7 @@ namespace MvcCodeRouting {
 
                         var sameMaxNumberOfParams =
                            (from a in signatureCompat
-                            group a by a.Name into g
+                            group a by a.ActionRouteSegment into g
                             where g.Select(a => a.RouteParameters.Count).Max() == count
                             select g)
                            .SelectMany(g => g)

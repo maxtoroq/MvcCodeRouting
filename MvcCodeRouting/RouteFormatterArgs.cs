@@ -20,16 +20,27 @@ using System.Text;
 namespace MvcCodeRouting {
    
    /// <summary>
-   /// Provides data form custom route formatting.
+   /// Provides data for custom route formatting.
    /// </summary>
    /// <see cref="CodeRoutingSettings.RouteFormatter"/>
    public class RouteFormatterArgs {
 
+      /// <summary>
+      /// Gets the original segment.
+      /// </summary>
       public string OriginalSegment { get; private set; }
+
+      /// <summary>
+      /// Gets the segment type.
+      /// </summary>
       public RouteSegmentType SegmentType { get; private set; }
+
+      /// <summary>
+      /// Gets the controller type.
+      /// </summary>
       public Type ControllerType { get; private set; }
 
-      public RouteFormatterArgs(string originalSegment, RouteSegmentType segmentType, Type controllerType) {
+      internal RouteFormatterArgs(string originalSegment, RouteSegmentType segmentType, Type controllerType) {
 
          this.OriginalSegment = originalSegment;
          this.SegmentType = segmentType;

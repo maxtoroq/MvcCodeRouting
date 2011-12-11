@@ -37,10 +37,11 @@ namespace MvcCodeRouting {
 
       readonly ControllerDescriptor controllerDescr;
 
-      ReadOnlyCollection<string> _NamespaceRouteParts;
+      ReadOnlyCollection<string> _NamespaceRouteSegments;
       ReadOnlyCollection<string> _ControllerBaseRouteSegments;
       TokenInfoCollection _RouteProperties;
       string _Name;
+      string _ControllerRouteSegment;
 
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
@@ -49,11 +50,8 @@ namespace MvcCodeRouting {
       public string Name {
          get {
             if (_Name == null) {
-               string controllerName = (controllerDescr != null) ? controllerDescr.ControllerName 
-                  : Type.Name.Substring(0, Type.Name.Length - 10);
-                  
-               _Name = Register.Settings.RouteFormatter(new RouteFormatterArgs(controllerName, RouteSegmentType.Controller, Type));
-               CodeRoutingSettings.CheckCaseFormattingOnly(controllerName, _Name, RouteSegmentType.Controller);
+               _Name = (controllerDescr != null) ? controllerDescr.ControllerName 
+                  : Type.Name.Substring(0, Type.Name.Length - "controller".Length);
             }
             return _Name;
          }
@@ -84,41 +82,48 @@ namespace MvcCodeRouting {
             return Type == Register.RootController;
          }
       }
-      
-      public ReadOnlyCollection<string> NamespaceRouteParts {
+
+      public string ControllerRouteSegment {
          get {
-            if (_NamespaceRouteParts == null) {
-               var namespaceParts = new List<string>();
+            if (_ControllerRouteSegment == null) 
+               _ControllerRouteSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: true);
+            return _ControllerRouteSegment;
+         }
+      }
+
+      public ReadOnlyCollection<string> NamespaceRouteSegments {
+         get {
+            if (_NamespaceRouteSegments == null) {
+               var namespaceSegments = new List<string>();
 
                if (IsInSubNamespace) {
-                  namespaceParts.AddRange(
-                     Namespace.Remove(0, Register.RootController.Namespace.Length + 1).Split('.')
-                  );
 
-                  if (namespaceParts.Count > 0 && NameEquals(namespaceParts.Last(), Name))
-                     namespaceParts.RemoveAt(namespaceParts.Count - 1);
+                  List<string> segments = Namespace.Remove(0, Register.RootController.Namespace.Length + 1).Split('.').ToList();
+
+                  if (segments.Count > 0 && NameEquals(segments.Last(), Name))
+                     segments.RemoveAt(segments.Count - 1);
+
+                  namespaceSegments.AddRange(
+                     segments.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type), caseOnly: true))
+                  );
                }
 
-               _NamespaceRouteParts = new ReadOnlyCollection<string>(namespaceParts);
+               _NamespaceRouteSegments = new ReadOnlyCollection<string>(namespaceSegments);
             }
-            return _NamespaceRouteParts;
+            return _NamespaceRouteSegments;
          }
       }
 
       public ReadOnlyCollection<string> ControllerBaseRouteSegments {
          get {
             if (_ControllerBaseRouteSegments == null) {
-               string[] nsSegments = NamespaceRouteParts.Select(s => Register.Settings.RouteFormatter(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type))).ToArray();
-
-               for (int i = 0; i < nsSegments.Length; i++)
-                  CodeRoutingSettings.CheckCaseFormattingOnly(NamespaceRouteParts[i], nsSegments[i], RouteSegmentType.Namespace);
 
                if (String.IsNullOrEmpty(Register.BaseRoute)) {
-                  _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(nsSegments);
+                  _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(NamespaceRouteSegments);
                } else {
                   var segments = new List<string>();
                   segments.AddRange(Register.BaseRoute.Split('/'));
-                  segments.AddRange(nsSegments);
+                  segments.AddRange(NamespaceRouteSegments);
 
                   _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(segments);
                }
@@ -170,7 +175,7 @@ namespace MvcCodeRouting {
       public string ControllerUrl {
          get {
             return String.Join("/", ControllerBaseRouteSegments
-               .Concat((!IsRootController) ? new[] { Name } : new string[0])
+               .Concat((!IsRootController) ? new[] { ControllerRouteSegment } : new string[0])
                .Concat(RouteProperties.Select(p => p.RouteSegment))
             );
          }
@@ -226,7 +231,7 @@ namespace MvcCodeRouting {
          var overloadedActions =
             (from a in actions
              where a.RouteParameters.Count > 0
-             group a by new { a.Controller, a.Name } into g
+             group a by new { a.Controller, Name = a.ActionRouteSegment } into g
              where g.Count() > 1
              select g).ToList();
 

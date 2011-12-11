@@ -85,18 +85,23 @@ namespace MvcCodeRouting {
             _DefaultConstraints.Add(type, @"0|[1-9]\d*");
       }
 
-      internal static void CheckCaseFormattingOnly(string originalValue, string formattedValue, RouteSegmentType segmentType) {
+      internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {
 
-         if (!String.Equals(originalValue, formattedValue, StringComparison.OrdinalIgnoreCase)) {
+         string formattedSegment = this.RouteFormatter(args);
+
+         if (caseOnly && !String.Equals(args.OriginalSegment, formattedSegment, StringComparison.OrdinalIgnoreCase)) { 
+            
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture, 
                   "Only case formatting is currently supported for {0} route segments (Original segment: '{1}', formatted segment: '{2}').",
-                  segmentType,
-                  originalValue,
-                  formattedValue
+                  args.SegmentType,
+                  args.OriginalSegment,
+                  formattedSegment
                )
             );
          }
+
+         return formattedSegment;
       }
    }
 }

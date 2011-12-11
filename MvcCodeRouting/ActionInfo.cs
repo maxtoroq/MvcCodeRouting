@@ -26,22 +26,20 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{ActionUrl}")]
    abstract class ActionInfo : ICustomAttributeProvider {
 
-      string _Name;
+      string _ActionRouteSegment;
       Collection<ActionParameterInfo> _Parameters;
       TokenInfoCollection _RouteParameters;
 
       public ControllerInfo Controller { get; private set; }
-      public abstract string OriginalName { get; }
-      public virtual string MethodName { get { return OriginalName; } }
+      public abstract string Name { get; }
+      public virtual string MethodName { get { return Name; } }
       public virtual Type DeclaringType { get { return Controller.Type; } }
 
-      public string Name {
+      public string ActionRouteSegment {
          get {
-            if (_Name == null) {
-               _Name = Controller.Register.Settings.RouteFormatter(new RouteFormatterArgs(OriginalName, RouteSegmentType.Action, Controller.Type));
-               CodeRoutingSettings.CheckCaseFormattingOnly(OriginalName, _Name, RouteSegmentType.Action);
-            }
-            return _Name;
+            if (_ActionRouteSegment == null) 
+               _ActionRouteSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: true);
+            return _ActionRouteSegment;
          }
       }
 
@@ -73,14 +71,14 @@ namespace MvcCodeRouting {
          get {
             return RouteParameters.Count == 0
                && Controller.DefaultActionName != null
-               && NameEquals(Name, Controller.DefaultActionName);
+               && NameEquals(ActionRouteSegment, Controller.DefaultActionName);
          }
       }
 
       public string ActionUrl {
          get {
             return String.Join("/",
-               (new[] { Controller.ControllerUrl, (!IsDefaultAction) ? Name : null })
+               (new[] { Controller.ControllerUrl, (!IsDefaultAction) ? ActionRouteSegment : null })
                .Where(s => !String.IsNullOrEmpty(s))
             );
          }

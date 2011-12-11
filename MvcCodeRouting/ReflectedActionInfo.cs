@@ -24,19 +24,19 @@ namespace MvcCodeRouting {
    class ReflectedActionInfo : ActionInfo {
 
       readonly MethodInfo method;
-      string _OriginalName;
+      string _Name;
 
-      public override string OriginalName {
+      public override string Name {
          get {
-            if (_OriginalName == null) {
+            if (_Name == null) {
                ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
                   .Cast<ActionNameAttribute>()
                   .SingleOrDefault();
 
-               _OriginalName = (nameAttr != null) ? 
+               _Name = (nameAttr != null) ? 
                   nameAttr.Name : method.Name;
             }
-            return _OriginalName;
+            return _Name;
          }
       }
 
