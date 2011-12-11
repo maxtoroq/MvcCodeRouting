@@ -26,7 +26,7 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{ActionUrl}")]
    abstract class ActionInfo : ICustomAttributeProvider {
 
-      string _ActionRouteSegment;
+      string _ActionSegment;
       Collection<ActionParameterInfo> _Parameters;
       TokenInfoCollection _RouteParameters;
 
@@ -35,11 +35,11 @@ namespace MvcCodeRouting {
       public virtual string MethodName { get { return Name; } }
       public virtual Type DeclaringType { get { return Controller.Type; } }
 
-      public string ActionRouteSegment {
+      public string ActionSegment {
          get {
-            if (_ActionRouteSegment == null) 
-               _ActionRouteSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: true);
-            return _ActionRouteSegment;
+            if (_ActionSegment == null) 
+               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: true);
+            return _ActionSegment;
          }
       }
 
@@ -71,14 +71,14 @@ namespace MvcCodeRouting {
          get {
             return RouteParameters.Count == 0
                && Controller.DefaultActionName != null
-               && NameEquals(ActionRouteSegment, Controller.DefaultActionName);
+               && NameEquals(ActionSegment, Controller.DefaultActionName);
          }
       }
 
       public string ActionUrl {
          get {
             return String.Join("/",
-               (new[] { Controller.ControllerUrl, (!IsDefaultAction) ? ActionRouteSegment : null })
+               (new[] { Controller.ControllerUrl, (!IsDefaultAction) ? ActionSegment : null })
                .Where(s => !String.IsNullOrEmpty(s))
             );
          }

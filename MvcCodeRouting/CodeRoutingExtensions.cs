@@ -141,17 +141,17 @@ namespace MvcCodeRouting {
                 declaringType1.GetGenericTypeDefinition()
                 : declaringType1
              group a by new {
-                Depth = a.Controller.NamespaceRouteSegments.Count
-                , a.Controller.IsRootController
-                , a.Controller.Namespace
-                , NamespaceRouteSegments = String.Join("/", a.Controller.NamespaceRouteSegments)
-                , DeclaringType = declaringType
-                , HasRouteParameters = (a.RouteParameters.Count > 0)
+                Depth = a.Controller.CodeRoutingNamespace.Count,
+                a.Controller.IsRootController,
+                a.Controller.Namespace,
+                NamespaceSegments = String.Join("/", a.Controller.NamespaceSegments),
+                DeclaringType = declaringType,
+                HasRouteParameters = (a.RouteParameters.Count > 0)
              } into g
-             orderby g.Key.IsRootController descending
-                , g.Key.Depth
-                , g.Key.Namespace
-                , g.Key.HasRouteParameters descending
+             orderby g.Key.IsRootController descending,
+                g.Key.Depth,
+                g.Key.Namespace,
+                g.Key.HasRouteParameters descending
              select g
              ).ToList();
 
@@ -175,7 +175,7 @@ namespace MvcCodeRouting {
 
                      var maxParamCounts =
                         (from a in signatureCompat
-                         group a by a.ActionRouteSegment into g
+                         group a by a.ActionSegment into g
                          select g.Select(a => a.RouteParameters.Count).Max()
                         ).Distinct().ToArray();
 
@@ -183,7 +183,7 @@ namespace MvcCodeRouting {
 
                         var sameMaxNumberOfParams =
                            (from a in signatureCompat
-                            group a by a.ActionRouteSegment into g
+                            group a by a.ActionSegment into g
                             where g.Select(a => a.RouteParameters.Count).Max() == count
                             select g)
                            .SelectMany(g => g)

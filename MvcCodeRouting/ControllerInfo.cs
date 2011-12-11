@@ -37,11 +37,13 @@ namespace MvcCodeRouting {
 
       readonly ControllerDescriptor controllerDescr;
 
-      ReadOnlyCollection<string> _NamespaceRouteSegments;
-      ReadOnlyCollection<string> _ControllerBaseRouteSegments;
+      ReadOnlyCollection<string> _CodeRoutingNamespace;
+      ReadOnlyCollection<string> _CodeRoutingContext;
+      ReadOnlyCollection<string> _NamespaceSegments;
+      ReadOnlyCollection<string> _BaseRouteAndNamespaceSegments;
       TokenInfoCollection _RouteProperties;
       string _Name;
-      string _ControllerRouteSegment;
+      string _ControllerSegment;
 
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
@@ -83,52 +85,81 @@ namespace MvcCodeRouting {
          }
       }
 
-      public string ControllerRouteSegment {
+      public string ControllerSegment {
          get {
-            if (_ControllerRouteSegment == null) 
-               _ControllerRouteSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: true);
-            return _ControllerRouteSegment;
+            if (_ControllerSegment == null) 
+               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: true);
+            return _ControllerSegment;
          }
       }
 
-      public ReadOnlyCollection<string> NamespaceRouteSegments {
+      public ReadOnlyCollection<string> CodeRoutingNamespace {
          get {
-            if (_NamespaceRouteSegments == null) {
-               var namespaceSegments = new List<string>();
+            if (_CodeRoutingNamespace == null) {
+
+               List<string> segments = new List<string>();
 
                if (IsInSubNamespace) {
-
-                  List<string> segments = Namespace.Remove(0, Register.RootController.Namespace.Length + 1).Split('.').ToList();
+                  
+                  segments.AddRange(Namespace.Remove(0, Register.RootController.Namespace.Length + 1).Split('.'));
 
                   if (segments.Count > 0 && NameEquals(segments.Last(), Name))
                      segments.RemoveAt(segments.Count - 1);
-
-                  namespaceSegments.AddRange(
-                     segments.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type), caseOnly: true))
-                  );
                }
-
-               _NamespaceRouteSegments = new ReadOnlyCollection<string>(namespaceSegments);
+               _CodeRoutingNamespace = new ReadOnlyCollection<string>(segments);
             }
-            return _NamespaceRouteSegments;
+            return _CodeRoutingNamespace;
          }
       }
 
-      public ReadOnlyCollection<string> ControllerBaseRouteSegments {
+      public ReadOnlyCollection<string> CodeRoutingContext {
          get {
-            if (_ControllerBaseRouteSegments == null) {
+            if (_CodeRoutingContext == null) {
 
                if (String.IsNullOrEmpty(Register.BaseRoute)) {
-                  _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(NamespaceRouteSegments);
+                  _CodeRoutingContext = new ReadOnlyCollection<string>(CodeRoutingNamespace);
                } else {
                   var segments = new List<string>();
                   segments.AddRange(Register.BaseRoute.Split('/'));
-                  segments.AddRange(NamespaceRouteSegments);
+                  segments.AddRange(CodeRoutingNamespace);
 
-                  _ControllerBaseRouteSegments = new ReadOnlyCollection<string>(segments);
+                  _CodeRoutingContext = new ReadOnlyCollection<string>(segments);
                }
             }
-            return _ControllerBaseRouteSegments;
+            return _CodeRoutingContext;
+         }
+      }
+
+      public ReadOnlyCollection<string> NamespaceSegments {
+         get {
+            if (_NamespaceSegments == null) {
+               var namespaceSegments = new List<string>();
+
+               namespaceSegments.AddRange(
+                  CodeRoutingNamespace.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type), caseOnly: false))
+               );
+
+               _NamespaceSegments = new ReadOnlyCollection<string>(namespaceSegments);
+            }
+            return _NamespaceSegments;
+         }
+      }
+
+      public ReadOnlyCollection<string> BaseRouteAndNamespaceSegments {
+         get {
+            if (_BaseRouteAndNamespaceSegments == null) {
+
+               if (String.IsNullOrEmpty(Register.BaseRoute)) {
+                  _BaseRouteAndNamespaceSegments = new ReadOnlyCollection<string>(NamespaceSegments);
+               } else {
+                  var segments = new List<string>();
+                  segments.AddRange(Register.BaseRoute.Split('/'));
+                  segments.AddRange(NamespaceSegments);
+
+                  _BaseRouteAndNamespaceSegments = new ReadOnlyCollection<string>(segments);
+               }
+            }
+            return _BaseRouteAndNamespaceSegments;
          }
       }
 
@@ -165,7 +196,7 @@ namespace MvcCodeRouting {
 
       public string UrlTemplate {
          get {
-            return String.Join("/", ControllerBaseRouteSegments
+            return String.Join("/", BaseRouteAndNamespaceSegments
                .Concat((!IsRootController) ? new[] { "{controller}" } : new string[0])
                .Concat(RouteProperties.Select(p => p.RouteSegment))
             );
@@ -174,8 +205,8 @@ namespace MvcCodeRouting {
 
       public string ControllerUrl {
          get {
-            return String.Join("/", ControllerBaseRouteSegments
-               .Concat((!IsRootController) ? new[] { ControllerRouteSegment } : new string[0])
+            return String.Join("/", BaseRouteAndNamespaceSegments
+               .Concat((!IsRootController) ? new[] { ControllerSegment } : new string[0])
                .Concat(RouteProperties.Select(p => p.RouteSegment))
             );
          }
@@ -231,7 +262,7 @@ namespace MvcCodeRouting {
          var overloadedActions =
             (from a in actions
              where a.RouteParameters.Count > 0
-             group a by new { a.Controller, Name = a.ActionRouteSegment } into g
+             group a by new { a.Controller, Name = a.ActionSegment } into g
              where g.Count() > 1
              select g).ToList();
 

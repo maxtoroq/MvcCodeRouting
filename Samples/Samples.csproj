@@ -52,6 +52,7 @@
     <Compile Include="Controllers\Api\RoleController.cs" />
     <Compile Include="Controllers\Api\UserController.cs" />
     <Compile Include="Controllers\Book\BookController.cs" />
+    <Compile Include="Controllers\SomeLongNamespace\SomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

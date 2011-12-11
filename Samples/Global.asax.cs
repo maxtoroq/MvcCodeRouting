@@ -21,7 +21,17 @@ namespace Samples {
          routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
          routes.MapCodeRoutes(
-            rootController: typeof(Controllers.HomeController)
+            rootController: typeof(Controllers.HomeController),
+            settings: new CodeRoutingSettings {
+               RouteFormatter = args => { 
+                  
+                  if (args.ControllerType == typeof(Controllers.SomeLongNamespace.SomeController) && args.SegmentType == RouteSegmentType.Namespace)
+                     return System.Text.RegularExpressions.Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1")
+                        .ToLowerInvariant();
+
+                  return args.OriginalSegment;
+               }
+            }
          );
       }
 

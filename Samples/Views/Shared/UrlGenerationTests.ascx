@@ -12,7 +12,7 @@
       <td>
          <code>Url.Action("", "Account")</code>
       </td>
-      <td>/Account</td>
+      <td><%: Url.Action("", "~Account") %></td>
       <td><%: Url.Action("", "Account") %></td>
       <td>Sibling (or self) reference.</td>
    </tr>
@@ -20,7 +20,7 @@
       <td>
          <code>Url.Action("", "..Admin")</code>
       </td>
-      <td>/Admin</td>
+      <td><%: Url.Action("", "~Admin") %></td>
       <td><%: Url.Action("", "..Admin") %></td>
       <td>Parent reference.</td>
    </tr>
@@ -28,7 +28,7 @@
       <td>
          <code>Url.Action("", "+User")</code>
       </td>
-      <td>/Admin/User</td>
+      <td><%: Url.Action("", "~Admin.User") %></td>
       <td><%: Url.Action("", "+User") %></td>
       <td>Child reference.</td>
    </tr>
@@ -36,7 +36,7 @@
       <td>
          <code>Url.Action("", "+Tasks.Maintenance")</code>
       </td>
-      <td>/Admin/Tasks/Maintenance</td>
+      <td><%: Url.Action("", "~Admin.Tasks.Maintenance")%></td>
       <td><%: Url.Action("", "+Tasks.Maintenance")%></td>
       <td>Grand-child reference.</td>
    </tr>
@@ -44,7 +44,7 @@
       <td>
          <code>Url.Action("", "~Admin")</code>
       </td>
-      <td>/Admin</td>
+      <td><%: Url.Action("", "~Admin")%></td>
       <td><%: Url.Action("", "~Admin")%></td>
       <td>Absolute reference.</td>
    </tr>
