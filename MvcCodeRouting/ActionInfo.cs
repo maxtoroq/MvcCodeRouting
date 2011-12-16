@@ -27,6 +27,8 @@ namespace MvcCodeRouting {
    abstract class ActionInfo : ICustomAttributeProvider {
 
       string _ActionSegment;
+      string _CustomRoute;
+      bool _CustomRouteInit;
       Collection<ActionParameterInfo> _Parameters;
       TokenInfoCollection _RouteParameters;
 
@@ -81,6 +83,23 @@ namespace MvcCodeRouting {
                (new[] { Controller.ControllerUrl, (!IsDefaultAction) ? ActionSegment : null })
                .Where(s => !String.IsNullOrEmpty(s))
             );
+         }
+      }
+
+      public string CustomRoute {
+         get {
+            if (!_CustomRouteInit) {
+
+               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
+                  .Cast<CustomRouteAttribute>()
+                  .SingleOrDefault();
+
+               if (attr != null) 
+                  _CustomRoute = attr.Url;
+
+               _CustomRouteInit = true;
+            }
+            return _CustomRoute;
          }
       }
 

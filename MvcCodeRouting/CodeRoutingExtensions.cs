@@ -110,6 +110,7 @@ namespace MvcCodeRouting {
 
          var ambiguousController =
             (from a in actions
+             where a.CustomRoute == null
              group a by a.ActionUrl into g
              where g.Count() > 1
              let distinctControllers = g.Select(a => a.Controller).Distinct().ToArray()
@@ -148,6 +149,8 @@ namespace MvcCodeRouting {
                 DeclaringType = declaringType,
                 ControllerSegment = (!a.Controller.Name.Equals(a.Controller.ControllerSegment, StringComparison.OrdinalIgnoreCase) ?
                   a.Controller.ControllerSegment : ""),
+                CustomRoute = (a.CustomRoute != null ?
+                  a : (object)""),
                 HasRouteParameters = (a.RouteParameters.Count > 0)
              } into g
              orderby g.Key.IsRootController descending,

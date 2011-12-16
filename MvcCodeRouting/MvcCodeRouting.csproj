@@ -52,6 +52,7 @@
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="ControllerInfo.cs" />
+    <Compile Include="CustomRouteAttribute.cs" />
     <Compile Include="DataTokenKeys.cs" />
     <Compile Include="DescriptedActionInfo.cs" />
     <Compile Include="DescriptedActionParameterInfo.cs" />

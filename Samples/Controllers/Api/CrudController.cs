@@ -10,6 +10,7 @@ namespace Samples.Controllers.Api {
    public abstract class CrudController<TEntity, TEntityKey> : Controller {
 
       [HttpGet]
+      [RequireRouteParameters]
       public ActionResult Entities() {
          throw new NotImplementedException();
       }
@@ -20,6 +21,7 @@ namespace Samples.Controllers.Api {
       }
 
       [HttpGet]
+      [RequireRouteParameters]
       public ActionResult Entities([FromRoute]TEntityKey id) {
          throw new NotImplementedException();
       }

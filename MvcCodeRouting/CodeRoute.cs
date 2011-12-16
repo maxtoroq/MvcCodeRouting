@@ -37,23 +37,28 @@ namespace MvcCodeRouting {
          var controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
          var actionNames = actions.Select(a => a.ActionSegment).Distinct().ToList();
 
+         bool hardcodeController = controllerNames.Count == 1;
+         bool hardcodeAction = actionNames.Count == 1
+            && !first.IsDefaultAction;
+
          List<string> segments = new List<string>();
          segments.Add(first.Controller.UrlTemplate);
-
-         bool hardcodeController = controllerNames.Count == 1;
 
          if (hardcodeController)
             segments[0] = first.Controller.ControllerUrl;
 
-         segments.Add("{action}");
+         if (first.CustomRoute != null) {
+            segments.Add(first.CustomRoute);
 
-         bool hardcodeAction = actionNames.Count == 1
-            && !first.IsDefaultAction;
+         } else {
 
-         if (hardcodeAction)
-            segments[1] = first.ActionSegment;
+            segments.Add("{action}");
 
-         segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
+            if (hardcodeAction)
+               segments[1] = first.ActionSegment;
+
+            segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
+         }
 
          string url = String.Join("/", segments.Where(s => !String.IsNullOrEmpty(s)));
 
@@ -83,8 +88,8 @@ namespace MvcCodeRouting {
 
          var constraints = new RouteValueDictionary();
 
-         if (!hardcodeController)
-            constraints.Add("controller", String.Join("|", controllerNames));
+         if (!hardcodeController) 
+            constraints.Add("controller", String.Join("|", actions.Select(a => a.Controller.ControllerSegment).Distinct()));
 
          if (!hardcodeAction || actionNames.Count > 1)
             constraints.Add("action", String.Join("|", actionNames));

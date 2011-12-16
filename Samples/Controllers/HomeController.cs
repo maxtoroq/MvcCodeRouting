@@ -12,9 +12,5 @@ namespace Samples.Controllers {
       public ActionResult Index() {
          return View();
       }
-
-      public ActionResult About([FromRoute]string id) {
-         throw new NotImplementedException();
-      }
    }
 }
