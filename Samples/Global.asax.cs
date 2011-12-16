@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -25,9 +26,9 @@ namespace Samples {
             settings: new CodeRoutingSettings {
                RouteFormatter = args => { 
                   
-                  if (args.ControllerType == typeof(Controllers.SomeLongNamespace.SomeController) && args.SegmentType == RouteSegmentType.Namespace)
-                     return System.Text.RegularExpressions.Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1")
-                        .ToLowerInvariant();
+                  if (args.ControllerType == typeof(Controllers.SomeLongNamespace.SomeLongControllerController)
+                     && new[] { RouteSegmentType.Namespace, RouteSegmentType.Controller }.Contains(args.SegmentType))
+                     return Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1").ToLowerInvariant();
 
                   return args.OriginalSegment;
                }

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Samples.Controllers.SomeLongNamespace {
    
-   public class SomeController : Controller {
+   public class SomeLongControllerController : Controller {
 
       public ActionResult Index() {
          return View();

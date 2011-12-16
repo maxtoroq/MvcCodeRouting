@@ -146,15 +146,21 @@ namespace MvcCodeRouting {
 
                sb.Append(" }");
 
-               if (route.Constraints != null && route.Constraints.Count > 0) {
+               RouteValueDictionary constraints = (route.Constraints != null) ?
+                  new RouteValueDictionary(route.Constraints)
+                  : new RouteValueDictionary();
+
+               constraints.Remove(CodeRoutingConstraint.Key);
+
+               if (constraints.Count > 0) {
 
                   sb.Append(", ")
-                        .AppendLine()
-                        .Append("    <span class='keyword'>new</span> { ");
+                     .AppendLine()
+                     .Append("    <span class='keyword'>new</span> { ");
 
                   int j = 0;
 
-                  foreach (var item in route.Constraints) {
+                  foreach (var item in constraints) {
 
                      if (j > 0)
                         sb.Append(", ");
@@ -288,7 +294,13 @@ namespace MvcCodeRouting {
 
                sb.Append("}");
 
-               if (route.Constraints != null && route.Constraints.Count > 0) {
+               RouteValueDictionary constraints = (route.Constraints != null) ?
+                  new RouteValueDictionary(route.Constraints)
+                  : new RouteValueDictionary();
+
+               constraints.Remove(CodeRoutingConstraint.Key);
+
+               if (constraints.Count > 0) {
 
                   sb.Append(", _")
                         .AppendLine()
@@ -296,7 +308,7 @@ namespace MvcCodeRouting {
 
                   int j = 0;
 
-                  foreach (var item in route.Constraints) {
+                  foreach (var item in constraints) {
 
                      if (j > 0)
                         sb.Append(", ");

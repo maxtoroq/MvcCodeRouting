@@ -88,7 +88,7 @@ namespace MvcCodeRouting {
       public string ControllerSegment {
          get {
             if (_ControllerSegment == null) 
-               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: true);
+               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: false);
             return _ControllerSegment;
          }
       }
