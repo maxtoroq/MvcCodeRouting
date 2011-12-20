@@ -160,24 +160,20 @@ namespace MvcCodeRouting {
                
                } else if (theController[0] == '+') {
 
-                  string[] namespaces = routeData.DataTokens[DataTokenKeys.Namespaces] as string[];
+                  string currentController = (string)routeData.Values["controller"];
+                  routeContextSegments.Add(currentController);
 
-                  if (namespaces == null || namespaces.Length > 1)
-                     return null;
-
-                  routeContextSegments.Add(namespaces[0].Split('.').Last());
                   theController.Remove(0, 1);
 
-               } else if (theController[0] == '.') {
+               } else if (theController[0] == '.' 
+                  && theController.Length > 1 
+                  && theController[1] == '.') {
 
-                  if (theController.Length > 1 && theController[1] == '.') {
+                  if (routeContextSegments.Count == 0)
+                     return null;
 
-                     if (routeContextSegments.Count == 0)
-                        return null;
-
-                     routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
-                     theController.Remove(0, 2);
-                  }
+                  routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
+                  theController.Remove(0, 2);
                }
 
                if (theController.Length > 1) {
