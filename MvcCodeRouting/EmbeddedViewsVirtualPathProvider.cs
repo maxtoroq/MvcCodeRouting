@@ -36,10 +36,10 @@ namespace MvcCodeRouting {
       readonly ConcurrentDictionary<string, AssemblyDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyDataCollection>(VirtualPathComparer);
       static bool embeddedViewsEnabled;
 
-      public static void RegisterAssembly(Assembly assembly, string viewsLocation) {
+      public static void RegisterAssembly(Type rootController, string viewsLocation) {
 
          string basePath = String.Join("/", new[] { "Views", viewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
-         var assemblyData = new AssemblyData(assembly, basePath);
+         var assemblyData = new AssemblyData(rootController, basePath);
 
          if (assemblyData.HasResources) 
             AssemblyDataTable.Add(assemblyData);
@@ -81,7 +81,7 @@ namespace MvcCodeRouting {
          AssemblyData assemblyData;
 
          if (GetAssemblyData(virtualDir).ResourceExists(virtualDir, false, out resourceName, out assemblyData))
-            return assemblyData.CreateVirtualDirectory(virtualDir, resourceName, prev);
+            return assemblyData.CreateVirtualDirectory(virtualDir, prev);
 
          return prev;
       }
@@ -151,7 +151,7 @@ namespace MvcCodeRouting {
       class AssemblyData {
 
          readonly Assembly assembly;
-         readonly string assemblyName;
+         readonly string rootNamespace;
          readonly string[] resourceNames;
          public readonly string basePath;
          readonly string[] basePathParts;
@@ -159,16 +159,19 @@ namespace MvcCodeRouting {
 
          public bool HasResources { get { return resourceNames.Length > 0; } }
 
-         public AssemblyData(Assembly assembly, string basePath) {
+         public AssemblyData(Type rootController, string basePath) {
+
+            this.assembly = rootController.Assembly;
             
-            this.assembly = assembly;
-            this.assemblyName = assembly.GetName().Name;
+            this.rootNamespace = (rootController.Namespace ?? "").Split('.').FirstOrDefault() 
+               ?? this.assembly.GetName().Name;
+            
             this.basePath = basePath;
             this.basePathParts = basePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             this.baseResourceName = RelativeVirtualPathToResourceName(basePath);
             this.resourceNames =
                (from n in assembly.GetManifestResourceNames()
-                where n.StartsWith(this.baseResourceName + ".")
+                where n.StartsWith(this.baseResourceName + ".", StringComparison.Ordinal)
                    && n.Split('.').Length >= 4
                 select n).ToArray();
          }
@@ -236,7 +239,7 @@ namespace MvcCodeRouting {
             if (parts.Count > 1)
                parts.RemoveRange(1, basePathParts.Length - 1);
 
-            parts.Insert(0, this.assemblyName);
+            parts.Insert(0, this.rootNamespace);
 
             return String.Join(".", parts);
          }
@@ -257,7 +260,7 @@ namespace MvcCodeRouting {
             return new AssemblyResourceVirtualFile(virtualPath, resourceName, this.assembly);
          }
 
-         public VirtualDirectory CreateVirtualDirectory(string virtualPath, string resourceName, VirtualDirectory prev) {
+         public VirtualDirectory CreateVirtualDirectory(string virtualPath, VirtualDirectory prev) {
             return new AssemblyResourceVirtualDirectory(virtualPath, prev, this);
          }
       }

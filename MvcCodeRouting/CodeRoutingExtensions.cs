@@ -107,7 +107,7 @@ namespace MvcCodeRouting {
             
             string viewsLocation = (string)codeRoutes[0].DataTokens[DataTokenKeys.ViewsLocation];
 
-            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo.RootController.Assembly, viewsLocation);
+            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo.RootController, viewsLocation);
          }
 
          return codeRoutes;

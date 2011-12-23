@@ -19,11 +19,26 @@ using System.Text;
 
 namespace MvcCodeRouting {
    
+   /// <summary>
+   /// Represents an attribute that is used to customize the URL for the decorated
+   /// action method.
+   /// </summary>
    [AttributeUsage(AttributeTargets.Method)]
    public sealed class CustomRouteAttribute : Attribute {
 
+      /// <summary>
+      /// The URL pattern.
+      /// </summary>
       public string Url { get; private set; }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
+      /// using the provided URL pattern.
+      /// </summary>
+      /// <param name="url">
+      /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
+      /// on the action method parameters.
+      /// </param>
       public CustomRouteAttribute(string url) {
          this.Url = url;
       }
