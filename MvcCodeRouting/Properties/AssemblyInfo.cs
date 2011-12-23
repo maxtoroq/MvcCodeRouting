@@ -17,7 +17,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: AssemblyVersion("0.9.2")]
+[assembly: AssemblyVersion("0.9.3")]
 [assembly: AssemblyProduct("MvcCodeRouting")]
 [assembly: AssemblyTitle("MvcCodeRouting.dll")]
 [assembly: AssemblyDescription("MvcCodeRouting.dll")]

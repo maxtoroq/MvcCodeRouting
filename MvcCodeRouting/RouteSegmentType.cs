@@ -25,17 +25,17 @@ namespace MvcCodeRouting {
    public enum RouteSegmentType {
       
       /// <summary>
-      /// The segment maps to a namespace segment.
+      /// The route segment maps to a namespace segment.
       /// </summary>
       Namespace,
       
       /// <summary>
-      /// The segment maps to a controller name.
+      /// The route segment maps to a controller name.
       /// </summary>
       Controller,
       
       /// <summary>
-      /// The segment maps to an action name.
+      /// The route segment maps to an action name.
       /// </summary>
       Action
    }
