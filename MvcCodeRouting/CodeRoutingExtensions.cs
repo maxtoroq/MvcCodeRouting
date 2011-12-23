@@ -17,7 +17,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -102,6 +101,14 @@ namespace MvcCodeRouting {
          
          foreach (CodeRoute route in codeRoutes)
             routes.Add(route);
+
+         if (codeRoutes.Length > 0 
+            && registerInfo.Settings.EnableEmbeddedViews) {
+            
+            string viewsLocation = (string)codeRoutes[0].DataTokens[DataTokenKeys.ViewsLocation];
+
+            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo.RootController.Assembly, viewsLocation);
+         }
 
          return codeRoutes;
       }
@@ -241,16 +248,15 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
-      /// Enables namespace-aware views location.
+      /// Enables namespace-aware views location. Always call after you are done adding view engines.
       /// </summary>
       /// <param name="engines">The view engine collection.</param>
-      /// <remarks>Always call after you are done adding view engines.</remarks>
       public static void EnableCodeRouting(this ViewEngineCollection engines) {
 
          if (engines == null) throw new ArgumentNullException("engines");
 
          for (int i = 0; i < engines.Count; i++) {
-            
+
             IViewEngine engine = engines[i];
 
             if (engine.GetType() == typeof(ViewEngineWrapper))
@@ -258,6 +264,8 @@ namespace MvcCodeRouting {
 
             engines[i] = new ViewEngineWrapper(engine);
          }
+
+         EmbeddedViewsVirtualPathProvider.RegisterIfNecessary();
       }
 
       /// <summary>

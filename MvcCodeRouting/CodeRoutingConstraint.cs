@@ -27,18 +27,13 @@ namespace MvcCodeRouting {
 
       public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
 
-         string valuesContext;
-         string routeContext;
+         if (routeDirection != RouteDirection.UrlGeneration)
+            return true;
 
-         if (routeDirection == RouteDirection.UrlGeneration
-            && (values["controller"] as string) != null
-            && (valuesContext = values[Key] as string) != null
-            && (routeContext = route.DataTokens[DataTokenKeys.CodeRoutingContext] as string) != null) {
+         string valuesContext = values[Key] as string ?? "";
+         string routeContext = route.DataTokens[DataTokenKeys.CodeRoutingContext] as string ?? "";
 
-            return String.Equals(valuesContext, routeContext, StringComparison.OrdinalIgnoreCase);
-         }
-
-         return true;
+         return String.Equals(valuesContext, routeContext, StringComparison.OrdinalIgnoreCase);
       }
    }
 }

@@ -65,6 +65,12 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
+      /// true to look for views embedded in assemblies. View resources must
+      /// be named using the following format: {assemblyName}.Views.{controller}.{viewFilePath} .
+      /// </summary>
+      public bool EnableEmbeddedViews { get; set; }
+
+      /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class.
       /// </summary>
       public CodeRoutingSettings() {
