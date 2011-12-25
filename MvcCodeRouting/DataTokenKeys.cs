@@ -21,6 +21,7 @@ namespace MvcCodeRouting {
    
    static class DataTokenKeys {
       public const string Namespaces = "Namespaces";
+      public const string BaseRoute = "MvcCodeRouting.BaseRoute";
       public const string CodeRoutingContext = "MvcCodeRouting.CodeRoutingContext";
       public const string ViewsLocation = "MvcCodeRouting.ViewsLocation";
    }

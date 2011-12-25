@@ -108,6 +108,7 @@ namespace MvcCodeRouting {
 
          var dataTokens = new RouteValueDictionary { 
             { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
+            { DataTokenKeys.BaseRoute, first.Controller.Register.BaseRoute },
             { DataTokenKeys.CodeRoutingContext, String.Join("/", first.Controller.CodeRoutingContext) },
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{'))) }
          };
@@ -156,7 +157,21 @@ namespace MvcCodeRouting {
                if (theController[0] == '~') {
 
                   routeContextSegments.Clear();
-                  theController.Remove(0, 1);
+
+                  if (theController.Length > 1
+                     && theController[1] == '~') {
+
+                     theController.Remove(0, 2);
+
+                  } else {
+
+                     string baseRoute = routeData.DataTokens[DataTokenKeys.BaseRoute] as string;
+
+                     if (!String.IsNullOrEmpty(baseRoute))
+                        routeContextSegments.AddRange(baseRoute.Split('/'));
+
+                     theController.Remove(0, 1);
+                  }
                
                } else if (theController[0] == '+') {
 
