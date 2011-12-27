@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" %>
 
 <table border="0">
-   <caption>Url Generation Tests</caption>
+   <caption>Url Generation Samples</caption>
    <tr>
       <th>Code</th>
       <th>Expected Value</th>
@@ -26,14 +26,6 @@
    </tr>
    <tr>
       <td>
-         <code>Url.Action("", "..Admin")</code>
-      </td>
-      <td><%: Url.Action("", "~Admin") %></td>
-      <td><%: Url.Action("", "..Admin") %></td>
-      <td>Parent reference.</td>
-   </tr>
-   <tr>
-      <td>
          <code>Url.Action("", "+User")</code>
       </td>
       <td><%: Url.Action("", "~Admin.User") %></td>
@@ -50,11 +42,27 @@
    </tr>
    <tr>
       <td>
+         <code>Url.Action("", "..Admin")</code>
+      </td>
+      <td><%: Url.Action("", "~Admin") %></td>
+      <td><%: Url.Action("", "..Admin") %></td>
+      <td>Parent reference.</td>
+   </tr>
+   <tr>
+      <td>
          <code>Url.Action("", "~Admin")</code>
       </td>
       <td><%: Url.Action("", "~Admin")%></td>
       <td><%: Url.Action("", "~Admin")%></td>
-      <td>Absolute reference.</td>
+      <td>baseRoute-relative reference.</td>
+   </tr>
+   <tr>
+      <td>
+         <code>Url.Action("", "~~Admin")</code>
+      </td>
+      <td><%: Url.Action("", "~~Admin")%></td>
+      <td><%: Url.Action("", "~~Admin")%></td>
+      <td>Application-relative reference.</td>
    </tr>
 </table>
-<p>The actual value depends on the current route, except for absolute references.</p>
+<p>The actual value depends on the current route, except for application-relative references.</p>

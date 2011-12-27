@@ -82,13 +82,13 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerInfo = new RegisterInfo(rootController) { 
+         var registerInfo = new RegisterInfo(null, rootController) { 
             BaseRoute = baseRoute, 
             Settings = settings 
          };
 
-         ActionInfo[] actions = ControllerInfo.GetControllers(registerInfo)
-            .SelectMany(c => c.GetActions())
+         ActionInfo[] actions = registerInfo.GetControllers()
+            .SelectMany(c => c.Actions)
             .ToArray();
 
          registeredActions.AddRange(actions);
@@ -101,13 +101,11 @@ namespace MvcCodeRouting {
          
          foreach (CodeRoute route in codeRoutes)
             routes.Add(route);
-
+         
          if (codeRoutes.Length > 0 
             && registerInfo.Settings.EnableEmbeddedViews) {
             
-            string viewsLocation = (string)codeRoutes[0].DataTokens[DataTokenKeys.ViewsLocation];
-
-            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo.RootController, viewsLocation);
+            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo);
          }
 
          return codeRoutes;

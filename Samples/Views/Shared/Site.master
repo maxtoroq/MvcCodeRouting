@@ -19,7 +19,7 @@
       <asp:ContentPlaceHolder ID="content" runat="server"/>
    </div>
    <div id="footer">
-      <% Html.RenderPartial("UrlGenerationTests"); %>
+      <% Html.RenderPartial("UrlGenerationSamples"); %>
    </div>
 </body>
 </html>

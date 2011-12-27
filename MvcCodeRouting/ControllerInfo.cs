@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{ControllerUrl}")]
    class ControllerInfo {
 
-      static readonly Type baseType = typeof(Controller);
+      internal static readonly Type BaseType = typeof(Controller);
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
@@ -42,6 +42,7 @@ namespace MvcCodeRouting {
       ReadOnlyCollection<string> _NamespaceSegments;
       ReadOnlyCollection<string> _BaseRouteAndNamespaceSegments;
       TokenInfoCollection _RouteProperties;
+      Collection<ActionInfo> _Actions;
       string _Name;
       string _ControllerSegment;
 
@@ -67,15 +68,15 @@ namespace MvcCodeRouting {
 
       public bool IsInRootNamespace {
          get {
-            return Namespace == Register.RootController.Namespace
+            return Namespace == Register.RootNamespace
                || IsInSubNamespace;
          }
       }
 
       public bool IsInSubNamespace {
          get {
-            return Namespace.Length > Register.RootController.Namespace.Length
-               && Namespace.StartsWith(Register.RootController.Namespace + ".", StringComparison.Ordinal);
+            return Namespace.Length > Register.RootNamespace.Length
+               && Namespace.StartsWith(Register.RootNamespace + ".", StringComparison.Ordinal);
          }
       }
 
@@ -101,7 +102,7 @@ namespace MvcCodeRouting {
 
                if (IsInSubNamespace) {
                   
-                  segments.AddRange(Namespace.Remove(0, Register.RootController.Namespace.Length + 1).Split('.'));
+                  segments.AddRange(Namespace.Remove(0, Register.RootNamespace.Length + 1).Split('.'));
 
                   if (segments.Count > 0 && NameEquals(segments.Last(), Name))
                      segments.RemoveAt(segments.Count - 1);
@@ -194,6 +195,21 @@ namespace MvcCodeRouting {
          }
       }
 
+      public Collection<ActionInfo> Actions {
+         get {
+            if (_Actions == null) {
+               _Actions = new Collection<ActionInfo>(
+                  (this.controllerDescr != null ?
+                     GetActions(this.controllerDescr)
+                     : GetActions(this.Type)).ToArray()
+               );
+
+               CheckOverloads(_Actions);
+            }
+            return _Actions;
+         }
+      }
+
       public string UrlTemplate {
          get {
             return String.Join("/", BaseRouteAndNamespaceSegments
@@ -218,39 +234,13 @@ namespace MvcCodeRouting {
          try {
             createActionInvoker =
                (Func<Controller, IActionInvoker>)
-                  Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), baseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
+                  Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), BaseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
 
             getControllerDescriptor =
                (Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>)
                   Delegate.CreateDelegate(typeof(Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>), typeof(ControllerActionInvoker).GetMethod("GetControllerDescriptor", BindingFlags.NonPublic | BindingFlags.Instance));
          
          } catch (MethodAccessException) { }
-      }
-
-      public static IEnumerable<ControllerInfo> GetControllers(RegisterInfo registerInfo) {
-
-         if (!IsController(registerInfo.RootController))
-            throw new InvalidOperationException("The specified root controller is not a valid controller type.");
-
-         ControllerInfo[] controllers =
-            (from t in registerInfo.RootController.Assembly.GetTypes()
-             where IsController(t)
-             select new ControllerInfo(t, registerInfo))
-             .ToArray();
-
-         return
-            from c in controllers
-            where !registerInfo.Settings.IgnoredControllers.Contains(c.Type)
-               && c.IsInRootNamespace
-            select c;
-      }
-
-      static bool IsController(Type t) {
-
-         return t.IsPublic
-            && !t.IsAbstract
-            && baseType.IsAssignableFrom(t)
-            && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase);
       }
 
       public static bool NameEquals(string name1, string name2) {
@@ -331,20 +321,6 @@ namespace MvcCodeRouting {
          }
       }
 
-      public IEnumerable<ActionInfo> GetActions() {
-
-         IEnumerable<ActionInfo> actions;
-
-         if (this.controllerDescr != null)
-            actions = GetActions(this.controllerDescr);
-         else
-            actions = GetActions(this.Type);
-
-         CheckOverloads(actions);
-
-         return actions;
-      }
-
       IEnumerable<ActionInfo> GetActions(ControllerDescriptor controllerDescr) {
 
          var actions =
@@ -362,7 +338,7 @@ namespace MvcCodeRouting {
          var actions =
              from m in controllerType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
              where !m.IsSpecialName
-                && baseType.IsAssignableFrom(m.DeclaringType)
+                && BaseType.IsAssignableFrom(m.DeclaringType)
                 && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
                 && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
              select new ReflectedActionInfo(m, this);

@@ -91,6 +91,22 @@ namespace MvcCodeRouting {
             _DefaultConstraints.Add(type, @"0|[1-9]\d*");
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class,
+      /// using the values from the provided settings instance.
+      /// </summary>
+      /// <param name="settings">Another <see cref="CodeRoutingSettings"/> instance to copy the settings from.</param>
+      public CodeRoutingSettings(CodeRoutingSettings settings) {
+         
+         if (settings == null) throw new ArgumentNullException("settings");
+
+         _IgnoredControllers = new Collection<Type>(settings.IgnoredControllers);
+         _DefaultConstraints = new Dictionary<Type, string>(settings.DefaultConstraints);
+         
+         this.RouteFormatter = settings.RouteFormatter;
+         this.EnableEmbeddedViews = settings.EnableEmbeddedViews;
+      }
+
       internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {
 
          string formattedSegment = this.RouteFormatter(args);

@@ -36,10 +36,10 @@ namespace MvcCodeRouting {
       readonly ConcurrentDictionary<string, AssemblyDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyDataCollection>(VirtualPathComparer);
       static bool embeddedViewsEnabled;
 
-      public static void RegisterAssembly(Type rootController, string viewsLocation) {
+      public static void RegisterAssembly(RegisterInfo registerInfo) {
 
-         string basePath = String.Join("/", new[] { "Views", viewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
-         var assemblyData = new AssemblyData(rootController, basePath);
+         string basePath = String.Join("/", new[] { "Views", registerInfo.ViewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
+         var assemblyData = new AssemblyData(registerInfo, basePath);
 
          if (assemblyData.HasResources) 
             AssemblyDataTable.Add(assemblyData);
@@ -159,11 +159,11 @@ namespace MvcCodeRouting {
 
          public bool HasResources { get { return resourceNames.Length > 0; } }
 
-         public AssemblyData(Type rootController, string basePath) {
+         public AssemblyData(RegisterInfo registerInfo, string basePath) {
 
-            this.assembly = rootController.Assembly;
-            
-            this.rootNamespace = (rootController.Namespace ?? "").Split('.').FirstOrDefault() 
+            this.assembly = registerInfo.Assembly;
+
+            this.rootNamespace = registerInfo.RootNamespace.Split('.').FirstOrDefault() 
                ?? this.assembly.GetName().Name;
             
             this.basePath = basePath;
