@@ -10,7 +10,7 @@ namespace Samples.Controllers.Book {
 
    public class BookController : Controller {
 
-      [FromRoute]
+      [FromRoute("id")]
       public int BookId { get; set; }
 
       protected override void Initialize(RequestContext requestContext) {

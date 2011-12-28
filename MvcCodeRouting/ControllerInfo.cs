@@ -364,7 +364,7 @@ namespace MvcCodeRouting {
             this.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
          }
 
-         return new TokenInfo(name, constraint);
+         return new TokenInfo(routeAttr.TokenName ?? name, constraint);
       }
    }
 }

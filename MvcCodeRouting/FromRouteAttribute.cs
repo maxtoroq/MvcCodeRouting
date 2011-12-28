@@ -15,6 +15,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using System.Web.Routing;
+using System.Globalization;
 
 namespace MvcCodeRouting {
    
@@ -28,6 +30,21 @@ namespace MvcCodeRouting {
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder {
 
+      string _TokenName;
+
+      /// <summary>
+      /// The token name. The default name used is the parameter or property name.
+      /// </summary>
+      public string TokenName {
+         get { return _TokenName; }
+         set {
+            if (value != null && value.Length == 0)
+               throw new ArgumentException("value cannot be empty.", "value");
+
+            _TokenName = value;
+         }
+      }
+
       /// <summary>
       /// A regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
@@ -39,6 +56,19 @@ namespace MvcCodeRouting {
       /// </summary>
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
       public bool CatchAll { get; set; }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
+      /// </summary>
+      public FromRouteAttribute() { }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
+      /// using the specified token name.
+      /// </summary>
+      public FromRouteAttribute(string tokenName) {
+         this.TokenName = tokenName;
+      }
 
       /// <summary>
       /// Gets the model binder used to bind the decorated parameter.
@@ -57,7 +87,26 @@ namespace MvcCodeRouting {
       /// <returns>The bound value.</returns>
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
-         bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
+         RouteValueDictionary values = controllerContext.RouteData.Values;
+
+         string paramName = (this.TokenName != null
+            && !String.Equals(bindingContext.ModelName, this.TokenName, StringComparison.OrdinalIgnoreCase)
+            && !values.ContainsKey(bindingContext.ModelName)) ?
+            bindingContext.ModelName
+            : null;
+
+         if (paramName != null) {
+
+            values = new RouteValueDictionary(values) { 
+               { paramName, values[this.TokenName] }
+            };
+
+            bindingContext.ValueProvider = new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture);
+         
+         } else {
+            
+            bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
+         }
 
          return ModelBinders.Binders.DefaultBinder.BindModel(controllerContext, bindingContext);
       }

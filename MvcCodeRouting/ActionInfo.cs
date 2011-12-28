@@ -127,7 +127,7 @@ namespace MvcCodeRouting {
 
          bool isCatchAll = routeAttr.CatchAll;
 
-         return new TokenInfo(name, constraint, isOptional, isCatchAll);
+         return new TokenInfo(routeAttr.TokenName ?? name, constraint, isOptional, isCatchAll);
       }
 
       public ActionInfo(ControllerInfo controller) {

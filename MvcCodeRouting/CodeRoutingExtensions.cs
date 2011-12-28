@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
    public static class CodeRoutingExtensions {
 
       static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
-      static readonly ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>> controllerDataCache = new ConcurrentDictionary<Type, Tuple<ModelMetadata, string[]>>();
+      static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
 
       /// <summary>
       /// Creates routes for the specified root controller and all other controllers
@@ -276,20 +276,13 @@ namespace MvcCodeRouting {
 
          if (controller == null) throw new ArgumentNullException("controller");
 
-         var controllerData = controllerDataCache.GetOrAdd(controller.GetType(), (type) => {
+         var controllerData = controllerDataCache
+            .GetOrAdd(controller.GetType(), (type) => new ControllerData(type));
 
-            var metadataProvider = new EmptyModelMetadataProvider();
-            var controllerMetadata = metadataProvider.GetMetadataForType(null, type);
+         if (controllerData.Properties.Length == 0)
+            return;
 
-            var properties =
-               (from p in type.GetProperties()
-                where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
-                select p.Name).ToArray();
-
-            return Tuple.Create(controllerMetadata, properties);
-         });
-
-         var metadata = controllerData.Item1;
+         ModelMetadata metadata = controllerData.Metadata;
          metadata.Model = controller;
 
          var modelState = new ModelStateDictionary();
@@ -298,9 +291,32 @@ namespace MvcCodeRouting {
             FallbackToEmptyPrefix = true,
             ModelMetadata = metadata,
             ModelState = modelState,
-            PropertyFilter = (p) => controllerData.Item2.Contains(p, StringComparer.Ordinal),
-            ValueProvider = new RouteDataValueProvider(controller.ControllerContext)
+            PropertyFilter = (p) => controllerData.Properties.Contains(p, StringComparer.Ordinal),
          };
+
+         RouteValueDictionary values = null;
+         bool hasCustomValues = false;
+
+         if (controllerData.HasCustomTokens) {
+
+            values = new RouteValueDictionary(controller.ControllerContext.RouteData.Values);
+            
+            for (int i = 0; i < controllerData.CustomTokens.Length; i++) {
+               string tokenName = controllerData.CustomTokens[i];
+               string propertyName = controllerData.Properties[i];
+
+               if (tokenName != null 
+                  && !values.ContainsKey(propertyName)) {
+                  
+                  values[propertyName] = values[tokenName];
+                  hasCustomValues = true;
+               }
+            }
+         }
+
+         bindingContext.ValueProvider = (hasCustomValues) ?
+            new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture)
+            : new RouteDataValueProvider(controller.ControllerContext);
 
          ModelBinders.Binders.DefaultBinder.BindModel(controller.ControllerContext, bindingContext);
 
@@ -314,6 +330,39 @@ namespace MvcCodeRouting {
                throw new HttpException(statusCode, message, error.Exception);
 
             throw new HttpException(statusCode, message);
+         }
+      }
+
+      class ControllerData {
+
+         public readonly ModelMetadata Metadata;
+         public readonly string[] Properties;
+         public readonly string[] CustomTokens;
+         public readonly bool HasCustomTokens;
+
+         public ControllerData(Type type) {
+
+            var metadataProvider = new EmptyModelMetadataProvider();
+            
+            this.Metadata = metadataProvider.GetMetadataForType(null, type);
+
+            var properties =
+               (from p in type.GetProperties()
+                let attr = p.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+                  .Cast<FromRouteAttribute>()
+                  .SingleOrDefault()
+                where attr != null
+                select new {
+                   PropertyName = p.Name,
+                   CustomTokenName = (attr.TokenName != null
+                      && !String.Equals(p.Name, attr.TokenName, StringComparison.OrdinalIgnoreCase)) ?
+                         attr.TokenName
+                         : null
+                }).ToArray();
+
+            this.Properties = properties.Select(p => p.PropertyName).ToArray();
+            this.CustomTokens = properties.Select(p => p.CustomTokenName).ToArray();
+            this.HasCustomTokens = this.CustomTokens.Any(s => s != null);
          }
       }
    }
