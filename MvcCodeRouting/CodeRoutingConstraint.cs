@@ -23,7 +23,7 @@ namespace MvcCodeRouting {
    
    class CodeRoutingConstraint : IRouteConstraint {
 
-      public const string Key = "__mvccoderouting";
+      public const string Key = "__routecontext";
 
       public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
 
@@ -31,7 +31,7 @@ namespace MvcCodeRouting {
             return true;
 
          string valuesContext = values[Key] as string ?? "";
-         string routeContext = route.DataTokens[DataTokenKeys.CodeRoutingContext] as string ?? "";
+         string routeContext = route.DataTokens[DataTokenKeys.RouteContext] as string ?? "";
 
          return String.Equals(valuesContext, routeContext, StringComparison.OrdinalIgnoreCase);
       }

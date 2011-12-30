@@ -197,10 +197,10 @@ namespace MvcCodeRouting {
             sb.Append(");");
 
 #if DEBUG
-         string crContext = route.DataTokens[DataTokenKeys.CodeRoutingContext] as string;
+         string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
 
          if (crContext != null)
-            sb.AppendLine().AppendFormat("    <span class='comment'>// {0}: \"{1}\"</span>", DataTokenKeys.CodeRoutingContext, crContext);
+            sb.AppendLine().AppendFormat("    <span class='comment'>// {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
 #endif
          }
 
@@ -344,11 +344,11 @@ namespace MvcCodeRouting {
 
             sb.Append(")");
 
-            string crContext = route.DataTokens[DataTokenKeys.CodeRoutingContext] as string;
+            string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
 
 #if DEBUG
          if (crContext != null)
-            sb.AppendLine().AppendFormat("    <span class='comment'>' {0}: \"{1}\"</span>", DataTokenKeys.CodeRoutingContext, crContext);
+            sb.AppendLine().AppendFormat("    <span class='comment'>' {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
 #endif
          }
 

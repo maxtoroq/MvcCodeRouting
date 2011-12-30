@@ -109,7 +109,7 @@ namespace MvcCodeRouting {
          var dataTokens = new RouteValueDictionary { 
             { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
             { DataTokenKeys.BaseRoute, first.Controller.Register.BaseRoute },
-            { DataTokenKeys.CodeRoutingContext, String.Join("/", first.Controller.CodeRoutingContext) },
+            { DataTokenKeys.RouteContext, String.Join("/", first.Controller.CodeRoutingContext) },
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{'))) }
          };
 
@@ -141,7 +141,7 @@ namespace MvcCodeRouting {
 
          if (values != null
             && (controller = values["controller"] as string) != null
-            && (currentRouteContext = routeData.DataTokens[DataTokenKeys.CodeRoutingContext] as string) != null) {
+            && (currentRouteContext = routeData.DataTokens[DataTokenKeys.RouteContext] as string) != null) {
 
             string routeContext = currentRouteContext;
             bool valuesHasRouteContext = values.ContainsKey(CodeRoutingConstraint.Key);
