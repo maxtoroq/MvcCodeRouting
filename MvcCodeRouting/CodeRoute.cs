@@ -34,29 +34,34 @@ namespace MvcCodeRouting {
          if (actions == null) throw new ArgumentNullException("actions");
 
          ActionInfo first = actions.First();
-         var controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
-         var actionNames = actions.Select(a => a.ActionSegment).Distinct().ToList();
+         
+         List<string> controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
+         List<string> controllerSegments = actions.Select(a => a.Controller.ControllerSegment).Distinct().ToList();
+
+         if (controllerNames.Count != controllerSegments.Count)
+            throw new ArgumentException("", "actions");
+
+         List<string> actionNames = actions.Select(a => a.Name).Distinct().ToList();
+         List<string> actionSegments = actions.Select(a => a.ActionSegment).Distinct().ToList();
+         
+         if (actionNames.Count != actionSegments.Count)
+            throw new ArgumentException("", "actions");
 
          bool hardcodeController = controllerNames.Count == 1;
-         bool hardcodeAction = actionNames.Count == 1
+         bool hardcodeAction = actionSegments.Count == 1
             && !first.IsDefaultAction;
 
-         List<string> segments = new List<string>();
-         segments.Add(first.Controller.UrlTemplate);
-
-         if (hardcodeController)
-            segments[0] = first.Controller.ControllerUrl;
+         var segments = new List<string> { 
+            (hardcodeController ? 
+               first.Controller.ControllerUrl 
+               : first.Controller.UrlTemplate)
+         };
 
          if (first.CustomRoute != null) {
             segments.Add(first.CustomRoute);
 
          } else {
-
-            segments.Add("{action}");
-
-            if (hardcodeAction)
-               segments[1] = first.ActionSegment;
-
+            segments.Add(hardcodeAction ? first.ActionSegment : "{action}");
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
          }
 
@@ -69,10 +74,11 @@ namespace MvcCodeRouting {
 
          string defaultAction = null;
 
-         if (actionNames.Count == 1) {
+         if (actionSegments.Count == 1) {
             defaultAction = first.ActionSegment;
+
          } else {
-            var defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
+            ActionInfo defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
 
             if (defAction != null)
                defaultAction = defAction.ActionSegment;
@@ -81,18 +87,18 @@ namespace MvcCodeRouting {
          if (defaultAction != null)
             defaults.Add("action", defaultAction);
 
-         var parameters = first.RouteParameters;
+         TokenInfoCollection parameters = first.RouteParameters;
 
          foreach (var param in parameters.Where(p => p.IsOptional))
             defaults.Add(param.Name, UrlParameter.Optional);
 
          var constraints = new RouteValueDictionary();
 
-         if (!hardcodeController) 
-            constraints.Add("controller", String.Join("|", actions.Select(a => a.Controller.ControllerSegment).Distinct()));
+         if (!hardcodeController)
+            constraints.Add("controller", String.Join("|", controllerSegments));
 
-         if (!hardcodeAction || actionNames.Count > 1)
-            constraints.Add("action", String.Join("|", actionNames));
+         if (!hardcodeAction || actionSegments.Count > 1)
+            constraints.Add("action", String.Join("|", actionSegments));
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 

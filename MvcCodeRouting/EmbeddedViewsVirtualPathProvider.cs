@@ -226,7 +226,7 @@ namespace MvcCodeRouting {
             }
 
             List<string> parts = virtualPath.Split('/').ToList();
-            parts.RemoveAt(0); // Assembly name
+            parts.RemoveAt(0); // Root namespace
             parts.InsertRange(1, this.basePathParts.Skip(1));
 
             return String.Join("/", parts);

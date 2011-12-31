@@ -33,8 +33,6 @@ namespace MvcCodeRouting {
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
-      const string DefaultAction = "Index";
-
       readonly ControllerDescriptor controllerDescr;
 
       ReadOnlyCollection<string> _CodeRoutingNamespace;
@@ -48,7 +46,6 @@ namespace MvcCodeRouting {
 
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
-      public string DefaultActionName { get; private set; }
 
       public string Name {
          get {
@@ -301,7 +298,6 @@ namespace MvcCodeRouting {
          
          this.Type = type;
          this.Register = registerInfo;
-         this.DefaultActionName = DefaultAction;
 
          if (createActionInvoker != null) {
             

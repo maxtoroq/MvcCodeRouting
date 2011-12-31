@@ -72,8 +72,7 @@ namespace MvcCodeRouting {
       public bool IsDefaultAction {
          get {
             return RouteParameters.Count == 0
-               && Controller.DefaultActionName != null
-               && NameEquals(ActionSegment, Controller.DefaultActionName);
+               && NameEquals(Name, "Index");
          }
       }
 
