@@ -71,6 +71,11 @@ namespace MvcCodeRouting {
       public bool EnableEmbeddedViews { get; set; }
 
       /// <summary>
+      /// true to include an {id} token for actions with a parameter named id.
+      /// </summary>
+      public bool UseImplicitIdToken { get; set; }
+
+      /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class.
       /// </summary>
       public CodeRoutingSettings() {

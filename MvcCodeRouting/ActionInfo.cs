@@ -64,6 +64,18 @@ namespace MvcCodeRouting {
                );
 
                CheckCatchAllParamIsLast(_RouteParameters);
+
+               if (_RouteParameters.Count == 0
+                  && Controller.Register.Settings.UseImplicitIdToken) {
+
+                  ActionParameterInfo id = Parameters.FirstOrDefault(p => p.Name.Equals("id", StringComparison.OrdinalIgnoreCase));
+
+                  if (id != null) {
+                     _RouteParameters = new TokenInfoCollection(
+                        new[] { CreateTokenInfo(id) }
+                     );
+                  }
+               }
             }
             return _RouteParameters;
          }
@@ -112,21 +124,25 @@ namespace MvcCodeRouting {
 
       static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {
 
-         string name = actionParam.Name;
+         string tokenName = actionParam.Name;
+         string constraint = null;
          bool isOptional = actionParam.IsOptional;
+         bool isCatchAll = false;
 
          var routeAttr = actionParam.FromRouteAttribute;
 
-         string constraint = routeAttr.Constraint;
+         if (routeAttr != null) {
+            constraint = routeAttr.Constraint;
+            isCatchAll = routeAttr.CatchAll;
+            tokenName = routeAttr.TokenName ?? tokenName;
+         }
 
          if (constraint == null) {
             Type t = (actionParam.IsNullableValueType) ? Nullable.GetUnderlyingType(actionParam.Type) : actionParam.Type;
             actionParam.Action.Controller.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
          }
 
-         bool isCatchAll = routeAttr.CatchAll;
-
-         return new TokenInfo(routeAttr.TokenName ?? name, constraint, isOptional, isCatchAll);
+         return new TokenInfo(tokenName, constraint, isOptional, isCatchAll);
       }
 
       public ActionInfo(ControllerInfo controller) {

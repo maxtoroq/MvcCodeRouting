@@ -28,7 +28,6 @@ namespace MvcCodeRouting {
    /// </summary>
    public static class CodeRoutingExtensions {
 
-      static readonly List<ActionInfo> registeredActions = new List<ActionInfo>();
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
 
       /// <summary>
@@ -91,9 +90,7 @@ namespace MvcCodeRouting {
             .SelectMany(c => c.Actions)
             .ToArray();
 
-         registeredActions.AddRange(actions);
-
-         CheckNoAmbiguousUrls(registeredActions);
+         CheckNoAmbiguousUrls(actions);
 
          var groupedActions = GroupActions(actions);
 
