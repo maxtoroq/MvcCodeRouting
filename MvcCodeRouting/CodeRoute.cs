@@ -28,6 +28,7 @@ namespace MvcCodeRouting {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
 
+      readonly IDictionary<string, string> controllerMapping;
       readonly IDictionary<string, string> actionMapping;
 
       public Collection<string> NonActionParameterTokens { get; private set; }
@@ -43,9 +44,9 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer)) 
             controllerMapping.Add(name, actions.First(a => ControllerInfo.NameEquals(a.Controller.Name, name)).Controller.ControllerSegment);
 
-         ICollection<string> controllerNames = controllerMapping.Keys;
-         ICollection<string> controllerSegments = controllerMapping.Values;
-         bool hardcodeController = controllerNames.Count == 1;
+         bool hardcodeController = controllerMapping.Count == 1;
+         bool controllerFormat = controllerMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
+         bool requiresControllerMapping = controllerFormat && !hardcodeController;
 
          var segments = new List<string> { 
             (hardcodeController ? 
@@ -58,10 +59,10 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
-         bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool hardcodeAction = actionMapping.Count == 1 && !first.IsDefaultAction;
-         bool actionFormatToken = actionFormat && !hardcodeAction;
-         string actionToken = (actionFormatToken) ? "__action" : "action";
+         bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
+         bool requiresActionMapping = actionFormat && !hardcodeAction;
+         string actionToken = "action";
 
          if (first.CustomRoute != null) {
             segments.Add(first.CustomRoute);
@@ -76,13 +77,13 @@ namespace MvcCodeRouting {
 
          var defaults = new RouteValueDictionary();
 
-         if (controllerNames.Count == 1)
-            defaults.Add("controller", controllerNames.First());
+         if (controllerMapping.Count == 1)
+            defaults.Add("controller", controllerMapping.Keys.First());
 
          string defaultAction = null;
 
          if (actionMapping.Count == 1) {
-            defaultAction = (actionFormatToken) ?
+            defaultAction = (requiresActionMapping) ?
                first.ActionSegment
                : first.Name;
 
@@ -90,7 +91,7 @@ namespace MvcCodeRouting {
             ActionInfo defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
 
             if (defAction != null)
-               defaultAction = (actionFormatToken) ?
+               defaultAction = (requiresActionMapping) ?
                   defAction.ActionSegment
                   : defAction.Name;
          }
@@ -106,7 +107,7 @@ namespace MvcCodeRouting {
          var constraints = new RouteValueDictionary();
 
          if (!hardcodeController)
-            constraints.Add("controller", String.Join("|", controllerSegments));
+            constraints.Add("controller", String.Join("|", controllerMapping.Values));
 
          if (!hardcodeAction)
             constraints.Add(actionToken, String.Join("|", actionMapping.Values));
@@ -137,16 +138,21 @@ namespace MvcCodeRouting {
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
-         return new CodeRoute(url, actionFormatToken ? actionMapping : null, nonActionParameterTokens.ToArray()) { 
+         return new CodeRoute(
+            url: url,
+            controllerMapping: (requiresControllerMapping) ? controllerMapping : null,
+            actionMapping: (requiresActionMapping) ? actionMapping : null,
+            nonActionParameterTokens: nonActionParameterTokens.ToArray()) { 
             Constraints = constraints,
             DataTokens = dataTokens,
             Defaults = defaults
          };
       }
 
-      private CodeRoute(string url, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
+      private CodeRoute(string url, IDictionary<string, string> controllerMapping, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
          : base(url, new MvcRouteHandler()) {
 
+         this.controllerMapping = controllerMapping;
          this.actionMapping = actionMapping;
          this.NonActionParameterTokens = new Collection<string>(nonActionParameterTokens);
       }
@@ -158,16 +164,28 @@ namespace MvcCodeRouting {
          if (data != null) {
             
             RouteValueDictionary values = data.Values;
-            string action = values["action"] as string;
-            string __action = values["__action"] as string;
 
-            if (action == null
-               && __action != null) {
+            if (this.controllerMapping != null) {
+               string controller = values["controller"] as string;
 
-               values["action"] = this.actionMapping
-                  .Single(p => String.Equals(p.Value, __action, StringComparison.OrdinalIgnoreCase))
-                  .Key;
-            } 
+               if (controller != null) {
+
+                  values["controller"] = this.controllerMapping
+                     .Single(p => String.Equals(p.Value, controller, StringComparison.OrdinalIgnoreCase))
+                     .Key;
+               }
+            }
+
+            if (this.actionMapping != null) {
+               string action = values["action"] as string;
+
+               if (action != null) {
+
+                  values["action"] = this.actionMapping
+                     .Single(p => String.Equals(p.Value, action, StringComparison.OrdinalIgnoreCase))
+                     .Key;
+               }  
+            }
          }
 
          return data;
@@ -178,69 +196,70 @@ namespace MvcCodeRouting {
          if (values == null)
             return base.GetVirtualPath(requestContext, values);
 
-         string action = null;
+         string originalAction = null;
 
          bool cleanupAction = this.actionMapping != null
-            && SetAction(values, out action);
+            && SetAction(values, out originalAction);
 
-         string controller;
+         string originalController;
          bool abort;
 
-         bool cleanupRouteContext = SetRouteContext(values, requestContext.RouteData, out controller, out abort);
+         bool cleanupRouteContext = SetRouteContext(values, requestContext.RouteData, out originalController, out abort);
+
+         string controller = null;
+
+         bool cleanupController = this.controllerMapping != null
+            && SetController(values, out controller);
 
          VirtualPathData virtualPath = (!abort)? 
             base.GetVirtualPath(requestContext, values)
             : null;
 
-         if (cleanupAction) {
-            
-            values.Remove("__action");
-            values["action"] = action;
-         }
+         if (cleanupAction)
+            CleanupAction(virtualPath, values, originalAction);
 
-         if (cleanupRouteContext) {
+         if (cleanupRouteContext) 
+            CleanupRouteContext(virtualPath, values, originalController);
 
-            // See issue #291
-            if (virtualPath == null)
-               values["controller"] = controller;
-
-            values.Remove(CodeRoutingConstraint.Key);
-         }
+         if (cleanupController && !cleanupRouteContext)
+            CleanupController(virtualPath, values, controller);
 
          return virtualPath;
       }
 
-      bool SetAction(RouteValueDictionary values, out string action) { 
+      bool SetAction(RouteValueDictionary values, out string originalAction) { 
 
-         action = values["action"] as string;
+         originalAction = values["action"] as string;
 
-         if (action == null)
+         if (originalAction == null)
             return false;
 
-         values["__action"] = this.actionMapping.ContainsKey(action) ?
-            this.actionMapping[action]
-            : action;
-
-         values.Remove("action");
+         values["action"] = this.actionMapping.ContainsKey(originalAction) ?
+            this.actionMapping[originalAction]
+            : originalAction;
 
          return true;
       }
 
-      bool SetRouteContext(RouteValueDictionary values, RouteData routeData, out string controller, out bool abort) {
+      void CleanupAction(VirtualPathData virtualPath, RouteValueDictionary values, string originalAction) {
+         values["action"] = originalAction;
+      }
+
+      bool SetRouteContext(RouteValueDictionary values, RouteData routeData, out string originalController, out bool abort) {
 
          string currentRouteContext;
          abort = false;
 
-         if ((controller = values["controller"] as string) == null
+         if ((originalController = values["controller"] as string) == null
             || (currentRouteContext = routeData.DataTokens[DataTokenKeys.RouteContext] as string) == null
             || values.ContainsKey(CodeRoutingConstraint.Key))
             return false;
 
          string routeContext = currentRouteContext;
 
-         if (controller.Length > 0) {
+         if (originalController.Length > 0) {
 
-            StringBuilder theController = new StringBuilder(controller);
+            StringBuilder theController = new StringBuilder(originalController);
 
             List<string> routeContextSegments = (routeContext.Length > 0) ?
                routeContext.Split('/').ToList()
@@ -306,6 +325,36 @@ namespace MvcCodeRouting {
          values[CodeRoutingConstraint.Key] = routeContext;
 
          return true;
+      }
+
+      void CleanupRouteContext(VirtualPathData virtualPath, RouteValueDictionary values, string originalController) {
+
+         // See issue #291
+         // When the route matches don't change the controller back to it's original value
+         // because it's used by ASP.NET MVC on child requests (e.g. Html.Action())
+         // to locate the controller (DefaultControllerFactory).
+         if (virtualPath == null)
+            values["controller"] = originalController;
+
+         values.Remove(CodeRoutingConstraint.Key);
+      }
+
+      bool SetController(RouteValueDictionary values, out string originalController) {
+
+         originalController = values["controller"] as string;
+         
+         if (originalController == null)
+            return false;
+
+         values["controller"] = this.controllerMapping.ContainsKey(originalController) ?
+            this.controllerMapping[originalController]
+            : originalController;
+
+         return true;
+      }
+
+      void CleanupController(VirtualPathData virtualPath, RouteValueDictionary values, string originalController) {
+         values["controller"] = originalController;
       }
    }
 }
