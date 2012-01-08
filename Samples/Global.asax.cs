@@ -24,14 +24,8 @@ namespace Samples {
          routes.MapCodeRoutes(
             rootController: typeof(Controllers.HomeController),
             settings: new CodeRoutingSettings {
-               RouteFormatter = args => { 
-                  
-                  if (args.ControllerType == typeof(Controllers.SomeLongNamespace.SomeLongControllerController)
-                     && new[] { RouteSegmentType.Namespace, RouteSegmentType.Controller }.Contains(args.SegmentType))
-                     return Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1").ToLowerInvariant();
-
-                  return args.OriginalSegment;
-               }
+               RouteFormatter = args => 
+                  Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1").ToLowerInvariant()
             }
          );
       }

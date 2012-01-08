@@ -40,7 +40,7 @@ namespace MvcCodeRouting {
       public string ActionSegment {
          get {
             if (_ActionSegment == null) 
-               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: true);
+               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: false);
             return _ActionSegment;
          }
       }

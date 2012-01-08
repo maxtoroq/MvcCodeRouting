@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -27,6 +28,8 @@ namespace MvcCodeRouting {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
 
+      readonly IDictionary<string, string> actionMapping;
+
       public Collection<string> NonActionParameterTokens { get; private set; }
 
       internal static CodeRoute Create(IEnumerable<ActionInfo> actions) {
@@ -34,22 +37,15 @@ namespace MvcCodeRouting {
          if (actions == null) throw new ArgumentNullException("actions");
 
          ActionInfo first = actions.First();
-         
-         List<string> controllerNames = actions.Select(a => a.Controller.Name).Distinct().ToList();
-         List<string> controllerSegments = actions.Select(a => a.Controller.ControllerSegment).Distinct().ToList();
 
-         if (controllerNames.Count != controllerSegments.Count)
-            throw new ArgumentException("", "actions");
+         var controllerMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-         List<string> actionNames = actions.Select(a => a.Name).Distinct().ToList();
-         List<string> actionSegments = actions.Select(a => a.ActionSegment).Distinct().ToList();
-         
-         if (actionNames.Count != actionSegments.Count)
-            throw new ArgumentException("", "actions");
+         foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer)) 
+            controllerMapping.Add(name, actions.First(a => ControllerInfo.NameEquals(a.Controller.Name, name)).Controller.ControllerSegment);
 
+         ICollection<string> controllerNames = controllerMapping.Keys;
+         ICollection<string> controllerSegments = controllerMapping.Values;
          bool hardcodeController = controllerNames.Count == 1;
-         bool hardcodeAction = actionSegments.Count == 1
-            && !first.IsDefaultAction;
 
          var segments = new List<string> { 
             (hardcodeController ? 
@@ -57,11 +53,22 @@ namespace MvcCodeRouting {
                : first.Controller.UrlTemplate)
          };
 
+         var actionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+         foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
+            actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
+
+         bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
+         bool hardcodeAction = actionMapping.Count == 1 && !first.IsDefaultAction;
+         bool actionFormatToken = actionFormat && !hardcodeAction;
+         string actionToken = (actionFormatToken) ? "__action" : "action";
+
          if (first.CustomRoute != null) {
             segments.Add(first.CustomRoute);
 
          } else {
-            segments.Add(hardcodeAction ? first.ActionSegment : "{action}");
+
+            segments.Add(hardcodeAction ? first.ActionSegment : String.Concat("{", actionToken, "}"));
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
          }
 
@@ -74,18 +81,22 @@ namespace MvcCodeRouting {
 
          string defaultAction = null;
 
-         if (actionSegments.Count == 1) {
-            defaultAction = first.ActionSegment;
+         if (actionMapping.Count == 1) {
+            defaultAction = (actionFormatToken) ?
+               first.ActionSegment
+               : first.Name;
 
          } else {
             ActionInfo defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
 
             if (defAction != null)
-               defaultAction = defAction.ActionSegment;
+               defaultAction = (actionFormatToken) ?
+                  defAction.ActionSegment
+                  : defAction.Name;
          }
 
          if (defaultAction != null)
-            defaults.Add("action", defaultAction);
+            defaults.Add(actionToken, defaultAction);
 
          TokenInfoCollection parameters = first.RouteParameters;
 
@@ -97,8 +108,8 @@ namespace MvcCodeRouting {
          if (!hardcodeController)
             constraints.Add("controller", String.Join("|", controllerSegments));
 
-         if (!hardcodeAction || actionSegments.Count > 1)
-            constraints.Add("action", String.Join("|", actionSegments));
+         if (!hardcodeAction)
+            constraints.Add(actionToken, String.Join("|", actionMapping.Values));
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 
@@ -126,111 +137,175 @@ namespace MvcCodeRouting {
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
-         return new CodeRoute(url, nonActionParameterTokens.ToArray()) { 
+         return new CodeRoute(url, actionFormatToken ? actionMapping : null, nonActionParameterTokens.ToArray()) { 
             Constraints = constraints,
             DataTokens = dataTokens,
             Defaults = defaults
          };
       }
 
-      private CodeRoute(string url, string[] nonActionParameterTokens)
+      private CodeRoute(string url, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
          : base(url, new MvcRouteHandler()) {
 
+         this.actionMapping = actionMapping;
          this.NonActionParameterTokens = new Collection<string>(nonActionParameterTokens);
+      }
+
+      public override RouteData GetRouteData(HttpContextBase httpContext) {
+
+         RouteData data = base.GetRouteData(httpContext);
+
+         if (data != null) {
+            
+            RouteValueDictionary values = data.Values;
+            string action = values["action"] as string;
+            string __action = values["__action"] as string;
+
+            if (action == null
+               && __action != null) {
+
+               values["action"] = this.actionMapping
+                  .Single(p => String.Equals(p.Value, __action, StringComparison.OrdinalIgnoreCase))
+                  .Key;
+            } 
+         }
+
+         return data;
       }
 
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
 
+         if (values == null)
+            return base.GetVirtualPath(requestContext, values);
+
+         string action = null;
+
+         bool cleanupAction = this.actionMapping != null
+            && SetAction(values, out action);
+
          string controller;
-         string currentRouteContext;
-         RouteData routeData = requestContext.RouteData;
+         bool abort;
 
-         if (values != null
-            && (controller = values["controller"] as string) != null
-            && (currentRouteContext = routeData.DataTokens[DataTokenKeys.RouteContext] as string) != null) {
+         bool cleanupRouteContext = SetRouteContext(values, requestContext.RouteData, out controller, out abort);
 
-            string routeContext = currentRouteContext;
-            bool valuesHasRouteContext = values.ContainsKey(CodeRoutingConstraint.Key);
+         VirtualPathData virtualPath = (!abort)? 
+            base.GetVirtualPath(requestContext, values)
+            : null;
 
-            if (controller.Length > 0 && !valuesHasRouteContext) {
+         if (cleanupAction) {
+            
+            values.Remove("__action");
+            values["action"] = action;
+         }
 
-               StringBuilder theController = new StringBuilder(controller);
-
-               List<string> routeContextSegments = (routeContext.Length > 0) ?
-                  routeContext.Split('/').ToList()
-                  : new List<string>();
-
-               if (theController[0] == '~') {
-
-                  routeContextSegments.Clear();
-
-                  if (theController.Length > 1
-                     && theController[1] == '~') {
-
-                     theController.Remove(0, 2);
-
-                  } else {
-
-                     string baseRoute = routeData.DataTokens[DataTokenKeys.BaseRoute] as string;
-
-                     if (!String.IsNullOrEmpty(baseRoute))
-                        routeContextSegments.AddRange(baseRoute.Split('/'));
-
-                     theController.Remove(0, 1);
-                  }
-               
-               } else if (theController[0] == '+') {
-
-                  string currentController = (string)routeData.Values["controller"];
-                  routeContextSegments.Add(currentController);
-
-                  theController.Remove(0, 1);
-
-               } else if (theController[0] == '.' 
-                  && theController.Length > 1 
-                  && theController[1] == '.') {
-
-                  if (routeContextSegments.Count == 0)
-                     return null;
-
-                  routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
-                  theController.Remove(0, 2);
-               }
-
-               if (theController.Length > 1) {
-
-                  string[] controllerSegments = theController.ToString().Split('.');
-
-                  if (controllerSegments.Length > 1) {
-
-                     routeContextSegments.AddRange(controllerSegments.Take(controllerSegments.Length - 1));
-                     
-                     theController.Clear();
-                     theController.Append(controllerSegments.Last());
-                  }
-               }
-
-               routeContext = String.Join("/", routeContextSegments);
-
-               values["controller"] = theController.ToString();
-            }
-
-            if (!valuesHasRouteContext)
-               values[CodeRoutingConstraint.Key] = routeContext;
-
-            VirtualPathData virtualPath = base.GetVirtualPath(requestContext, values);
+         if (cleanupRouteContext) {
 
             // See issue #291
             if (virtualPath == null)
                values["controller"] = controller;
 
-            if (!valuesHasRouteContext)
-               values.Remove(CodeRoutingConstraint.Key);
-
-            return virtualPath;
+            values.Remove(CodeRoutingConstraint.Key);
          }
 
-         return base.GetVirtualPath(requestContext, values);
+         return virtualPath;
+      }
+
+      bool SetAction(RouteValueDictionary values, out string action) { 
+
+         action = values["action"] as string;
+
+         if (action == null)
+            return false;
+
+         values["__action"] = this.actionMapping.ContainsKey(action) ?
+            this.actionMapping[action]
+            : action;
+
+         values.Remove("action");
+
+         return true;
+      }
+
+      bool SetRouteContext(RouteValueDictionary values, RouteData routeData, out string controller, out bool abort) {
+
+         string currentRouteContext;
+         abort = false;
+
+         if ((controller = values["controller"] as string) == null
+            || (currentRouteContext = routeData.DataTokens[DataTokenKeys.RouteContext] as string) == null
+            || values.ContainsKey(CodeRoutingConstraint.Key))
+            return false;
+
+         string routeContext = currentRouteContext;
+
+         if (controller.Length > 0) {
+
+            StringBuilder theController = new StringBuilder(controller);
+
+            List<string> routeContextSegments = (routeContext.Length > 0) ?
+               routeContext.Split('/').ToList()
+               : new List<string>();
+
+            if (theController[0] == '~') {
+
+               routeContextSegments.Clear();
+
+               if (theController.Length > 1
+                  && theController[1] == '~') {
+
+                  theController.Remove(0, 2);
+
+               } else {
+
+                  string baseRoute = routeData.DataTokens[DataTokenKeys.BaseRoute] as string;
+
+                  if (!String.IsNullOrEmpty(baseRoute))
+                     routeContextSegments.AddRange(baseRoute.Split('/'));
+
+                  theController.Remove(0, 1);
+               }
+
+            } else if (theController[0] == '+') {
+
+               string currentController = (string)routeData.Values["controller"];
+               routeContextSegments.Add(currentController);
+
+               theController.Remove(0, 1);
+
+            } else if (theController[0] == '.'
+               && theController.Length > 1
+               && theController[1] == '.') {
+
+               if (routeContextSegments.Count == 0) {
+                  abort = true;
+                  return false;
+               }
+
+               routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
+               theController.Remove(0, 2);
+            }
+
+            if (theController.Length > 1) {
+
+               string[] controllerSegments = theController.ToString().Split('.');
+
+               if (controllerSegments.Length > 1) {
+
+                  routeContextSegments.AddRange(controllerSegments.Take(controllerSegments.Length - 1));
+
+                  theController.Clear();
+                  theController.Append(controllerSegments.Last());
+               }
+            }
+
+            routeContext = String.Join("/", routeContextSegments);
+
+            values["controller"] = theController.ToString(); 
+         }
+
+         values[CodeRoutingConstraint.Key] = routeContext;
+
+         return true;
       }
    }
 }
