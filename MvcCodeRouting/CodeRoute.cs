@@ -216,13 +216,13 @@ namespace MvcCodeRouting {
             : null;
 
          if (cleanupAction)
-            CleanupAction(virtualPath, values, originalAction);
+            CleanupAction(values, originalAction);
 
          if (cleanupRouteContext) 
             CleanupRouteContext(virtualPath, values, originalController);
 
          if (cleanupController && !cleanupRouteContext)
-            CleanupController(virtualPath, values, controller);
+            CleanupController(values, controller);
 
          return virtualPath;
       }
@@ -241,11 +241,11 @@ namespace MvcCodeRouting {
          return true;
       }
 
-      void CleanupAction(VirtualPathData virtualPath, RouteValueDictionary values, string originalAction) {
+      static void CleanupAction(RouteValueDictionary values, string originalAction) {
          values["action"] = originalAction;
       }
 
-      bool SetRouteContext(RouteValueDictionary values, RouteData routeData, out string originalController, out bool abort) {
+      static bool SetRouteContext(RouteValueDictionary values, RouteData routeData, out string originalController, out bool abort) {
 
          string currentRouteContext;
          abort = false;
@@ -327,7 +327,7 @@ namespace MvcCodeRouting {
          return true;
       }
 
-      void CleanupRouteContext(VirtualPathData virtualPath, RouteValueDictionary values, string originalController) {
+      static void CleanupRouteContext(VirtualPathData virtualPath, RouteValueDictionary values, string originalController) {
 
          // See issue #291
          // When the route matches don't change the controller back to it's original value
@@ -353,7 +353,7 @@ namespace MvcCodeRouting {
          return true;
       }
 
-      void CleanupController(VirtualPathData virtualPath, RouteValueDictionary values, string originalController) {
+      static void CleanupController(RouteValueDictionary values, string originalController) {
          values["controller"] = originalController;
       }
    }

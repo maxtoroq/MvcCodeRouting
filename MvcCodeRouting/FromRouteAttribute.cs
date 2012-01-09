@@ -37,7 +37,7 @@ namespace MvcCodeRouting {
       /// </summary>
       public string TokenName {
          get { return _TokenName; }
-         set {
+         private set {
             if (value != null && value.Length == 0)
                throw new ArgumentException("value cannot be empty.", "value");
 

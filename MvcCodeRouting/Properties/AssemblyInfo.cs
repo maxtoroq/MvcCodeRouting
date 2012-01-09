@@ -17,11 +17,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: AssemblyVersion("0.9.3")]
+[assembly: AssemblyVersion("0.9.4")]
 [assembly: AssemblyProduct("MvcCodeRouting")]
 [assembly: AssemblyTitle("MvcCodeRouting.dll")]
 [assembly: AssemblyDescription("MvcCodeRouting.dll")]
-[assembly: AssemblyCopyright("© 2011 Max Toro Q.")]
+[assembly: AssemblyCopyright("© 2011-2012 Max Toro Q.")]
 [assembly: AssemblyCompany("http://mvccoderouting.codeplex.com/")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliantAttribute(true)]
