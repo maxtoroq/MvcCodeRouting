@@ -66,6 +66,7 @@ namespace MvcCodeRouting {
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
       /// using the specified token name.
       /// </summary>
+      /// <param name="tokenName">The token name.</param>
       public FromRouteAttribute(string tokenName) {
          this.TokenName = tokenName;
       }
