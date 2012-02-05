@@ -23,6 +23,7 @@ namespace MvcCodeRouting {
    class DescriptedActionParameterInfo : ActionParameterInfo {
 
       readonly ParameterDescriptor paramDescr;
+      readonly ReflectedParameterDescriptor reflectedParamDescr;
 
       public override string Name {
          get { return paramDescr.ParameterName; }
@@ -35,6 +36,7 @@ namespace MvcCodeRouting {
       public override bool IsOptional {
          get {
             return paramDescr.DefaultValue != null
+               || (reflectedParamDescr != null && reflectedParamDescr.ParameterInfo.IsOptional)
                || IsNullableValueType;
          }
       }
@@ -43,6 +45,7 @@ namespace MvcCodeRouting {
          : base(action) {
 
          this.paramDescr = paramDescr;
+         this.reflectedParamDescr = paramDescr as ReflectedParameterDescriptor;
       }
 
       public override object[] GetCustomAttributes(bool inherit) {
