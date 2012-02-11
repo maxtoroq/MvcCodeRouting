@@ -22,7 +22,7 @@ namespace MvcCodeRouting {
    /// <summary>
    /// Provides data for custom route formatting.
    /// </summary>
-   /// <see cref="CodeRoutingSettings.RouteFormatter"/>
+   /// <seealso cref="CodeRoutingSettings.RouteFormatter"/>
    public class RouteFormatterArgs {
 
       /// <summary>
