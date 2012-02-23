@@ -27,6 +27,8 @@ namespace MvcCodeRouting {
    /// </summary>
    public class CodeRoutingSettings {
 
+      // IMPORTANT: When new properties are added ctor(CodeRoutingSettings) must be updated.
+
       Func<RouteFormatterArgs, string> _RouteFormatter;
       readonly IDictionary<Type, string> _DefaultConstraints;
       readonly Collection<Type> _IgnoredControllers;
@@ -105,11 +107,16 @@ namespace MvcCodeRouting {
          
          if (settings == null) throw new ArgumentNullException("settings");
 
-         _IgnoredControllers = new Collection<Type>(settings.IgnoredControllers);
+         _IgnoredControllers = new Collection<Type>();
+
+         foreach (var item in settings.IgnoredControllers) 
+            _IgnoredControllers.Add(item);
+
          _DefaultConstraints = new Dictionary<Type, string>(settings.DefaultConstraints);
          
          this.RouteFormatter = settings.RouteFormatter;
          this.EnableEmbeddedViews = settings.EnableEmbeddedViews;
+         this.UseImplicitIdToken = settings.UseImplicitIdToken;
       }
 
       internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {
