@@ -24,8 +24,8 @@ namespace Samples {
          routes.MapCodeRoutes(
             rootController: typeof(Controllers.HomeController),
             settings: new CodeRoutingSettings {
-               RouteFormatter = args => 
-                  Regex.Replace(args.OriginalSegment, @"(\B[A-Z])", "-$1").ToLowerInvariant()
+               RouteFormatter = args =>
+                  Regex.Replace(args.OriginalSegment, @"([a-z])([A-Z])", "$1-$2").ToLowerInvariant()
             }
          );
       }

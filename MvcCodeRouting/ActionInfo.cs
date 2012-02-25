@@ -124,22 +124,19 @@ namespace MvcCodeRouting {
 
       static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {
 
+         FromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
+
          string tokenName = actionParam.Name;
-         string constraint = null;
+         string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(actionParam.Type, routeAttr);
          bool isOptional = actionParam.IsOptional;
          bool isCatchAll = false;
 
-         var routeAttr = actionParam.FromRouteAttribute;
-
          if (routeAttr != null) {
-            constraint = routeAttr.Constraint;
-            isCatchAll = routeAttr.CatchAll;
-            tokenName = routeAttr.TokenName ?? tokenName;
-         }
 
-         if (constraint == null) {
-            Type t = (actionParam.IsNullableValueType) ? Nullable.GetUnderlyingType(actionParam.Type) : actionParam.Type;
-            actionParam.Action.Controller.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
+            isCatchAll = routeAttr.CatchAll;
+
+            if (routeAttr.TokenName != null)
+               tokenName = routeAttr.TokenName;
          }
 
          return new TokenInfo(tokenName, constraint, isOptional, isCatchAll);

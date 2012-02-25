@@ -137,5 +137,30 @@ namespace MvcCodeRouting {
 
          return formattedSegment;
       }
+
+      internal string GetConstraintForType(Type type, FromRouteAttribute routeAttr) {
+
+         bool isNullableValueType = type.IsGenericType 
+            && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+         string constraint = null;
+
+         if (routeAttr != null)
+            constraint = routeAttr.Constraint;
+
+         if (constraint == null) {
+            type = (isNullableValueType) ? Nullable.GetUnderlyingType(type) : type;
+
+            this.DefaultConstraints.TryGetValue(type, out constraint);
+
+            if (constraint == null
+               && type.IsEnum) {
+
+               constraint = String.Join("|", Enum.GetNames(type));
+            }
+         }
+
+         return constraint;
+      }
    }
 }

@@ -345,22 +345,15 @@ namespace MvcCodeRouting {
       TokenInfo CreateTokenInfo(PropertyInfo property) {
 
          Type propertyType = property.PropertyType;
-         bool isNullableValueType = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-
-         string name = property.Name;
 
          var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
             .Cast<FromRouteAttribute>()
             .Single();
 
-         string constraint = routeAttr.Constraint;
+         string name = routeAttr.TokenName ?? property.Name;
+         string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
-         if (constraint == null) {
-            Type t = (isNullableValueType) ? Nullable.GetUnderlyingType(propertyType) : propertyType;
-            this.Register.Settings.DefaultConstraints.TryGetValue(t, out constraint);
-         }
-
-         return new TokenInfo(routeAttr.TokenName ?? name, constraint);
+         return new TokenInfo(name, constraint);
       }
    }
 }
