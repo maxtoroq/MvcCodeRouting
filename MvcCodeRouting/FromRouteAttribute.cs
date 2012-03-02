@@ -109,7 +109,9 @@ namespace MvcCodeRouting {
             bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
          }
 
-         return ModelBinders.Binders.DefaultBinder.BindModel(controllerContext, bindingContext);
+         IModelBinder binder = ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
+
+         return binder.BindModel(controllerContext, bindingContext);
       }
    }
 }

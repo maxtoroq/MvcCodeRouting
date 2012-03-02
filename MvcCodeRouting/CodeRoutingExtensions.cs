@@ -313,7 +313,9 @@ namespace MvcCodeRouting {
             new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture)
             : new RouteDataValueProvider(controller.ControllerContext);
 
-         ModelBinders.Binders.DefaultBinder.BindModel(controller.ControllerContext, bindingContext);
+         IModelBinder binder = ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
+
+         binder.BindModel(controller.ControllerContext, bindingContext);
 
          if (!modelState.IsValid) {
             ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First(); 
