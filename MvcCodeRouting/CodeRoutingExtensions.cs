@@ -149,8 +149,7 @@ namespace MvcCodeRouting {
                 a.Controller.Namespace,
                 NamespaceSegments = String.Join("/", a.Controller.NamespaceSegments),
                 DeclaringType = declaringType,
-                CustomRoute = (a.CustomRoute != null ?
-                  a : (object)""),
+                a.CustomRoute,
                 HasRouteParameters = (a.RouteParameters.Count > 0)
              } into g
              orderby g.Key.IsRootController descending,

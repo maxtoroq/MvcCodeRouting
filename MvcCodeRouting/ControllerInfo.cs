@@ -202,6 +202,7 @@ namespace MvcCodeRouting {
                );
 
                CheckOverloads(_Actions);
+               CheckCustomRoutes(_Actions);
             }
             return _Actions;
          }
@@ -266,7 +267,7 @@ namespace MvcCodeRouting {
 
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
-                  "The following action methods must be decorated with the {0} for disambiguation: {1}.",
+                  "The following action methods must be decorated with {0} for disambiguation: {1}.",
                   typeof(RequireRouteParametersAttribute).FullName,
                   String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
@@ -289,6 +290,29 @@ namespace MvcCodeRouting {
                String.Format(CultureInfo.InvariantCulture,
                   "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
                   String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
+               )
+            );
+         }
+      }
+
+      static void CheckCustomRoutes(IEnumerable<ActionInfo> actions) { 
+
+         var sameCustomRouteDifferentNames = 
+            (from a in actions
+             where a.CustomRoute != null
+             group a by a.CustomRoute into grp
+             let distinctNameCount = grp.Select(a => a.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()
+             where distinctNameCount > 1
+             select grp).ToList();
+
+         if (sameCustomRouteDifferentNames.Count > 0) {
+            var first = sameCustomRouteDifferentNames.First();
+            
+            throw new InvalidOperationException(
+               String.Format(CultureInfo.InvariantCulture,
+                  "Action methods decorated with {0} must have the same name: {1}.",
+                  typeof(CustomRouteAttribute).FullName,
+                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
          }
