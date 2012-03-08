@@ -83,8 +83,8 @@ namespace MvcCodeRouting {
 
       public bool IsDefaultAction {
          get {
-            return RouteParameters.Count == 0
-               && NameEquals(Name, "Index");
+            return NameEquals(Name, "Index")
+               && (RouteParameters.Count == 0 || RouteParameters.All(p => p.IsOptional));
          }
       }
 
