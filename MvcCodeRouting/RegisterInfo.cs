@@ -105,10 +105,11 @@ namespace MvcCodeRouting {
 
       IEnumerable<Type> GetControllerTypes() {
 
-         return
-            from t in this.Assembly.GetTypes()
-            where IsController(t)
-            select t;
+         Type[] types = (this.Settings.RootOnly) ?
+            new[] { this.RootController }
+            : this.Assembly.GetTypes();
+
+         return types.Where(t => IsController(t));
       }
 
       static bool IsController(Type t) {

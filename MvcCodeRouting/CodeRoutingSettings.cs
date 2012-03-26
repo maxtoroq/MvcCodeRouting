@@ -78,6 +78,11 @@ namespace MvcCodeRouting {
       public bool UseImplicitIdToken { get; set; }
 
       /// <summary>
+      /// true to create routes for the root controller only.
+      /// </summary>
+      public bool RootOnly { get; set; }
+
+      /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class.
       /// </summary>
       public CodeRoutingSettings() {
@@ -117,6 +122,7 @@ namespace MvcCodeRouting {
          this.RouteFormatter = settings.RouteFormatter;
          this.EnableEmbeddedViews = settings.EnableEmbeddedViews;
          this.UseImplicitIdToken = settings.UseImplicitIdToken;
+         this.RootOnly = settings.RootOnly;
       }
 
       internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {

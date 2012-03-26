@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,6 +25,7 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting {
    
+   [DebuggerDisplay("{Url}")]
    class CodeRoute : Route {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
