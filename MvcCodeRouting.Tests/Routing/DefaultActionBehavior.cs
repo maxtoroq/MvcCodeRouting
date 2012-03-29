@@ -2,15 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MvcCodeRouting;
+using Moq;
 
 namespace MvcCodeRouting.Tests.Routing {
 
    [TestClass]
    public class DefaultActionBehavior {
+
+      RouteCollection routes;
+      UrlHelper Url;
+
+      [TestInitialize]
+      public void Init() {
+
+         this.routes = new RouteCollection();
+         this.Url = TestUtil.CreateUrlHelper(routes);
+      }
 
       [TestMethod]
       public void CanUseEmptyStringInUrlGeneration() {
@@ -18,15 +29,21 @@ namespace MvcCodeRouting.Tests.Routing {
          // #32
          // Using an empty string as action for URL generation (e.g. Url.Action("")) does not work
 
-         var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(DefaultAction1Controller), new CodeRoutingSettings { RootOnly = true });
-
-         Assert.IsTrue(((Route)routes[0]).Url.Contains("{action}"));
+         Type controller = typeof(DefaultAction1Controller);
 
          routes.Clear();
-         routes.MapCodeRoutes(typeof(DefaultAction2Controller), new CodeRoutingSettings { RootOnly = true });
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.IsTrue(((Route)routes[0]).Url.Contains("{action}"));
+         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
+
+         controller = typeof(DefaultAction2Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
 
       [TestMethod]
@@ -35,10 +52,14 @@ namespace MvcCodeRouting.Tests.Routing {
          // #783
          // Default action with optional route parameters does not work
 
-         var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(DefaultAction3Controller), new CodeRoutingSettings { RootOnly = true });
+         Type controller = typeof(DefaultAction3Controller);
 
-         Assert.IsTrue(((Route)routes[0]).Url.Contains("{action}"));
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual(Url.Action("", controller, new { id = 5 }), "/Index/5");
+         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
 
       [TestMethod]
@@ -47,10 +68,13 @@ namespace MvcCodeRouting.Tests.Routing {
          // #535
          // Overloaded default action should not produced a route with hardcoded action
 
-         var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(DefaultAction4Controller), new CodeRoutingSettings { RootOnly = true });
+         Type controller = typeof(DefaultAction4Controller);
 
-         Assert.IsTrue(((Route)routes[0]).Url.Contains("{action}"));
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
    }
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MvcCodeRouting.Tests.Routing {
    
@@ -17,7 +17,7 @@ namespace MvcCodeRouting.Tests.Routing {
          var routes = new RouteCollection();
          routes.MapCodeRoutes(typeof(CatchAllParameter1Controller), new CodeRoutingSettings { RootOnly = true });
 
-         Assert.IsTrue(((Route)routes[0]).Url.EndsWith("{*a}"));
+         Assert.IsTrue(routes.At(0).Url.EndsWith("{*a}"));
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
