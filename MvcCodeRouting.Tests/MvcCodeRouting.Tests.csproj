@@ -48,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routing\DefaultActionBehavior.cs" />
     <Compile Include="Routing\CatchAllParameterBehavior.cs" />
+    <Compile Include="Routing\RouteFormattingBehavior.cs" />
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>

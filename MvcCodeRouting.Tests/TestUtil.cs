@@ -24,12 +24,17 @@ namespace MvcCodeRouting.Tests {
          httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
       }
 
-      public static UrlHelper CreateUrlHelper(RouteCollection routes) {
+      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentRouteContext = "") {
 
          var httpContextMock = new Mock<HttpContextBase>();
          SetupHttpContextForUrlHelper(httpContextMock);
 
-         var requestContext = new RequestContext(httpContextMock.Object, new RouteData());
+         var routeData = new RouteData();
+
+         if (currentRouteContext != null)
+            routeData.DataTokens["MvcCodeRouting.RouteContext"] = currentRouteContext;
+
+         var requestContext = new RequestContext(httpContextMock.Object, routeData);
          var urlHelper = new UrlHelper(requestContext, routes);
 
          return urlHelper;
