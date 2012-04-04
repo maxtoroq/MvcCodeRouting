@@ -79,25 +79,22 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 
    public class DefaultAction1Controller : Controller {
-
       public void Index() { }
    }
 
    public class DefaultAction2Controller : Controller {
-
       public void Index() { }
       public void Foo() { }
    }
 
    public class DefaultAction3Controller : Controller {
-
       public void Index([FromRoute]int? id) { }
    }
 
    public class DefaultAction4Controller : Controller {
-
+      
       public void Index() { }
-
+      
       [HttpPost]
       public void Index(string foo) { }
    }

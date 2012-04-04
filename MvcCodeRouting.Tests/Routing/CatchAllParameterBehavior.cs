@@ -29,12 +29,10 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 
    public class CatchAllParameter1Controller : Controller {
-
       public void Foo([FromRoute(CatchAll = true)]string a) { }
    }
 
    public class CatchAllParameter2Controller : Controller {
-
       public void Foo([FromRoute(CatchAll = true)]string a, [FromRoute]string b) { }
    }
 }
