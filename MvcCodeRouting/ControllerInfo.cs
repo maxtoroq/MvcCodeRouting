@@ -300,6 +300,7 @@ namespace MvcCodeRouting {
          var sameCustomRouteDifferentNames = 
             (from a in actions
              where a.CustomRoute != null
+               && !a.CustomRouteHasActionToken
              group a by a.CustomRoute into grp
              let distinctNameCount = grp.Select(a => a.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count()
              where distinctNameCount > 1

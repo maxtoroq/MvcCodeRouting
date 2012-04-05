@@ -74,6 +74,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.IsTrue(routes.At(0).Url.EndsWith("{action}"));
          Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
    }

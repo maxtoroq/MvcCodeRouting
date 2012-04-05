@@ -29,6 +29,7 @@ namespace MvcCodeRouting {
       string _ActionSegment;
       string _CustomRoute;
       bool _CustomRouteInit;
+      bool? _CustomRouteHasActionToken;
       Collection<ActionParameterInfo> _Parameters;
       TokenInfoCollection _RouteParameters;
 
@@ -111,6 +112,20 @@ namespace MvcCodeRouting {
                _CustomRouteInit = true;
             }
             return _CustomRoute;
+         }
+      }
+
+      public bool CustomRouteHasActionToken {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            if (_CustomRouteHasActionToken == null) {
+               _CustomRouteHasActionToken =
+                  CustomRoute.IndexOf("{action}", StringComparison.OrdinalIgnoreCase) != -1;
+            }
+
+            return _CustomRouteHasActionToken.Value;
          }
       }
 

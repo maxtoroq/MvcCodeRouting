@@ -51,6 +51,7 @@
     <Compile Include="Routing\DefaultControllerBehavior.cs" />
     <Compile Include="Routing\RootControllerBehavior.cs" />
     <Compile Include="Routing\RouteFormattingBehavior.cs" />
+    <Compile Include="Routing\RouteGroupingBehavior.cs" />
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
