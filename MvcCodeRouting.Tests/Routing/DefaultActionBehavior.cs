@@ -29,7 +29,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #32
          // Using an empty string as action for URL generation (e.g. Url.Action("")) does not work
 
-         Type controller = typeof(DefaultAction1Controller);
+         Type controller = typeof(DefaultAction.DefaultAction1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -37,7 +37,7 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.AreEqual(Url.Action("", controller), "/");
          Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
 
-         controller = typeof(DefaultAction2Controller);
+         controller = typeof(DefaultAction.DefaultAction2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -52,7 +52,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #783
          // Default action with optional route parameters does not work
 
-         Type controller = typeof(DefaultAction3Controller);
+         Type controller = typeof(DefaultAction.DefaultAction3Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -68,7 +68,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #535
          // Overloaded default action should not produced a route with hardcoded action
 
-         Type controller = typeof(DefaultAction4Controller);
+         Type controller = typeof(DefaultAction.DefaultAction4Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -78,6 +78,9 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
    }
+}
+
+namespace MvcCodeRouting.Tests.Routing.DefaultAction {
 
    public class DefaultAction1Controller : Controller {
       public void Index() { }
@@ -93,9 +96,9 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 
    public class DefaultAction4Controller : Controller {
-      
+
       public void Index() { }
-      
+
       [HttpPost]
       public void Index(string foo) { }
    }

@@ -27,7 +27,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #744
          // Create only one route for multiple actions with equal custom routes
 
-         var controller = typeof(RouteGroupingBehavior1Controller);
+         var controller = typeof(RouteGrouping.RouteGroupingBehavior1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -39,7 +39,7 @@ namespace MvcCodeRouting.Tests.Routing {
       [ExpectedException(typeof(InvalidOperationException))]
       public void DisallowMultipleActionsWithSameCustomRoute() {
 
-         var controller = typeof(RouteGroupingBehavior2Controller);
+         var controller = typeof(RouteGrouping.RouteGroupingBehavior2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -51,7 +51,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #779
          // Allow multiple actions with same custom route if {action} token is present
 
-         var controller = typeof(RouteGroupingBehavior3Controller);
+         var controller = typeof(RouteGrouping.RouteGroupingBehavior3Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -59,6 +59,9 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.AreEqual(routes.Count, 1);
       }
    }
+}
+
+namespace MvcCodeRouting.Tests.Routing.RouteGrouping {
 
    public class RouteGroupingBehavior1Controller : Controller {
 

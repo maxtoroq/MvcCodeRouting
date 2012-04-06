@@ -24,7 +24,7 @@ namespace MvcCodeRouting.Tests.Routing {
       [TestMethod]
       public void DontIncludeControllerToken() {
 
-         var controller = typeof(RootController1Controller);
+         var controller = typeof(RootController.RootController1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -32,6 +32,9 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.IsTrue(!routes.At(0).Url.Contains("{controller}"));
       }
    }
+}
+
+namespace MvcCodeRouting.Tests.Routing.RootController {
 
    public class RootController1Controller : Controller {
       public void Index() { }

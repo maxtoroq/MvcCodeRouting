@@ -15,7 +15,7 @@ namespace MvcCodeRouting.Tests.Routing {
       public void SupportsCatchAllParameter() {
 
          var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(CatchAllParameter1Controller), new CodeRoutingSettings { RootOnly = true });
+         routes.MapCodeRoutes(typeof(CatchAll.CatchAllParameter1Controller), new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsTrue(routes.At(0).Url.EndsWith("{*a}"));
       }
@@ -24,9 +24,12 @@ namespace MvcCodeRouting.Tests.Routing {
       public void IsLastParameter() {
 
          var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(CatchAllParameter2Controller), new CodeRoutingSettings { RootOnly = true });
+         routes.MapCodeRoutes(typeof(CatchAll.CatchAllParameter2Controller), new CodeRoutingSettings { RootOnly = true });
       }
    }
+}
+
+namespace MvcCodeRouting.Tests.Routing.CatchAll {
 
    public class CatchAllParameter1Controller : Controller {
       public void Foo([FromRoute(CatchAll = true)]string a) { }
