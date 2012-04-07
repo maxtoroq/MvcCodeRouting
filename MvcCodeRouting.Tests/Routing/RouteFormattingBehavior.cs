@@ -42,7 +42,15 @@ namespace MvcCodeRouting.Tests.Routing {
 
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
 
+         Assert.IsNotNull(routeData);
          Assert.AreEqual(routeData.GetRequiredString("action"), "AbcDfg");
+
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/_Index");
+
+         routeData = routes.GetRouteData(httpContextMock.Object);
+
+         Assert.IsNotNull(routeData);
+         Assert.AreEqual(routeData.GetRequiredString("action"), "Index");
       }
 
       [TestMethod]
@@ -105,6 +113,7 @@ namespace MvcCodeRouting.Tests.Routing {
          });
 
          Assert.AreEqual(Url.Action("AbcDfg", controller), "/_AbcDfg");
+         Assert.AreEqual(Url.Action("Index", controller), "/");
       }
 
       [TestMethod]

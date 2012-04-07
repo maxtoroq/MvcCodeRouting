@@ -61,7 +61,10 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
-         bool hardcodeAction = actionMapping.Count == 1 && !first.IsDefaultAction;
+         bool hardcodeAction = actionMapping.Count == 1
+            && (!first.IsDefaultAction 
+               || (first.CustomRoute != null && !first.CustomRouteHasActionToken));
+
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool requiresActionMapping = actionFormat && !hardcodeAction;
          string actionToken = "action";

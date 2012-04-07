@@ -2,28 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace MvcCodeRouting.Tests.Routing {
    
    [TestClass]
    public class CatchAllParameterBehavior {
 
+      RouteCollection routes;
+      UrlHelper Url;
+
+      [TestInitialize]
+      public void Init() {
+
+         this.routes = new RouteCollection();
+         this.Url = TestUtil.CreateUrlHelper(routes);
+      }
+
       [TestMethod]
       public void SupportsCatchAllParameter() {
 
-         var routes = new RouteCollection();
-         routes.MapCodeRoutes(typeof(CatchAll.CatchAllParameter1Controller), new CodeRoutingSettings { RootOnly = true });
+         var controller = typeof(CatchAll.CatchAllParameter1Controller);
 
-         Assert.IsTrue(routes.At(0).Url.EndsWith("{*a}"));
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/Foo/1/2/3");
+
+         Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
+         Assert.IsNotNull(Url.Action("Foo", controller, new { a = "1/2/3" }));
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void IsLastParameter() {
 
-         var routes = new RouteCollection();
+         routes.Clear();
          routes.MapCodeRoutes(typeof(CatchAll.CatchAllParameter2Controller), new CodeRoutingSettings { RootOnly = true });
       }
    }

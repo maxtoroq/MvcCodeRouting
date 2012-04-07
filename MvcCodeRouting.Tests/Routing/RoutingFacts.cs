@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web.Routing;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Web;
 
 namespace MvcCodeRouting.Tests.Routing {
    
-   [TestClass]
+   //[TestClass]
    public class RoutingFacts {
 
       RouteCollection routes;
@@ -45,14 +45,14 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapRoute(null, "{a}");
 
          Assert.IsNull(Url.RouteUrl(new { }));
-         Assert.AreEqual(Url.RouteUrl(new { a = "foo" }), "/foo");
+         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
 
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/foo");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
       }
@@ -61,7 +61,7 @@ namespace MvcCodeRouting.Tests.Routing {
       public void DefaultValueMakesTokenOptional() {
 
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { a = "foo" });
+         routes.MapRoute(null, "{a}", new { a = "b" });
 
          Assert.AreEqual(Url.RouteUrl(new { }), "/");
 
@@ -75,7 +75,7 @@ namespace MvcCodeRouting.Tests.Routing {
       public void CanUseNullOrEmptyStringForTokenWithDefaultValue() {
 
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { a = "foo" });
+         routes.MapRoute(null, "{a}", new { a = "b" });
 
          Assert.AreEqual(Url.RouteUrl(new { a = (string)null }), "/");
          Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
@@ -85,42 +85,42 @@ namespace MvcCodeRouting.Tests.Routing {
       public void CannotUseNullOrEmptyStringForDefaultValueWithoutToken() {
 
          routes.Clear();
-         routes.MapRoute(null, "foo", new { a = "foo" });
+         routes.MapRoute(null, "a", new { b = "c" });
 
-         Assert.IsNull(Url.RouteUrl(new { a = (string)null }));
-         Assert.IsNull(Url.RouteUrl(new { a = "" }));
+         Assert.IsNull(Url.RouteUrl(new { b = (string)null }));
+         Assert.IsNull(Url.RouteUrl(new { b = "" }));
       }
 
       [TestMethod]
       public void ValueMustMatchDefaultValueWithoutTokenOrBeOmitted() {
 
          routes.Clear();
-         routes.MapRoute(null, "foo", new { a = "foo" });
+         routes.MapRoute(null, "a", new { b = "c" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "foo" }), "/foo");
-         Assert.AreEqual(Url.RouteUrl(new { }), "/foo");
+         Assert.AreEqual(Url.RouteUrl(new { b = "c" }), "/a");
+         Assert.AreEqual(Url.RouteUrl(new { }), "/a");
       }
 
       [TestMethod]
       public void ConstraintsLimitTheValueSpaceOfAToken() {
 
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { }, new { a = "foo|bar" });
+         routes.MapRoute(null, "{a}", new { }, new { a = "b|c" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "foo" }), "/foo");
-         Assert.AreEqual(Url.RouteUrl(new { a = "bar" }), "/bar");
-         Assert.IsNull(Url.RouteUrl(new { a = "xyz" }));
+         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
+         Assert.AreEqual(Url.RouteUrl(new { a = "c" }), "/c");
+         Assert.IsNull(Url.RouteUrl(new { a = "d" }));
 
          var httpContextMock = new Mock<HttpContextBase>();
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/foo");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
 
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/bar");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/c");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
 
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/xyz");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/d");
 
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
       }
@@ -129,17 +129,17 @@ namespace MvcCodeRouting.Tests.Routing {
       public void ConstraintsTestTheWholeValue() {
          
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { }, new { a = "foo" });
+         routes.MapRoute(null, "{a}", new { }, new { a = "b" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "foo" }), "/foo");
-         Assert.IsNull(Url.RouteUrl(new { a = "foo2" }));
+         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
+         Assert.IsNull(Url.RouteUrl(new { a = "b2" }));
 
          var httpContextMock = new Mock<HttpContextBase>();
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/foo");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
 
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/foo2");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b2");
 
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
       }
@@ -148,7 +148,7 @@ namespace MvcCodeRouting.Tests.Routing {
       public void ConstraintsForOptionalTokensShouldMatchAnEmptyString() {
 
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { a = "" }, new { a = "foo" });
+         routes.MapRoute(null, "{a}", new { a = "" }, new { a = "b" });
 
          Assert.IsNull(Url.RouteUrl(new { a = "" }));
 
@@ -158,7 +158,7 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
 
          routes.Clear();
-         routes.MapRoute(null, "{a}", new { a = "" }, new { a = "(foo)?" });
+         routes.MapRoute(null, "{a}", new { a = "" }, new { a = "(b)?" });
 
          Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
 
@@ -176,11 +176,11 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapRoute(null, "_{a}");
 
          var httpContextMock = new Mock<HttpContextBase>();
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/_bar");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/_b");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
 
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/__bar");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/__b");
 
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
       }

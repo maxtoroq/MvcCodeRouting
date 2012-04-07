@@ -35,7 +35,6 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(Url.Action("", controller), "/");
-         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
 
          controller = typeof(DefaultAction.DefaultAction2Controller);
 
@@ -43,7 +42,6 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(Url.Action("", controller), "/");
-         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
 
       [TestMethod]
@@ -59,7 +57,6 @@ namespace MvcCodeRouting.Tests.Routing {
 
          Assert.AreEqual(Url.Action("", controller), "/");
          Assert.AreEqual(Url.Action("", controller, new { id = 5 }), "/Index/5");
-         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
 
       [TestMethod]
@@ -74,8 +71,6 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(Url.Action("", controller), "/");
-         Assert.IsTrue(routes.At(0).Url.EndsWith("{action}"));
-         Assert.AreEqual(routes.At(0).Defaults["action"] as string, "Index");
       }
    }
 }
