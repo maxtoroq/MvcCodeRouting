@@ -61,20 +61,17 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
-         bool hardcodeAction = actionMapping.Count == 1
-            && (!first.IsDefaultAction 
-               || (first.CustomRoute != null && !first.CustomRouteHasActionToken));
+         bool includeActionToken = (first.CustomRoute != null) ? 
+            first.CustomRouteHasActionToken
+            : actionMapping.Count > 1 || first.IsDefaultAction;
 
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
-         bool requiresActionMapping = actionFormat && !hardcodeAction;
-         string actionToken = "action";
+         bool requiresActionMapping = actionFormat && includeActionToken;
 
          if (first.CustomRoute != null) {
             segments.Add(first.CustomRoute);
-
          } else {
-
-            segments.Add(hardcodeAction ? first.ActionSegment : String.Concat("{", actionToken, "}"));
+            segments.Add(!includeActionToken ? first.ActionSegment : String.Concat("{action}"));
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
          }
 
@@ -85,24 +82,20 @@ namespace MvcCodeRouting {
          if (controllerMapping.Count == 1)
             defaults.Add("controller", controllerMapping.Keys.First());
 
-         string defaultAction = null;
+         ActionInfo defaultAction = (includeActionToken) ?
+            actions.FirstOrDefault(a => a.IsDefaultAction)
+            : first;
 
-         if (actionMapping.Count == 1) {
-            defaultAction = (requiresActionMapping) ?
-               first.ActionSegment
-               : first.Name;
+         string actionDefault = null;
 
-         } else {
-            ActionInfo defAction = actions.FirstOrDefault(a => a.IsDefaultAction);
-
-            if (defAction != null)
-               defaultAction = (requiresActionMapping) ?
-                  defAction.ActionSegment
-                  : defAction.Name;
+         if (defaultAction != null) { 
+            actionDefault = (requiresActionMapping) ?
+               defaultAction.ActionSegment
+               : defaultAction.Name;
          }
 
-         if (defaultAction != null)
-            defaults.Add(actionToken, defaultAction);
+         if (actionDefault != null)
+            defaults.Add("action", actionDefault);
 
          TokenInfoCollection parameters = first.RouteParameters;
 
@@ -114,8 +107,8 @@ namespace MvcCodeRouting {
          if (!hardcodeController)
             constraints.Add("controller", String.Join("|", controllerMapping.Values));
 
-         if (!hardcodeAction)
-            constraints.Add(actionToken, String.Join("|", actionMapping.Values));
+         if (includeActionToken)
+            constraints.Add("action", String.Join("|", actionMapping.Values));
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 

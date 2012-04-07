@@ -24,12 +24,37 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
+      public void IsNamedIndex() {
+
+         var controller = typeof(DefaultAction.DefaultAction2Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.AreEqual(routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"), "Index");
+         Assert.AreEqual(Url.Action("", controller), "/");
+
+         controller = typeof(DefaultAction.DefaultAction5Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
+         Assert.IsNull(Url.Action("", controller));
+      }
+
+      [TestMethod]
       public void CanUseEmptyStringInUrlGeneration() {
 
          // #32
          // Using an empty string as action for URL generation (e.g. Url.Action("")) does not work
 
-         Type controller = typeof(DefaultAction.DefaultAction1Controller);
+         var controller = typeof(DefaultAction.DefaultAction1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -50,7 +75,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #783
          // Default action with optional route parameters does not work
 
-         Type controller = typeof(DefaultAction.DefaultAction3Controller);
+         var controller = typeof(DefaultAction.DefaultAction3Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -65,7 +90,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #535
          // Overloaded default action should not produced a route with hardcoded action
 
-         Type controller = typeof(DefaultAction.DefaultAction4Controller);
+         var controller = typeof(DefaultAction.DefaultAction4Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -96,5 +121,11 @@ namespace MvcCodeRouting.Tests.Routing.DefaultAction {
 
       [HttpPost]
       public void Index(string foo) { }
+   }
+
+   public class DefaultAction5Controller : Controller {
+
+      [CustomRoute("{action}")]
+      public void Foo() { }
    }
 }
