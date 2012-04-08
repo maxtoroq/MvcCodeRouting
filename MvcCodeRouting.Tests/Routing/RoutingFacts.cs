@@ -39,7 +39,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void TokensAreRequiredByDefault() {
+      public void ParametersAreRequiredByDefault() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}");
@@ -58,7 +58,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void DefaultValueMakesTokenOptional() {
+      public void DefaultValueMakesParameterOptional() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "b" });
@@ -72,7 +72,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void CanUseNullOrEmptyStringForTokenWithDefaultValue() {
+      public void CanUseNullOrEmptyStringForParameterWithDefaultValue() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "b" });
@@ -82,7 +82,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void CannotUseNullOrEmptyStringForDefaultValueWithoutToken() {
+      public void CannotUseNullOrEmptyStringForDefaultValueWithoutParameter() {
 
          routes.Clear();
          routes.MapRoute(null, "a", new { b = "c" });
@@ -92,7 +92,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void ValueMustMatchDefaultValueWithoutTokenOrBeOmitted() {
+      public void ValueMustMatchDefaultValueWithoutParameterOrBeOmitted() {
 
          routes.Clear();
          routes.MapRoute(null, "a", new { b = "c" });
@@ -102,7 +102,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void ConstraintsLimitTheValueSpaceOfAToken() {
+      public void ConstraintLimitsTheValueSpaceOfParameter() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}", new { }, new { a = "b|c" });
@@ -126,7 +126,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void ConstraintsTestTheWholeValue() {
+      public void ConstraintTestsTheWholeValue() {
          
          routes.Clear();
          routes.MapRoute(null, "{a}", new { }, new { a = "b" });
@@ -145,7 +145,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void ConstraintsForOptionalTokensShouldMatchAnEmptyString() {
+      public void ConstraintForOptionalParameterShouldMatchAnEmptyString() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "" }, new { a = "b" });
@@ -186,7 +186,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       //[TestMethod] // Appears to be fixed in .NET 4.5
-      public void TwoConsecutiveOptionalTokensBug() {
+      public void TwoConsecutiveOptionalParametersBug() {
 
          // http://haacked.com/archive/2011/02/20/routing-regression-with-two-consecutive-optional-url-parameters.aspx
 
