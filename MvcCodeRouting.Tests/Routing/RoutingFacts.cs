@@ -145,7 +145,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void ConstraintForOptionalParameterShouldMatchAnEmptyString() {
+      public void ConstraintForOptionalParameterShouldMatchAnEmptyStringIfDefaultValueIsEmptyString() {
 
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "" }, new { a = "b" });
@@ -157,8 +157,21 @@ namespace MvcCodeRouting.Tests.Routing {
 
          Assert.IsNull(routes.GetRouteData(httpContextMock.Object));
 
+         //--------------------------------------
+
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "" }, new { a = "(b)?" });
+
+         Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
+
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
+
+         //--------------------------------------
+
+         routes.Clear();
+         routes.MapRoute(null, "{a}", new { a = "b" }, new { a = "b" });
 
          Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
 
