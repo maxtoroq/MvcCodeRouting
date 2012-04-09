@@ -34,7 +34,7 @@ namespace MvcCodeRouting {
 
       static readonly List<AssemblyData> AssemblyDataTable = new List<AssemblyData>();
       readonly ConcurrentDictionary<string, AssemblyDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyDataCollection>(VirtualPathComparer);
-      static bool embeddedViewsEnabled;
+      static bool embeddedViewsEnabled, registered;
 
       public static void RegisterAssembly(RegisterInfo registerInfo) {
 
@@ -43,13 +43,18 @@ namespace MvcCodeRouting {
 
          if (assemblyData.HasResources) 
             AssemblyDataTable.Add(assemblyData);
+
+         if (embeddedViewsEnabled && !registered)
+            RegisterIfNecessary();
       }
 
       public static void RegisterIfNecessary() {
 
-         if (AssemblyDataTable.Count > 0 && !embeddedViewsEnabled) {
+         embeddedViewsEnabled = true;
+
+         if (AssemblyDataTable.Count > 0 && !registered) {
             HostingEnvironment.RegisterVirtualPathProvider(new EmbeddedViewsVirtualPathProvider());
-            embeddedViewsEnabled = true;
+            registered = true;
          }
       }
 
