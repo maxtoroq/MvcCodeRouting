@@ -9,8 +9,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace MvcCodeRouting.Tests.Routing {
+   using UrlHelper = System.Web.Mvc.UrlHelper;
    
-   //[TestClass]
+   [TestClass]
    public class RoutingFacts {
 
       RouteCollection routes;
@@ -178,6 +179,27 @@ namespace MvcCodeRouting.Tests.Routing {
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
+      }
+
+      [TestMethod]
+      public void UrlHelperActionMethodUsesTheCurrentRequestControllerAndActionValuesAsDefaults() {
+
+         var routeData = new RouteData {
+            Values = { 
+               { "controller", "b" },
+               { "action", "c" }
+            }
+         };
+
+         var requestContext = new RequestContext(this.Url.RequestContext.HttpContext, routeData);
+         var Url = new UrlHelper(requestContext, routes);
+
+         routes.Clear();
+         routes.MapRoute(null, "a", new { controller = "b", action = "c" });
+
+         Assert.IsNull(Url.RouteUrl(new { controller = (string)null, action = (string)null }));
+         Assert.AreEqual(Url.Action(null), "/a");
+         Assert.AreEqual(Url.Action(null, (string)null), "/a");
       }
 
       [TestMethod]
