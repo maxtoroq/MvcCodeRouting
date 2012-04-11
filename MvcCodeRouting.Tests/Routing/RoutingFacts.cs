@@ -182,7 +182,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void UrlHelperActionMethodUsesTheCurrentRequestControllerAndActionValuesAsDefaults() {
+      public void UrlHelperActionUsesTheCurrentRequestControllerAndActionValuesAsDefaults() {
 
          var routeData = new RouteData {
             Values = { 
@@ -200,6 +200,38 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.IsNull(Url.RouteUrl(new { controller = (string)null, action = (string)null }));
          Assert.AreEqual(Url.Action(null), "/a");
          Assert.AreEqual(Url.Action(null, (string)null), "/a");
+      }
+
+      [TestMethod]
+      public void CurrentRequestValuesAreUsedAsDefaults() {
+
+         routes.Clear();
+         routes.MapRoute(null, "{a}");
+
+         var routeData = new RouteData {
+            Values = { 
+               { "a", "x" },
+            }
+         };
+
+         var requestContext = new RequestContext(this.Url.RequestContext.HttpContext, routeData);
+         var Url = new UrlHelper(requestContext, routes);
+
+         Assert.AreEqual(Url.RouteUrl(new { }), "/x");
+      }
+
+      [TestMethod]
+      public void RoutingIsCaseInsensitive() {
+
+         routes.Clear();
+         routes.MapRoute(null, "a/{b}", new { a = "A" }, new { b = "xyz" });
+
+         Assert.IsNotNull(Url.RouteUrl(new { a = "a", b = "XYZ" }));
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/A/XYZ");
+
+         Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
       }
 
       [TestMethod]
