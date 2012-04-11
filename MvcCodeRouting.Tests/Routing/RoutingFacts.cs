@@ -235,6 +235,49 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
+      public void RoutesAreEvaluatedInOrder() {
+
+         routes.Clear();
+         routes.MapRoute(null, "{a}/{b}", new { b = "c" });
+         routes.MapRoute(null, "{a}");
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/x");
+
+         Assert.IsTrue(
+            Object.ReferenceEquals(
+               routes.GetVirtualPath(Url.RequestContext, new RouteValueDictionary(new { a = "x" })).Route, 
+               routes.First()
+            )
+         );
+
+         Assert.IsTrue(
+            Object.ReferenceEquals(
+               routes.GetRouteData(httpContextMock.Object).Route, 
+               routes.First()
+            )
+         );
+
+         var lastRoute = routes.Last();
+         routes.Remove(lastRoute);
+         routes.Insert(0, lastRoute);
+
+         Assert.IsTrue(
+            Object.ReferenceEquals(
+               routes.GetVirtualPath(Url.RequestContext, new RouteValueDictionary(new { a = "x" })).Route,
+               routes.First()
+            )
+         );
+
+         Assert.IsTrue(
+            Object.ReferenceEquals(
+               routes.GetRouteData(httpContextMock.Object).Route,
+               routes.First()
+            )
+         );
+      }
+
+      [TestMethod]
       public void LiteralSubsegmentBug() {
 
          // http://stackoverflow.com/questions/4318373
