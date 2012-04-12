@@ -9,34 +9,31 @@ namespace Samples.Controllers.Api {
    
    public abstract class CrudController<TEntity, TEntityKey> : Controller {
 
+      [HttpGet]
       public ActionResult Index() {
          throw new NotImplementedException();
       }
 
-      [HttpGet]
-      [RequireRouteParameters]
-      public ActionResult Entities() {
-         throw new NotImplementedException();
-      }
-
       [HttpPost]
-      public ActionResult Entities(TEntity model) {
+      public ActionResult Index(TEntity model) {
          throw new NotImplementedException();
       }
 
+      [CustomRoute("{id}")]
       [HttpGet]
-      [RequireRouteParameters]
-      public ActionResult Entities([FromRoute]TEntityKey id) {
+      public ActionResult Entity([FromRoute]TEntityKey id) {
          throw new NotImplementedException();
       }
 
+      [CustomRoute("{id}")]
       [HttpPut]
-      public ActionResult Entities([FromRoute]TEntityKey id, TEntity model) {
+      public ActionResult Entity([FromRoute]TEntityKey id, TEntity model) {
          throw new NotImplementedException();
       }
 
+      [CustomRoute("{id}")]
       [HttpDelete]
-      public ActionResult Entities([FromRoute]TEntityKey id, string foo) {
+      public ActionResult Entity([FromRoute]TEntityKey id, string foo) {
          throw new NotImplementedException();
       }
    }
