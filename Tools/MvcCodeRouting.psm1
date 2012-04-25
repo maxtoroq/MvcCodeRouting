@@ -14,21 +14,34 @@
 
 function Extract-Views {
     param(
-        [Parameter(Mandatory=$true, HelpMessage = "The name of the assembly that contains embedded views.")]
+        [Parameter(Mandatory=$true, HelpMessage="The name of the assembly that contains embedded views.")]
         [string]$AssemblyName, 
         
-        [Parameter(HelpMessage = "The directory relative to the Views directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'")]
-        [string]$ViewsDirectory = $null
+        [Parameter(HelpMessage="The directory relative to the Views directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'")]
+        [string]$ViewsDirectory = $null,
+        
+        [Parameter(HelpMessage="The name of the project to which you want to apply this command.")]
+        [string]$ProjectName = $null
     )
     
-    $project = Get-Project
+    $project = $null
+    
+    if ($ProjectName) {
+        $project = Get-Project $ProjectName
+    } else {
+        $project = Get-Project
+        $ProjectName = $project.Name
+    }
+    
+    if ($project -eq $null) {
+        throw "Couldn't find project $ProjectName."
+    }
+    
     $isWebsite = Project-Is-Website $project
-    $projectName = $project.Name
     $assemblyRef = $project.Object.References | where {(AssemblyName-From-Ref $_ $isWebsite) -eq $AssemblyName}
     
     if (-not $assemblyRef) {
-        Write-Error "Couldn't find $AssemblyName reference in $projectName."
-        return
+        throw "Couldn't find $AssemblyName reference in $ProjectName."
     }
     
     $assemblyPath = if ($isWebsite) { $assemblyRef.FullPath } else { $assemblyRef.Path }
@@ -38,8 +51,7 @@ function Extract-Views {
     
     if ($viewResourceNames -eq $null `
         -or $viewResourceNames.Length -eq 0) {
-        Write-Error "$AssemblyName doesn't have embedded views."
-        return
+        throw "$AssemblyName doesn't have embedded views."
     }
        
     $projectPath = ($project.Properties | where {$_.Name -eq "FullPath"}).Value
@@ -137,9 +149,22 @@ if (-not (Get-Command Get-Project -ErrorAction SilentlyContinue)) {
 }
 
 if ((Get-Command Register-TabExpansion -ErrorAction SilentlyContinue)) {
-
+       
     Register-TabExpansion 'Extract-Views' @{
-        'AssemblyName' = { (Get-Project).Object.References | % {AssemblyName-From-Ref $_ (Project-Is-Website (Get-Project))} | sort $_ }
+        'AssemblyName' = { 
+            param($Context)
+            
+            $project = $null
+            
+            if ($Context.ProjectName) {
+                $project = Get-Project $Context.ProjectName
+            } else {
+                $project = Get-Project
+            }
+                       
+            $project.Object.References | % {AssemblyName-From-Ref $_ (Project-Is-Website $project)} | sort $_ 
+        };
+        'ProjectName' = { $dte.Solution | % {$_.ProjectName} }
     }
 }
 
