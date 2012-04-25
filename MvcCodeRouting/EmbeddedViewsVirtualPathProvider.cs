@@ -156,7 +156,8 @@ namespace MvcCodeRouting {
       class AssemblyData {
 
          readonly Assembly assembly;
-         readonly string rootNamespace;
+         readonly string assemblyName;
+         readonly int assemblyNamePartsCount;
          readonly string[] resourceNames;
          public readonly string basePath;
          readonly string[] basePathParts;
@@ -167,10 +168,8 @@ namespace MvcCodeRouting {
          public AssemblyData(RegisterInfo registerInfo, string basePath) {
 
             this.assembly = registerInfo.Assembly;
-
-            this.rootNamespace = registerInfo.RootNamespace.Split('.').FirstOrDefault() 
-               ?? this.assembly.GetName().Name;
-            
+            this.assemblyName = this.assembly.GetName().Name;
+            this.assemblyNamePartsCount = this.assemblyName.Split('.').Count();
             this.basePath = basePath;
             this.basePathParts = basePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             this.baseResourceName = RelativeVirtualPathToResourceName(basePath);
@@ -231,7 +230,7 @@ namespace MvcCodeRouting {
             }
 
             List<string> parts = virtualPath.Split('/').ToList();
-            parts.RemoveAt(0); // Root namespace
+            parts.RemoveRange(0, this.assemblyNamePartsCount);
             parts.InsertRange(1, this.basePathParts.Skip(1));
 
             return String.Join("/", parts);
@@ -244,7 +243,7 @@ namespace MvcCodeRouting {
             if (parts.Count > 1)
                parts.RemoveRange(1, basePathParts.Length - 1);
 
-            parts.Insert(0, this.rootNamespace);
+            parts.Insert(0, this.assemblyName);
 
             return String.Join(".", parts);
          }

@@ -1,0 +1,8 @@
+=========================================================================
+==  NOTICE file corresponding to the section 4 d of                    ==
+==  the Apache License, Version 2.0,                                   ==
+==  in this case for the MvcCodeRouting distribution.                  ==
+=========================================================================
+
+MvcCodeRouting
+Copyright 2011-2012 Max Toro Q.
