@@ -18,7 +18,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -28,126 +27,12 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{Url}")]
    class CodeRoute : Route {
 
-      static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
-
       readonly IDictionary<string, string> controllerMapping;
       readonly IDictionary<string, string> actionMapping;
 
       public Collection<string> NonActionParameterTokens { get; private set; }
 
-      internal static CodeRoute Create(IEnumerable<ActionInfo> actions) {
-
-         if (actions == null) throw new ArgumentNullException("actions");
-
-         ActionInfo first = actions.First();
-
-         var controllerMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-         foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer)) 
-            controllerMapping.Add(name, actions.First(a => ControllerInfo.NameEquals(a.Controller.Name, name)).Controller.ControllerSegment);
-
-         bool hardcodeController = controllerMapping.Count == 1;
-         bool controllerFormat = controllerMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
-         bool requiresControllerMapping = controllerFormat && !hardcodeController;
-
-         var segments = new List<string> { 
-            (hardcodeController ? 
-               first.Controller.ControllerUrl 
-               : first.Controller.UrlTemplate)
-         };
-
-         var actionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-         foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
-            actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
-
-         bool includeActionToken = (first.CustomRoute != null) ? 
-            first.CustomRouteHasActionToken
-            : actionMapping.Count > 1 || first.IsDefaultAction;
-
-         bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
-         bool requiresActionMapping = actionFormat && includeActionToken;
-
-         if (first.CustomRoute != null) {
-            segments.Add(first.CustomRoute);
-         } else {
-            segments.Add(!includeActionToken ? first.ActionSegment : String.Concat("{action}"));
-            segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
-         }
-
-         string url = String.Join("/", segments.Where(s => !String.IsNullOrEmpty(s)));
-
-         var defaults = new RouteValueDictionary();
-
-         if (controllerMapping.Count == 1)
-            defaults.Add("controller", controllerMapping.Keys.First());
-
-         ActionInfo defaultAction = (includeActionToken) ?
-            actions.FirstOrDefault(a => a.IsDefaultAction)
-            : first;
-
-         string actionDefault = null;
-
-         if (defaultAction != null) { 
-            actionDefault = (requiresActionMapping) ?
-               defaultAction.ActionSegment
-               : defaultAction.Name;
-         }
-
-         if (actionDefault != null)
-            defaults.Add("action", actionDefault);
-
-         TokenInfoCollection parameters = first.RouteParameters;
-
-         foreach (var param in parameters.Where(p => p.IsOptional))
-            defaults.Add(param.Name, UrlParameter.Optional);
-
-         var constraints = new RouteValueDictionary();
-
-         if (!hardcodeController)
-            constraints.Add("controller", String.Join("|", controllerMapping.Values));
-
-         if (includeActionToken)
-            constraints.Add("action", String.Join("|", actionMapping.Values));
-
-         foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
-
-            string regex = param.Constraint;
-
-            if (param.IsOptional)
-               regex = String.Concat("(", regex, ")?");
-
-            constraints.Add(param.Name, regex);
-         }
-
-         constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
-
-         var dataTokens = new RouteValueDictionary { 
-            { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
-            { DataTokenKeys.BaseRoute, first.Controller.Register.BaseRoute },
-            { DataTokenKeys.RouteContext, String.Join("/", first.Controller.CodeRoutingContext) },
-            { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{'))) }
-         };
-
-         var nonActionParameterTokens = new List<string>();
-
-         if (!String.IsNullOrEmpty(first.Controller.Register.BaseRoute)) 
-            nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.Register.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
-
-         nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
-
-         return new CodeRoute(
-            url: url,
-            controllerMapping: (requiresControllerMapping) ? controllerMapping : null,
-            actionMapping: (requiresActionMapping) ? actionMapping : null,
-            nonActionParameterTokens: nonActionParameterTokens.ToArray()) { 
-            Constraints = constraints,
-            DataTokens = dataTokens,
-            Defaults = defaults
-         };
-      }
-
-      private CodeRoute(string url, IDictionary<string, string> controllerMapping, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
+      internal CodeRoute(string url, IDictionary<string, string> controllerMapping, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
          : base(url, new MvcRouteHandler()) {
 
          this.controllerMapping = controllerMapping;

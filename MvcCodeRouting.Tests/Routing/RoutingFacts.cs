@@ -11,7 +11,7 @@ using Moq;
 namespace MvcCodeRouting.Tests.Routing {
    using UrlHelper = System.Web.Mvc.UrlHelper;
    
-   [TestClass]
+   //[TestClass]
    public class RoutingFacts {
 
       RouteCollection routes;

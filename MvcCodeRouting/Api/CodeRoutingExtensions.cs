@@ -86,157 +86,18 @@ namespace MvcCodeRouting {
             Settings = settings 
          };
 
-         ActionInfo[] actions = registerInfo.GetControllers()
-            .SelectMany(c => c.Actions)
-            .ToArray();
-
-         CheckNoAmbiguousUrls(actions);
-
-         var groupedActions = GroupActions(actions);
-
-         CodeRoute[] codeRoutes = groupedActions.Select(g => CodeRoute.Create(g)).ToArray();
+         Route[] newRoutes = RouteFactory.CreateRoutes(registerInfo);
          
-         foreach (CodeRoute route in codeRoutes)
+         foreach (var route in newRoutes)
             routes.Add(route);
          
-         if (codeRoutes.Length > 0 
+         if (newRoutes.Length > 0 
             && registerInfo.Settings.EnableEmbeddedViews) {
             
             EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo);
          }
 
-         return codeRoutes;
-      }
-
-      static void CheckNoAmbiguousUrls(IEnumerable<ActionInfo> actions) {
-
-         var ambiguousController =
-            (from a in actions
-             where a.CustomRoute == null
-             group a by a.ActionUrl into g
-             where g.Count() > 1
-             let distinctControllers = g.Select(a => a.Controller).Distinct().ToArray()
-             where distinctControllers.Length > 1
-             select new {
-                ActionUrl = g.Key,
-                DistinctControllers = distinctControllers
-             }).ToList();
-
-         if (ambiguousController.Count > 0) {
-            var first = ambiguousController.First();
-
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "The URL '{0}' cannot be bound to more than one controller ({1}).",
-                  first.ActionUrl,
-                  String.Join(", ", first.DistinctControllers.Select(c => c.Type.FullName))
-               )
-            );
-         }
-      }
-
-      static IEnumerable<IEnumerable<ActionInfo>> GroupActions(IEnumerable<ActionInfo> actions) {
-
-         var groupedActions =
-            (from a in actions
-             let declaringType1 = a.DeclaringType
-             let declaringType = (declaringType1.IsGenericType) ?
-                declaringType1.GetGenericTypeDefinition()
-                : declaringType1
-             group a by new {
-                Depth = a.Controller.CodeRoutingNamespace.Count,
-                a.Controller.IsRootController,
-                a.Controller.Namespace,
-                NamespaceSegments = String.Join("/", a.Controller.NamespaceSegments),
-                DeclaringType = declaringType,
-                a.CustomRoute,
-                HasRouteParameters = (a.RouteParameters.Count > 0)
-             } into g
-             orderby g.Key.IsRootController descending,
-                g.Key.Depth,
-                g.Key.Namespace,
-                g.Key.HasRouteParameters descending
-             select g
-             ).ToList();
-
-         var signatureComparer = new ActionSignatureComparer();
-         var finalGrouping = new List<IEnumerable<ActionInfo>>();
-         
-         for (int i = 0; i < groupedActions.Count; i++) {
-
-            var set = groupedActions[i];
-
-            if (set.Key.HasRouteParameters) {
-
-               var ordered = set.OrderByDescending(a => a.RouteParameters.Count).ToList();
-
-               while (ordered.Count > 0) {
-                  var firstInSet = ordered.First();
-                  var similar = ordered.Skip(1).Where(a => signatureComparer.Equals(firstInSet, a)).ToList();
-
-                  if (similar.Count > 0) {
-                     var signatureCompat = new[] { firstInSet }.Concat(similar).ToArray();
-
-                     var maxParamCounts =
-                        (from a in signatureCompat
-                         group a by a.ActionSegment into g
-                         select g.Select(a => a.RouteParameters.Count).Max()
-                        ).Distinct().ToArray();
-
-                     foreach (var count in maxParamCounts) {
-
-                        var sameMaxNumberOfParams =
-                           (from a in signatureCompat
-                            group a by a.ActionSegment into g
-                            where g.Select(a => a.RouteParameters.Count).Max() == count
-                            select g)
-                           .SelectMany(g => g)
-                           .Distinct()
-                           .OrderByDescending(a => a.RouteParameters.Count)
-                           .ToArray();
-
-                        var index = 0;
-                        var k = 0;
-                        var overloadRanges =
-                           (from a in sameMaxNumberOfParams
-                            let idx = ++index
-                            let next = sameMaxNumberOfParams.ElementAtOrDefault(idx)
-                            let diff = (next == null) ? 0 : Math.Abs(a.RouteParameters.Count - next.RouteParameters.Count)
-                            let key = (diff == 1 || diff == 0) ?
-                            k : k++
-                            group a by key into g
-                            select g).ToArray();
-
-                        foreach (var range in overloadRanges) {
-
-                           if (range.Count() > 1) {
-
-                              var first = range.First();
-                              var last = range.Last();
-
-                              foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count))
-                                 param.IsOptional = true; 
-                           }
-
-                           finalGrouping.Add(range);
-
-                           foreach (var item in range)
-                              ordered.Remove(item); 
-                        }
-                     } 
-
-                  } else {
-                     finalGrouping.Add(new[] { firstInSet });
-                     ordered.Remove(firstInSet);
-                  }
-               }
-            } else {
-
-               finalGrouping.Add(set);
-            }
-         }
-
-         return finalGrouping;
+         return newRoutes;
       }
 
       /// <summary>
