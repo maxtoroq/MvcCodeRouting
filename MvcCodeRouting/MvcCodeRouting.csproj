@@ -56,7 +56,6 @@
     <Compile Include="RouteFactory.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="DataTokenKeys.cs" />
-    <Compile Include="EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="MetaModel\ActionInfo.cs" />
     <Compile Include="MetaModel\ActionParameterInfo.cs" />
     <Compile Include="MetaModel\ActionSignatureComparer.cs" />
@@ -70,14 +69,18 @@
     <Compile Include="MetaModel\TokenInfoCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDebugHandler.cs" />
-    <Compile Include="ViewEngineWrapper.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceData.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceDataCollection.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceVirtualDirectory.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceVirtualFile.cs" />
+    <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
+    <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
+    <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\MvcCodeRouting.snk" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewsLocation\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

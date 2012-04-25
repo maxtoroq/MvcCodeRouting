@@ -29,11 +29,8 @@ namespace MvcCodeRouting {
 
    sealed class EmbeddedViewsVirtualPathProvider : VirtualPathProvider {
 
-      static readonly StringComparison VirtualPathComparison = StringComparison.OrdinalIgnoreCase;
-      static readonly StringComparer VirtualPathComparer = StringComparer.OrdinalIgnoreCase;
-
       static readonly List<AssemblyResourceData> AssemblyDataTable = new List<AssemblyResourceData>();
-      readonly ConcurrentDictionary<string, AssemblyResourceDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyResourceDataCollection>(VirtualPathComparer);
+      readonly ConcurrentDictionary<string, AssemblyResourceDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyResourceDataCollection>(VirtualPathComparison.Comparer);
       static bool embeddedViewsEnabled, registered;
 
       public static void RegisterAssembly(RegisterInfo registerInfo) {
@@ -126,7 +123,7 @@ namespace MvcCodeRouting {
 
          List<string> parts = appRelativePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
 
-         if (parts.Count < 1 || !parts[0].Equals("Views", VirtualPathComparison))
+         if (parts.Count < 1 || !parts[0].Equals("Views", VirtualPathComparison.Comparison))
             return AssemblyResourceDataCollection.Null;
 
          return this.virtualPathCache.GetOrAdd(virtualPath, (s) => {
@@ -143,7 +140,7 @@ namespace MvcCodeRouting {
             for (int i = 0; i < parts.Count; i++) {
                string basePath = String.Join("/", parts.Take(parts.Count - i));
 
-               result.AddRange(AssemblyDataTable.Where(d => d.BasePath.Equals(basePath, VirtualPathComparison)));
+               result.AddRange(AssemblyDataTable.Where(d => d.BasePath.Equals(basePath, VirtualPathComparison.Comparison)));
 
                if (result.Count > 0)
                   break;
@@ -151,235 +148,6 @@ namespace MvcCodeRouting {
 
             return result;
          });
-      }
-
-      class AssemblyResourceData {
-
-         public readonly string BasePath;
-         readonly string[] basePathParts;
-         readonly string baseResourceName;
-
-         readonly Assembly assembly;
-         readonly string assemblyName;
-         readonly int assemblyNamePartsCount;
-         readonly string[] resourceNames;
-
-         public bool HasResources { get { return resourceNames.Length > 0; } }
-
-         public AssemblyResourceData(RegisterInfo registerInfo, string basePath) {
-
-            this.assembly = registerInfo.Assembly;
-            this.assemblyName = this.assembly.GetName().Name;
-            this.assemblyNamePartsCount = this.assemblyName.Split('.').Count();
-            this.BasePath = basePath;
-            this.basePathParts = basePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            this.baseResourceName = RelativeVirtualPathToResourceName(basePath);
-            this.resourceNames =
-               (from n in assembly.GetManifestResourceNames()
-                where n.StartsWith(this.baseResourceName + ".", StringComparison.Ordinal)
-                   && n.Split('.').Length >= 4
-                select n).ToArray();
-         }
-
-         public bool ResourceExists(string virtualPath, bool isFile, out string resourceName) {
-
-            if (this.HasResources) {
-
-               string relativeVirtualPath = VirtualPathUtility.ToAppRelative(virtualPath).Remove(0, 2);
-               string[] relativeVirtualPathParts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-
-               for (int i = 0; i < resourceNames.Length; i++) {
-
-                  resourceName = resourceNames[i];
-                  string resourcePath = ResourceNameToRelativeVirtualPath(resourceName);
-                  string[] resourcePathParts = resourcePath.Split('/');
-
-                  bool resourcePathLengthOK = (isFile) ?
-                     resourcePathParts.Length == relativeVirtualPathParts.Length
-                     : resourcePathParts.Length > relativeVirtualPathParts.Length;
-
-                  if (resourcePathLengthOK) {
-
-                     string resourcePath2 = (isFile) ?
-                        resourcePath
-                        : String.Join("/", resourcePathParts.Take(resourcePathParts.Length - 1));
-
-                     if (String.Equals(String.Join("/", relativeVirtualPathParts), resourcePath2, VirtualPathComparison))
-                        return true;
-                  }
-               }
-            }
-
-            resourceName = null;
-            return false;
-         }
-
-         public string ResourceNameToRelativeVirtualPath(string resourceName) {
-
-            int dotFirstIndex = resourceName.IndexOf('.');
-            int dotLastIndex = resourceName.LastIndexOf('.');
-
-            string virtualPath = resourceName;
-
-            if (dotFirstIndex > 0
-               && dotFirstIndex != dotLastIndex) {
-
-               StringBuilder sb = new StringBuilder(resourceName);
-               sb.Replace('.', '/', 0, dotLastIndex);
-
-               virtualPath = sb.ToString();
-            }
-
-            List<string> parts = virtualPath.Split('/').ToList();
-            parts.RemoveRange(0, this.assemblyNamePartsCount);
-            parts.InsertRange(1, this.basePathParts.Skip(1));
-
-            return String.Join("/", parts);
-         }
-
-         public string RelativeVirtualPathToResourceName(string relativeVirtualPath) {
-
-            List<string> parts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-            if (parts.Count > 1)
-               parts.RemoveRange(1, basePathParts.Length - 1);
-
-            parts.Insert(0, this.assemblyName);
-
-            return String.Join(".", parts);
-         }
-
-         public string[] GetFileResources() {
-
-            string[] baseNameParts = this.baseResourceName.Split('.');
-
-            return
-               (from resourceName in resourceNames
-                let resourceParts = resourceName.Split('.')
-                where resourceParts.Length == baseNameParts.Length + 2
-                   && String.Equals(String.Join(".", resourceParts.Take(baseNameParts.Length)), this.baseResourceName, StringComparison.Ordinal)
-                select resourceName).ToArray();
-         }
-
-         public VirtualFile CreateVirtualFile(string virtualPath, string resourceName) {
-            return new AssemblyResourceVirtualFile(virtualPath, resourceName, this.assembly);
-         }
-
-         public VirtualDirectory CreateVirtualDirectory(string virtualPath, VirtualDirectory prev) {
-            return new AssemblyResourceVirtualDirectory(virtualPath, prev, this);
-         }
-      }
-
-      class AssemblyResourceDataCollection : Collection<AssemblyResourceData> {
-
-         public static readonly AssemblyResourceDataCollection Null = new AssemblyResourceDataCollection();
-
-         public void AddRange(IEnumerable<AssemblyResourceData> items) {
-
-            foreach (var item in items) 
-               this.Add(item);
-         }
-
-         public bool ResourceExists(string virtualPath, bool isFile) {
-
-            if (this.Count == 0)
-               return false;
-
-            string resourceName;
-            AssemblyResourceData data;
-
-            return ResourceExists(virtualPath, isFile, out resourceName, out data);
-         }
-
-         public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out AssemblyResourceData data) {
-
-            for (int i = 0; i < this.Count; i++) {
-
-               data = this[i];
-
-               if (data.ResourceExists(virtualPath, isFile, out resourceName))
-                  return true;
-            }
-
-            resourceName = null;
-            data = null;
-
-            return false;
-         }
-      }
-      
-      class AssemblyResourceVirtualDirectory : VirtualDirectory {
-
-         readonly VirtualDirectory prevDirectory;
-         readonly AssemblyResourceData assemblyData;
-
-         List<VirtualFile> _Files;
-         List<VirtualDirectory> _Directories;
-
-         public override IEnumerable Children {
-            get {
-               return Directories.Cast<object>().Concat(Files.Cast<object>());
-            }
-         }
-
-         public override IEnumerable Directories {
-            get {
-               if (_Directories == null) {
-                  List<VirtualDirectory> prevDirs = this.prevDirectory.Directories.Cast<VirtualDirectory>().ToList();
-
-                  _Directories = prevDirs;
-               }
-               return _Directories;
-            }
-         }
-
-         public override IEnumerable Files {
-            get {
-               if (_Files == null) {
-                  List<VirtualFile> prevFiles = this.prevDirectory.Files.Cast<VirtualFile>().ToList();
-
-                  string[] fileResources = this.assemblyData.GetFileResources();
-
-                  for (int i = 0; i < fileResources.Length; i++) {
-
-                     string resourceName = fileResources[i];
-                     string virtualPath = VirtualPathUtility.ToAbsolute("~/" + this.assemblyData.ResourceNameToRelativeVirtualPath(resourceName));
-
-                     if (prevFiles.Exists(v => v.VirtualPath == virtualPath))
-                        continue;
-
-                     prevFiles.Add(this.assemblyData.CreateVirtualFile(virtualPath, resourceName));
-                  }
-
-                  _Files = prevFiles;
-               }
-               return _Files;
-            }
-         }
-
-         public AssemblyResourceVirtualDirectory(string virtualPath, VirtualDirectory prevDirectory, AssemblyResourceData assemblyData)
-            : base(virtualPath) {
-
-            this.prevDirectory = prevDirectory;
-            this.assemblyData = assemblyData;
-         }
-      }
-
-      class AssemblyResourceVirtualFile : VirtualFile {
-
-         readonly string resourceName;
-         readonly Assembly assembly;
-
-         public AssemblyResourceVirtualFile(string virtualPath, string resourceName, Assembly assembly)
-            : base(virtualPath) {
-
-            this.resourceName = resourceName;
-            this.assembly = assembly;
-         }
-
-         public override Stream Open() {
-            return this.assembly.GetManifestResourceStream(resourceName);
-         }
       }
    }
 }
