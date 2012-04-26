@@ -14,11 +14,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Web.Routing;
 
 namespace MvcCodeRouting {
    
@@ -27,11 +28,22 @@ namespace MvcCodeRouting {
    /// </summary>
    public class CodeRoutingSettings {
 
-      // IMPORTANT: When new properties are added ctor(CodeRoutingSettings) must be updated.
+      // IMPORTANT: When new properties are added Import and Reset must be updated.
+
+      static readonly CodeRoutingSettings _Defaults = new CodeRoutingSettings(defaultsConstructor: true);
 
       Func<RouteFormatterArgs, string> _RouteFormatter;
-      readonly IDictionary<Type, string> _DefaultConstraints;
-      readonly Collection<Type> _IgnoredControllers;
+      readonly IDictionary<Type, string> _DefaultConstraints = new Dictionary<Type, string>();
+      readonly Collection<Type> _IgnoredControllers = new Collection<Type>();
+
+      /// <summary>
+      /// The settings that all new <see cref="CodeRoutingSettings"/> instances inherit.
+      /// Use this property to affect the behavior of the <see cref="CodeRoutingExtensions.MapCodeRoutes(RouteCollection, Type)"/> 
+      /// methods without having to pass a settings instance for each call.
+      /// </summary>
+      public static CodeRoutingSettings Defaults {
+         get { return _Defaults; }
+      }
 
       /// <summary>
       /// Gets default constraints used for tokens that represents action parameters
@@ -67,8 +79,7 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
-      /// true to look for views embedded in assemblies. View resources must
-      /// be named using the following format: {rootNamespace}.Views.{controller}.{viewFilePath} .
+      /// true to look for views embedded in assemblies.
       /// </summary>
       public bool EnableEmbeddedViews { get; set; }
 
@@ -83,25 +94,11 @@ namespace MvcCodeRouting {
       public bool RootOnly { get; set; }
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class.
+      /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class,
+      /// using the values from the <see cref="CodeRoutingSettings.Defaults"/> property.
       /// </summary>
-      public CodeRoutingSettings() {
-
-         _IgnoredControllers = new Collection<Type>();
-
-         _DefaultConstraints = new Dictionary<Type, string>();
-         _DefaultConstraints.Add(typeof(Boolean), "true|false");
-         _DefaultConstraints.Add(typeof(Guid), @"\b[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Za-z0-9]{12}\b");
-
-         foreach (var type in new[] { typeof(Decimal), typeof(Double), typeof(Single) })
-            _DefaultConstraints.Add(type, @"-?(0|[1-9]\d*)(\.\d+)?");
-
-         foreach (var type in new[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) })
-            _DefaultConstraints.Add(type, @"0|-?[1-9]\d*");
-
-         foreach (var type in new[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) })
-            _DefaultConstraints.Add(type, @"0|[1-9]\d*");
-      }
+      public CodeRoutingSettings() 
+         : this(_Defaults) { }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class,
@@ -112,17 +109,57 @@ namespace MvcCodeRouting {
          
          if (settings == null) throw new ArgumentNullException("settings");
 
-         _IgnoredControllers = new Collection<Type>();
+         Import(settings);
+      }
 
-         foreach (var item in settings.IgnoredControllers) 
-            _IgnoredControllers.Add(item);
+      private CodeRoutingSettings(bool defaultsConstructor) {
+         Reset();
+      }
 
-         _DefaultConstraints = new Dictionary<Type, string>(settings.DefaultConstraints);
-         
-         this.RouteFormatter = settings.RouteFormatter;
+      void Import(CodeRoutingSettings settings) {
+
          this.EnableEmbeddedViews = settings.EnableEmbeddedViews;
-         this.UseImplicitIdToken = settings.UseImplicitIdToken;
          this.RootOnly = settings.RootOnly;
+         this.RouteFormatter = settings.RouteFormatter;
+         this.UseImplicitIdToken = settings.UseImplicitIdToken;
+
+         this.IgnoredControllers.Clear();
+
+         foreach (Type item in settings.IgnoredControllers)
+            this.IgnoredControllers.Add(item);
+
+         this.DefaultConstraints.Clear();
+
+         foreach (var item in settings.DefaultConstraints)
+            this.DefaultConstraints.Add(item.Key, item.Value);
+      }
+
+      /// <summary>
+      /// Resets the members of the settings class to their original default values, that is,
+      /// the values from the <see cref="CodeRoutingSettings.Defaults"/> property before any
+      /// changes were made.
+      /// </summary>
+      public void Reset() {
+
+         this.EnableEmbeddedViews = false;
+         this.RootOnly = false;
+         this.RouteFormatter = null;
+         this.UseImplicitIdToken = false;
+
+         this.IgnoredControllers.Clear();
+
+         this.DefaultConstraints.Clear();
+         this.DefaultConstraints.Add(typeof(Boolean), "true|false");
+         this.DefaultConstraints.Add(typeof(Guid), @"\b[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Za-z0-9]{12}\b");
+
+         foreach (Type type in new[] { typeof(Decimal), typeof(Double), typeof(Single) })
+            this.DefaultConstraints.Add(type, @"-?(0|[1-9]\d*)(\.\d+)?");
+
+         foreach (Type type in new[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) })
+            this.DefaultConstraints.Add(type, @"0|-?[1-9]\d*");
+
+         foreach (Type type in new[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) })
+            this.DefaultConstraints.Add(type, @"0|[1-9]\d*");
       }
 
       internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {

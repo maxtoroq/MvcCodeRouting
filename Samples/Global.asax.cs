@@ -21,13 +21,11 @@ namespace Samples {
 
          routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-         routes.MapCodeRoutes(
-            rootController: typeof(Controllers.HomeController),
-            settings: new CodeRoutingSettings {
-               RouteFormatter = args =>
-                  Regex.Replace(args.OriginalSegment, @"([a-z])([A-Z])", "$1-$2").ToLowerInvariant()
-            }
-         );
+         CodeRoutingSettings.Defaults.Reset();
+         CodeRoutingSettings.Defaults.RouteFormatter = args =>
+            Regex.Replace(args.OriginalSegment, @"([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
+
+         routes.MapCodeRoutes(typeof(Controllers.HomeController));
       }
 
       void RegisterViewEngines(ViewEngineCollection viewEngines) {
