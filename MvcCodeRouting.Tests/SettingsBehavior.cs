@@ -28,6 +28,33 @@ namespace MvcCodeRouting.Tests {
          Assert.AreEqual(1, settings1.IgnoredControllers.Count);
          Assert.AreEqual(2, settings2.IgnoredControllers.Count);
       }
+
+      [TestMethod]
+      public void NewInstanceHasDefaultValues() {
+
+         CodeRoutingSettings.Defaults.Reset();
+
+         var settings1 = new CodeRoutingSettings();
+
+         Assert.AreEqual(CodeRoutingSettings.Defaults.EnableEmbeddedViews, settings1.EnableEmbeddedViews);
+
+         CodeRoutingSettings.Defaults.EnableEmbeddedViews = !CodeRoutingSettings.Defaults.EnableEmbeddedViews;
+
+         var settings2 = new CodeRoutingSettings();
+
+         Assert.AreEqual(CodeRoutingSettings.Defaults.EnableEmbeddedViews, settings2.EnableEmbeddedViews);
+      }
+
+      [TestMethod]
+      public void NewInstanceCopiesValuesFromProvidedSettings() {
+
+         var settings1 = new CodeRoutingSettings();
+         settings1.EnableEmbeddedViews = !settings1.EnableEmbeddedViews;
+
+         var settings2 = new CodeRoutingSettings(settings1);
+
+         Assert.AreEqual(settings1.EnableEmbeddedViews, settings2.EnableEmbeddedViews);
+      }
    }
 }
 

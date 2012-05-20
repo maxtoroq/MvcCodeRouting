@@ -43,14 +43,14 @@ namespace MvcCodeRouting.Tests.Routing {
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
 
          Assert.IsNotNull(routeData);
-         Assert.AreEqual(routeData.GetRequiredString("action"), "AbcDfg");
+         Assert.AreEqual("AbcDfg", routeData.GetRequiredString("action"));
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/_Index");
 
          routeData = routes.GetRouteData(httpContextMock.Object);
 
          Assert.IsNotNull(routeData);
-         Assert.AreEqual(routeData.GetRequiredString("action"), "Index");
+         Assert.AreEqual("Index", routeData.GetRequiredString("action"));
       }
 
       [TestMethod]
@@ -72,7 +72,7 @@ namespace MvcCodeRouting.Tests.Routing {
 
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
 
-         Assert.AreEqual(routeData.GetRequiredString("controller"), "RouteFormatting2");
+         Assert.AreEqual("RouteFormatting2", routeData.GetRequiredString("controller"));
       }
 
       [TestMethod]
@@ -94,8 +94,8 @@ namespace MvcCodeRouting.Tests.Routing {
 
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
 
-         Assert.AreEqual(routeData.GetRequiredString("controller"), "RouteFormatting3");
-         Assert.AreEqual(((string[])routeData.DataTokens["Namespaces"])[0], typeof(RouteFormatting.SubNamespace.RouteFormatting3Controller).Namespace);
+         Assert.AreEqual("RouteFormatting3", routeData.GetRequiredString("controller"));
+         Assert.AreEqual(typeof(RouteFormatting.SubNamespace.RouteFormatting3Controller).Namespace, ((string[])routeData.DataTokens["Namespaces"])[0]);
       }
 
       [TestMethod]
@@ -112,8 +112,8 @@ namespace MvcCodeRouting.Tests.Routing {
             }
          });
 
-         Assert.AreEqual(Url.Action("AbcDfg", controller), "/_AbcDfg");
-         Assert.AreEqual(Url.Action("Index", controller), "/");
+         Assert.AreEqual("/_AbcDfg", Url.Action("AbcDfg", controller));
+         Assert.AreEqual("/", Url.Action("Index", controller));
       }
 
       [TestMethod]
@@ -130,7 +130,7 @@ namespace MvcCodeRouting.Tests.Routing {
             }
          });
 
-         Assert.AreEqual(Url.Action("", "RouteFormatting2"), "/_RouteFormatting2");
+         Assert.AreEqual("/_RouteFormatting2", Url.Action("", "RouteFormatting2"));
       }
 
       [TestMethod]

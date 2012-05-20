@@ -32,7 +32,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(routes.Count, 1);
+         Assert.AreEqual(1, routes.Count);
       }
 
       [TestMethod]
@@ -56,7 +56,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(routes.Count, 1);
+         Assert.AreEqual(1, routes.Count);
       }
    }
 }

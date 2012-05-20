@@ -38,20 +38,20 @@ namespace MvcCodeRouting.Tests.Routing {
             httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/" + item);
 
             Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
-            Assert.AreEqual(Url.Action(item, controller), "/" + item); 
+            Assert.AreEqual("/" + item, Url.Action(item, controller));
          }
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/a");
 
          Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
-         Assert.AreEqual(Url.Action("Custom", controller), "/a");
+         Assert.AreEqual("/a", Url.Action("Custom", controller));
 
          foreach (var item in new[] { "Custom2", "Custom3" }) {
             
             httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b/" + item);
 
             Assert.IsNotNull(routes.GetRouteData(httpContextMock.Object));
-            Assert.AreEqual(Url.Action(item, controller), "/b/" + item);
+            Assert.AreEqual("/b/" + item, Url.Action(item, controller));
          }
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/b/XYZ");

@@ -31,7 +31,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(Url.Action("Foo", controller), "/Foo");
+         Assert.AreEqual("/Foo", Url.Action("Foo", controller));
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/Foo");

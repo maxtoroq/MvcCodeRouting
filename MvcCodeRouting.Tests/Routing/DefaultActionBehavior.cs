@@ -34,8 +34,8 @@ namespace MvcCodeRouting.Tests.Routing {
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
-         Assert.AreEqual(routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"), "Index");
-         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual("Index", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
+         Assert.AreEqual("/", Url.Action("", controller));
 
          controller = typeof(DefaultAction.DefaultAction5Controller);
 
@@ -59,14 +59,14 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual("/", Url.Action("", controller));
 
          controller = typeof(DefaultAction.DefaultAction2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual("/", Url.Action("", controller));
       }
 
       [TestMethod]
@@ -80,8 +80,8 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(Url.Action("", controller), "/");
-         Assert.AreEqual(Url.Action("", controller, new { id = 5 }), "/Index/5");
+         Assert.AreEqual("/", Url.Action("", controller));
+         Assert.AreEqual("/Index/5", Url.Action("", controller, new { id = 5 }));
       }
 
       [TestMethod]
@@ -95,7 +95,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
-         Assert.AreEqual(Url.Action("", controller), "/");
+         Assert.AreEqual("/", Url.Action("", controller));
       }
    }
 }

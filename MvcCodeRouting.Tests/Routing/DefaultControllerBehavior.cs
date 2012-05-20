@@ -38,15 +38,15 @@ namespace MvcCodeRouting.Tests.Routing {
 
          var routeData = routes.GetRouteData(httpContextMock.Object);
 
-         Assert.AreEqual(routeData.GetRequiredString("controller"), "DefaultController2");
-         Assert.AreEqual(((string[])routeData.DataTokens["Namespaces"])[0], controller.Namespace);
+         Assert.AreEqual("DefaultController2", routeData.GetRequiredString("controller"));
+         Assert.AreEqual(controller.Namespace, ((string[])routeData.DataTokens["Namespaces"])[0]);
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/DefaultController2/Foo");
 
          routeData = routes.GetRouteData(httpContextMock.Object);
 
-         Assert.AreEqual(routeData.GetRequiredString("controller"), "DefaultController2");
-         Assert.AreEqual(((string[])routeData.DataTokens["Namespaces"])[0], typeof(DefaultController.DefaultController2.DefaultController2Controller).Namespace);
+         Assert.AreEqual("DefaultController2", routeData.GetRequiredString("controller"));
+         Assert.AreEqual(typeof(DefaultController.DefaultController2.DefaultController2Controller).Namespace, ((string[])routeData.DataTokens["Namespaces"])[0]);
       }
 
       [TestMethod]

@@ -46,7 +46,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapRoute(null, "{a}");
 
          Assert.IsNull(Url.RouteUrl(new { }));
-         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
+         Assert.AreEqual("/b", Url.RouteUrl(new { a = "b" }));
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
@@ -64,7 +64,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "b" });
 
-         Assert.AreEqual(Url.RouteUrl(new { }), "/");
+         Assert.AreEqual("/", Url.RouteUrl(new { }));
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
@@ -78,8 +78,8 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "b" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = (string)null }), "/");
-         Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
+         Assert.AreEqual("/", Url.RouteUrl(new { a = (string)null }));
+         Assert.AreEqual("/", Url.RouteUrl(new { a = "" }));
       }
 
       [TestMethod]
@@ -98,8 +98,8 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "a", new { b = "c" });
 
-         Assert.AreEqual(Url.RouteUrl(new { b = "c" }), "/a");
-         Assert.AreEqual(Url.RouteUrl(new { }), "/a");
+         Assert.AreEqual("/a", Url.RouteUrl(new { b = "c" }));
+         Assert.AreEqual("/a", Url.RouteUrl(new { }));
       }
 
       [TestMethod]
@@ -108,8 +108,8 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { }, new { a = "b|c" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
-         Assert.AreEqual(Url.RouteUrl(new { a = "c" }), "/c");
+         Assert.AreEqual("/b", Url.RouteUrl(new { a = "b" }));
+         Assert.AreEqual("/c", Url.RouteUrl(new { a = "c" }));
          Assert.IsNull(Url.RouteUrl(new { a = "d" }));
 
          var httpContextMock = new Mock<HttpContextBase>();
@@ -132,7 +132,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { }, new { a = "b" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "b" }), "/b");
+         Assert.AreEqual("/b", Url.RouteUrl(new { a = "b" }));
          Assert.IsNull(Url.RouteUrl(new { a = "b2" }));
 
          var httpContextMock = new Mock<HttpContextBase>();
@@ -163,7 +163,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "" }, new { a = "(b)?" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
+         Assert.AreEqual("/", Url.RouteUrl(new { a = "" }));
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
@@ -174,7 +174,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.Clear();
          routes.MapRoute(null, "{a}", new { a = "b" }, new { a = "b" });
 
-         Assert.AreEqual(Url.RouteUrl(new { a = "" }), "/");
+         Assert.AreEqual("/", Url.RouteUrl(new { a = "" }));
 
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
@@ -198,8 +198,8 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapRoute(null, "a", new { controller = "b", action = "c" });
 
          Assert.IsNull(Url.RouteUrl(new { controller = (string)null, action = (string)null }));
-         Assert.AreEqual(Url.Action(null), "/a");
-         Assert.AreEqual(Url.Action(null, (string)null), "/a");
+         Assert.AreEqual("/a", Url.Action(null));
+         Assert.AreEqual("/a", Url.Action(null, (string)null));
       }
 
       [TestMethod]
@@ -217,7 +217,7 @@ namespace MvcCodeRouting.Tests.Routing {
          var requestContext = new RequestContext(this.Url.RequestContext.HttpContext, routeData);
          var Url = new UrlHelper(requestContext, routes);
 
-         Assert.AreEqual(Url.RouteUrl(new { }), "/x");
+         Assert.AreEqual("/x", Url.RouteUrl(new { }));
       }
 
       [TestMethod]
