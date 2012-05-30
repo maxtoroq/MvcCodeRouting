@@ -23,17 +23,16 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Web.Mvc;
+using System.Web.Mvc.Async;
 
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ControllerUrl}")]
-   class ControllerInfo {
+   abstract class ControllerInfo {
 
       internal static readonly Type BaseType = typeof(Controller);
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
-
-      readonly ControllerDescriptor controllerDescr;
 
       ReadOnlyCollection<string> _CodeRoutingNamespace;
       ReadOnlyCollection<string> _CodeRoutingContext;
@@ -47,12 +46,10 @@ namespace MvcCodeRouting {
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
 
-      public string Name {
+      public virtual string Name {
          get {
-            if (_Name == null) {
-               _Name = (controllerDescr != null) ? controllerDescr.ControllerName 
-                  : Type.Name.Substring(0, Type.Name.Length - "controller".Length);
-            }
+            if (_Name == null) 
+               _Name = Type.Name.Substring(0, Type.Name.Length - "Controller".Length);
             return _Name;
          }
       }
@@ -196,9 +193,9 @@ namespace MvcCodeRouting {
          get {
             if (_Actions == null) {
                _Actions = new Collection<ActionInfo>(
-                  (this.controllerDescr != null ?
-                     GetActions(this.controllerDescr)
-                     : GetActions(this.Type)).ToArray()
+                  (from a in GetActions()
+                   where !a.IsDefined(typeof(NonActionAttribute), inherit: true)
+                   select a).ToArray()
                );
 
                CheckOverloads(_Actions);
@@ -319,17 +316,16 @@ namespace MvcCodeRouting {
          }
       }
 
-      public ControllerInfo(Type type, RegisterInfo registerInfo) {
-         
-         this.Type = type;
-         this.Register = registerInfo;
+      public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+
+         ControllerDescriptor controllerDescr = null;
 
          if (createActionInvoker != null) {
-            
+
             Controller instance = null;
 
             try {
-               instance = (Controller)FormatterServices.GetUninitializedObject(this.Type);
+               instance = (Controller)FormatterServices.GetUninitializedObject(controllerType);
             } catch (SecurityException) { }
 
             if (instance != null) {
@@ -337,34 +333,35 @@ namespace MvcCodeRouting {
                ControllerActionInvoker actionInvoker = createActionInvoker(instance) as ControllerActionInvoker;
 
                if (actionInvoker != null)
-                  this.controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
-            } 
+                  controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
+            }
          }
+
+         if (controllerDescr != null) 
+            return new DescriptedControllerInfo(controllerDescr, controllerType, registerInfo);
+
+         return new ReflectedControllerInfo(controllerType, registerInfo);
       }
 
-      IEnumerable<ActionInfo> GetActions(ControllerDescriptor controllerDescr) {
-
-         var actions =
-            from a in controllerDescr.GetCanonicalActions()
-            where !a.IsDefined(typeof(NonActionAttribute), inherit: true)
-            select new DescriptedActionInfo(a, this);
+      protected ControllerInfo(Type type, RegisterInfo registerInfo) {
          
-         return actions;
+         this.Type = type;
+         this.Register = registerInfo;
       }
 
-      IEnumerable<ActionInfo> GetActions(Type controllerType) {
+      protected internal abstract ActionInfo[] GetActions();
 
-         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(controllerType);
+      protected IEnumerable<MethodInfo> GetCanonicalActionMethods() {
 
-         var actions =
-             from m in controllerType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(this.Type);
+
+         return
+             from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
              where !m.IsSpecialName
                 && BaseType.IsAssignableFrom(m.DeclaringType)
                 && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
                 && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
-             select new ReflectedActionInfo(m, this);
-
-         return actions;
+             select m;
       }
 
       TokenInfo CreateTokenInfo(PropertyInfo property) {

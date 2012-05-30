@@ -53,6 +53,10 @@
     <Compile Include="Api\RouteFormatterArgs.cs" />
     <Compile Include="Api\RouteSegmentType.cs" />
     <Compile Include="CodeRoute.cs" />
+    <Compile Include="MetaModel\DescriptedAsyncActionInfo.cs" />
+    <Compile Include="MetaModel\DescriptedControllerInfo.cs" />
+    <Compile Include="MetaModel\ReflectedAsyncActionInfo.cs" />
+    <Compile Include="MetaModel\ReflectedControllerInfo.cs" />
     <Compile Include="RouteFactory.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="DataTokenKeys.cs" />

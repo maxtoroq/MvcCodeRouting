@@ -50,7 +50,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public ActionParameterInfo(ActionInfo action) {
+      protected ActionParameterInfo(ActionInfo action) {
          this.Action = action;
       }
 

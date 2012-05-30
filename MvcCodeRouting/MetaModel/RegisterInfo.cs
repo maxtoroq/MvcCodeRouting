@@ -97,7 +97,7 @@ namespace MvcCodeRouting {
 
          return
             from t in GetControllerTypes()
-            let c = new ControllerInfo(t, this)
+            let c = ControllerInfo.Create(t, this)
             where !this.Settings.IgnoredControllers.Contains(c.Type)
               && c.IsInRootNamespace
             select c;

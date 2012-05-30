@@ -26,6 +26,7 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{ActionUrl}")]
    abstract class ActionInfo : ICustomAttributeProvider {
 
+      string _Name;
       string _ActionSegment;
       string _CustomRoute;
       bool _CustomRouteInit;
@@ -34,7 +35,22 @@ namespace MvcCodeRouting {
       TokenInfoCollection _RouteParameters;
 
       public ControllerInfo Controller { get; private set; }
-      public abstract string Name { get; }
+      
+      public string Name {
+         get {
+            if (_Name == null) {
+
+               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
+                  .Cast<ActionNameAttribute>()
+                  .SingleOrDefault();
+
+               _Name = (nameAttr != null) ?
+                  nameAttr.Name : GetName();
+            }
+            return _Name;
+         }
+      }
+
       public virtual string MethodName { get { return Name; } }
       public virtual Type DeclaringType { get { return Controller.Type; } }
 
@@ -157,11 +173,13 @@ namespace MvcCodeRouting {
          return new TokenInfo(tokenName, constraint, isOptional, isCatchAll);
       }
 
-      public ActionInfo(ControllerInfo controller) {
+      protected ActionInfo(ControllerInfo controller) {
          this.Controller = controller;
       }
 
       protected abstract ActionParameterInfo[] GetParameters();
+      protected abstract string GetName();
+
       public abstract object[] GetCustomAttributes(bool inherit);
       public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
       public abstract bool IsDefined(Type attributeType, bool inherit);

@@ -24,21 +24,6 @@ namespace MvcCodeRouting {
    class ReflectedActionInfo : ActionInfo {
 
       readonly MethodInfo method;
-      string _Name;
-
-      public override string Name {
-         get {
-            if (_Name == null) {
-               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
-                  .Cast<ActionNameAttribute>()
-                  .SingleOrDefault();
-
-               _Name = (nameAttr != null) ? 
-                  nameAttr.Name : method.Name;
-            }
-            return _Name;
-         }
-      }
 
       public override string MethodName {
          get { return method.Name; }
@@ -52,6 +37,10 @@ namespace MvcCodeRouting {
          : base(controller) {
 
          this.method = method;
+      }
+
+      protected override string GetName() {
+         return this.method.Name;
       }
 
       protected override ActionParameterInfo[] GetParameters() {

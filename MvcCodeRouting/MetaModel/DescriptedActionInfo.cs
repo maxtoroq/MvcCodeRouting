@@ -24,21 +24,6 @@ namespace MvcCodeRouting {
 
       readonly ActionDescriptor actionDescr;
       readonly ReflectedActionDescriptor reflectedActionDescr;
-      string _Name;
-
-      public override string Name {
-         get {
-            if (_Name == null) {
-               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
-                  .Cast<ActionNameAttribute>()
-                  .SingleOrDefault();
-
-               _Name = (nameAttr != null) ? 
-                  nameAttr.Name : actionDescr.ActionName;
-            }
-            return _Name;
-         }
-      }
 
       public override string MethodName {
          get {
@@ -61,6 +46,10 @@ namespace MvcCodeRouting {
 
          this.actionDescr = actionDescr;
          this.reflectedActionDescr = actionDescr as ReflectedActionDescriptor;
+      }
+
+      protected override string GetName() {
+         return this.actionDescr.ActionName;
       }
 
       protected override ActionParameterInfo[] GetParameters() {
