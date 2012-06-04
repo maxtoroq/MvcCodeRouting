@@ -45,7 +45,7 @@ function Extract-Views {
     }
     
     $assemblyPath = if ($isWebsite) { $assemblyRef.FullPath } else { $assemblyRef.Path }
-    $assembly = [Reflection.Assembly]::LoadFrom($assemblyPath)
+    $assembly = [Reflection.Assembly]::Load([IO.File]::ReadAllBytes($assemblyPath))
     $viewResourceNames = $assembly.GetManifestResourceNames() | 
         where {[Text.RegularExpressions.Regex]::IsMatch($_, "^$AssemblyName\.Views\.", [Text.RegularExpressions.RegexOptions]::IgnoreCase)}
     
