@@ -94,6 +94,12 @@ namespace MvcCodeRouting {
       public bool RootOnly { get; set; }
 
       /// <summary>
+      /// Gets or sets an object that is associated to each created route as a data token
+      /// named 'Configuration'. Use to provide configuration settings to controllers.
+      /// </summary>
+      public object Configuration { get; set; }
+
+      /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class,
       /// using the values from the <see cref="CodeRoutingSettings.Defaults"/> property.
       /// </summary>
@@ -132,6 +138,8 @@ namespace MvcCodeRouting {
 
          foreach (var item in settings.DefaultConstraints)
             this.DefaultConstraints.Add(item.Key, item.Value);
+
+         this.Configuration = settings.Configuration;
       }
 
       /// <summary>
@@ -145,6 +153,7 @@ namespace MvcCodeRouting {
          this.RootOnly = false;
          this.RouteFormatter = null;
          this.UseImplicitIdToken = false;
+         this.Configuration = null;
 
          this.IgnoredControllers.Clear();
 

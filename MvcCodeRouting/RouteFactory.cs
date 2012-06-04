@@ -39,6 +39,13 @@ namespace MvcCodeRouting {
 
          CodeRoute[] codeRoutes = groupedActions.Select(g => CreateRoute(g)).ToArray();
 
+         object config = registerInfo.Settings.Configuration;
+
+         if (config != null) {
+            for (int i = 0; i < codeRoutes.Length; i++) 
+               codeRoutes[i].DataTokens[DataTokenKeys.Configuration] = config;
+         }
+
          return codeRoutes;
       }
 
