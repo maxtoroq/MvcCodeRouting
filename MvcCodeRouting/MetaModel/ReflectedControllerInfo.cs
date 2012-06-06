@@ -53,5 +53,17 @@ namespace MvcCodeRouting {
                 : new ReflectedActionInfo(m, this)
              select info).ToArray();
       }
+
+      public override object[] GetCustomAttributes(bool inherit) {
+         return this.Type.GetCustomAttributes(inherit);
+      }
+
+      public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
+         return this.Type.GetCustomAttributes(attributeType, inherit);
+      }
+
+      public override bool IsDefined(Type attributeType, bool inherit) {
+         return this.Type.IsDefined(attributeType, inherit);
+      }
    }
 }

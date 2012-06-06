@@ -23,7 +23,7 @@ namespace MvcCodeRouting {
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method.
    /// </summary>
-   [AttributeUsage(AttributeTargets.Method)]
+   [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public sealed class CustomRouteAttribute : Attribute {
 
       /// <summary>
@@ -40,6 +40,11 @@ namespace MvcCodeRouting {
       /// on the action method parameters.
       /// </param>
       public CustomRouteAttribute(string url) {
+
+         if (!String.IsNullOrEmpty(url)
+            && url[0] == '/')
+            throw new ArgumentException("Custom route cannot start with '/'.", "url");
+
          this.Url = url;
       }
    }

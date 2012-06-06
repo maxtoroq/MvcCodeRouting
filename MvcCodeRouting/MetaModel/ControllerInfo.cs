@@ -28,7 +28,7 @@ using System.Web.Mvc.Async;
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ControllerUrl}")]
-   abstract class ControllerInfo {
+   abstract class ControllerInfo : ICustomAttributeProvider {
 
       internal static readonly Type BaseType = typeof(Controller);
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
@@ -42,6 +42,11 @@ namespace MvcCodeRouting {
       Collection<ActionInfo> _Actions;
       string _Name;
       string _ControllerSegment;
+      string _CustomRoute;
+      bool _CustomRouteInit;
+      bool? _CustomRouteHasControllerToken;
+      string _UrlTemplate;
+      string _ControllerUrl;
 
       public Type Type { get; private set; }
       public RegisterInfo Register { get; private set; }
@@ -207,19 +212,77 @@ namespace MvcCodeRouting {
 
       public string UrlTemplate {
          get {
-            return String.Join("/", BaseRouteAndNamespaceSegments
-               .Concat((!IsRootController) ? new[] { "{controller}" } : new string[0])
-               .Concat(RouteProperties.Select(p => p.RouteSegment))
-            );
+            if (_UrlTemplate == null) {
+
+               List<string> segments = new List<string>();
+               segments.AddRange(BaseRouteAndNamespaceSegments);
+
+               if (CustomRoute != null) {
+                  segments.AddRange(CustomRoute.Split('/'));
+               } else {
+
+                  if (!IsRootController)
+                     segments.Add("{controller}");
+
+                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
+               }
+
+               _UrlTemplate = String.Join("/", segments); 
+            }
+            return _UrlTemplate;
          }
       }
 
       public string ControllerUrl {
          get {
-            return String.Join("/", BaseRouteAndNamespaceSegments
-               .Concat((!IsRootController) ? new[] { ControllerSegment } : new string[0])
-               .Concat(RouteProperties.Select(p => p.RouteSegment))
-            );
+            if (_ControllerUrl == null) {
+               List<string> segments = new List<string>();
+               segments.AddRange(BaseRouteAndNamespaceSegments);
+
+               if (CustomRoute != null) {
+                  segments.AddRange(CustomRoute.Split('/'));
+               } else {
+
+                  if (!IsRootController)
+                     segments.Add(ControllerSegment);
+
+                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
+               }
+
+               _ControllerUrl = String.Join("/", segments);
+            }
+            return _ControllerUrl;
+         }
+      }
+
+      public string CustomRoute {
+         get {
+            if (!_CustomRouteInit) {
+
+               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
+                  .Cast<CustomRouteAttribute>()
+                  .SingleOrDefault();
+
+               if (attr != null)
+                  _CustomRoute = attr.Url;
+
+               _CustomRouteInit = true;
+            }
+            return _CustomRoute;
+         }
+      }
+
+      public bool CustomRouteHasControllerToken {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            if (_CustomRouteHasControllerToken == null) {
+               _CustomRouteHasControllerToken =
+                  CustomRoute.IndexOf("{controller}", StringComparison.OrdinalIgnoreCase) != -1;
+            }
+
+            return _CustomRouteHasControllerToken.Value;
          }
       }
 
@@ -350,6 +413,9 @@ namespace MvcCodeRouting {
       }
 
       protected internal abstract ActionInfo[] GetActions();
+      public abstract object[] GetCustomAttributes(bool inherit);
+      public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
+      public abstract bool IsDefined(Type attributeType, bool inherit);
 
       protected IEnumerable<MethodInfo> GetCanonicalActionMethods() {
 

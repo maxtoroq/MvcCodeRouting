@@ -89,6 +89,7 @@ namespace MvcCodeRouting {
                 a.Controller.IsRootController,
                 a.Controller.Namespace,
                 NamespaceSegments = String.Join("/", a.Controller.NamespaceSegments),
+                ControllerCustomRoute = a.Controller.CustomRoute,
                 DeclaringType = declaringType,
                 a.CustomRoute,
                 HasRouteParameters = (a.RouteParameters.Count > 0)
@@ -185,20 +186,27 @@ namespace MvcCodeRouting {
          if (actions == null) throw new ArgumentNullException("actions");
 
          ActionInfo first = actions.First();
+         string baseRoute = first.Controller.Register.BaseRoute;
 
          var controllerMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
          foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer))
             controllerMapping.Add(name, actions.First(a => ControllerInfo.NameEquals(a.Controller.Name, name)).Controller.ControllerSegment);
 
-         bool hardcodeController = controllerMapping.Count == 1;
+         string controllerCustomRoute = first.Controller.CustomRoute;
+
+         bool includeControllerToken = (controllerCustomRoute != null) ?
+            first.Controller.CustomRouteHasControllerToken
+            : controllerMapping.Count > 1;
+
          bool controllerFormat = controllerMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
-         bool requiresControllerMapping = controllerFormat && !hardcodeController;
+         bool requiresControllerMapping = controllerFormat && includeControllerToken;
 
          var segments = new List<string> { 
-            (hardcodeController ? 
-               first.Controller.ControllerUrl 
-               : first.Controller.UrlTemplate)
+            (includeControllerToken ? 
+               first.Controller.UrlTemplate
+               : first.Controller.ControllerUrl 
+            )
          };
 
          var actionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -206,20 +214,19 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
-         string customRoute = first.CustomRoute;
-         string baseRoute = first.Controller.Register.BaseRoute;
+         string actionCustomRoute = first.CustomRoute;
 
-         bool includeActionToken = (customRoute != null) ?
+         bool includeActionToken = (actionCustomRoute != null) ?
             first.CustomRouteHasActionToken
             : actionMapping.Count > 1 || first.IsDefaultAction;
 
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool requiresActionMapping = actionFormat && includeActionToken;
 
-         if (customRoute != null) {
+         if (actionCustomRoute != null) {
 
-            if (customRoute.StartsWith("~/")) {
-               customRoute = customRoute.Substring(2);
+            if (actionCustomRoute.StartsWith("~/")) {
+               actionCustomRoute = actionCustomRoute.Substring(2);
 
                segments.Clear();
 
@@ -227,9 +234,9 @@ namespace MvcCodeRouting {
                   segments.AddRange(baseRoute.Split('/'));
             }
 
-            segments.Add(customRoute);
+            segments.Add(actionCustomRoute);
          } else {
-            segments.Add(!includeActionToken ? first.ActionSegment : String.Concat("{action}"));
+            segments.Add(!includeActionToken ? first.ActionSegment : "{action}");
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
          }
 
@@ -237,7 +244,7 @@ namespace MvcCodeRouting {
 
          var defaults = new RouteValueDictionary();
 
-         if (controllerMapping.Count == 1)
+         if (!includeControllerToken)
             defaults.Add("controller", controllerMapping.Keys.First());
 
          ActionInfo defaultAction = (includeActionToken) ?
@@ -262,7 +269,7 @@ namespace MvcCodeRouting {
 
          var constraints = new RouteValueDictionary();
 
-         if (!hardcodeController)
+         if (includeControllerToken)
             constraints.Add("controller", String.Join("|", controllerMapping.Values));
 
          if (includeActionToken)

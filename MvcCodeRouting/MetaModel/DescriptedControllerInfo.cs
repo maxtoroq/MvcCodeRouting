@@ -43,7 +43,7 @@ namespace MvcCodeRouting {
       protected internal override ActionInfo[] GetActions() {
 
          ActionInfo[] actions = 
-            (from a in controllerDescr.GetCanonicalActions()
+            (from a in this.controllerDescr.GetCanonicalActions()
              let asyncActionDescr = a as ReflectedAsyncActionDescriptor
              select (asyncActionDescr != null) ?
                new DescriptedAsyncActionInfo(asyncActionDescr, this)
@@ -59,6 +59,18 @@ namespace MvcCodeRouting {
          }
 
          return actions;
+      }
+
+      public override object[] GetCustomAttributes(bool inherit) {
+         return this.controllerDescr.GetCustomAttributes(inherit);
+      }
+
+      public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
+         return this.controllerDescr.GetCustomAttributes(attributeType, inherit);
+      }
+
+      public override bool IsDefined(Type attributeType, bool inherit) {
+         return this.controllerDescr.IsDefined(attributeType, inherit);
       }
    }
 }
