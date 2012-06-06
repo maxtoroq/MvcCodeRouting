@@ -206,15 +206,28 @@ namespace MvcCodeRouting {
          foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
-         bool includeActionToken = (first.CustomRoute != null) ?
+         string customRoute = first.CustomRoute;
+         string baseRoute = first.Controller.Register.BaseRoute;
+
+         bool includeActionToken = (customRoute != null) ?
             first.CustomRouteHasActionToken
             : actionMapping.Count > 1 || first.IsDefaultAction;
 
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool requiresActionMapping = actionFormat && includeActionToken;
 
-         if (first.CustomRoute != null) {
-            segments.Add(first.CustomRoute);
+         if (customRoute != null) {
+
+            if (customRoute.StartsWith("~/")) {
+               customRoute = customRoute.Substring(2);
+
+               segments.Clear();
+
+               if (!String.IsNullOrEmpty(baseRoute))
+                  segments.AddRange(baseRoute.Split('/'));
+            }
+
+            segments.Add(customRoute);
          } else {
             segments.Add(!includeActionToken ? first.ActionSegment : String.Concat("{action}"));
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));
@@ -269,15 +282,15 @@ namespace MvcCodeRouting {
 
          var dataTokens = new RouteValueDictionary { 
             { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
-            { DataTokenKeys.BaseRoute, first.Controller.Register.BaseRoute },
+            { DataTokenKeys.BaseRoute, baseRoute },
             { DataTokenKeys.RouteContext, String.Join("/", first.Controller.CodeRoutingContext) },
             { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{'))) }
          };
 
          var nonActionParameterTokens = new List<string>();
 
-         if (!String.IsNullOrEmpty(first.Controller.Register.BaseRoute))
-            nonActionParameterTokens.AddRange(TokenPattern.Matches(first.Controller.Register.BaseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
+         if (!String.IsNullOrEmpty(baseRoute))
+            nonActionParameterTokens.AddRange(TokenPattern.Matches(baseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
