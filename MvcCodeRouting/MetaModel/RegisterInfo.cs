@@ -23,10 +23,28 @@ namespace MvcCodeRouting {
    
    class RegisterInfo {
 
+      string _BaseRoute;
       Assembly _Assembly;
       CodeRoutingSettings _Settings;
       string _RootNamespace;
       string _ViewsLocation;
+
+      public string BaseRoute {
+         get { return _BaseRoute; }
+         set {
+            if (!String.IsNullOrWhiteSpace(value)) {
+               value = value.Trim();
+
+               if (new[] { '~', '/' }.Any(c => value[0] == c)) {
+                  throw new ArgumentException(
+                     String.Format(CultureInfo.InvariantCulture, "Base route cannot start with '{0}'.", value[0])
+                  );
+               }
+
+               _BaseRoute = value;
+            }
+         }
+      }
 
       public Assembly Assembly {
          get {
@@ -40,7 +58,6 @@ namespace MvcCodeRouting {
       }
 
       public Type RootController { get; private set; }
-      public string BaseRoute { get; set; }
       
       public CodeRoutingSettings Settings {
          get {
@@ -67,7 +84,7 @@ namespace MvcCodeRouting {
       public string ViewsLocation {
          get {
             if (_ViewsLocation == null) {
-               _ViewsLocation = (!String.IsNullOrEmpty(this.BaseRoute)) ? 
+               _ViewsLocation = (this.BaseRoute != null) ? 
                   String.Join("/", this.BaseRoute.Split('/').Where(s => !s.Contains('{'))) 
                   : "";
             }

@@ -111,7 +111,7 @@ namespace MvcCodeRouting {
          get {
             if (_CodeRoutingContext == null) {
 
-               if (String.IsNullOrEmpty(Register.BaseRoute)) {
+               if (Register.BaseRoute == null) {
                   _CodeRoutingContext = new ReadOnlyCollection<string>(CodeRoutingNamespace);
                } else {
                   var segments = new List<string>();
@@ -144,7 +144,7 @@ namespace MvcCodeRouting {
          get {
             if (_BaseRouteAndNamespaceSegments == null) {
 
-               if (String.IsNullOrEmpty(Register.BaseRoute)) {
+               if (Register.BaseRoute == null) {
                   _BaseRouteAndNamespaceSegments = new ReadOnlyCollection<string>(NamespaceSegments);
                } else {
                   var segments = new List<string>();

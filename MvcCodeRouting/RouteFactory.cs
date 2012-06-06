@@ -223,7 +223,7 @@ namespace MvcCodeRouting {
 
                segments.Clear();
 
-               if (!String.IsNullOrEmpty(baseRoute))
+               if (baseRoute != null)
                   segments.AddRange(baseRoute.Split('/'));
             }
 
@@ -289,7 +289,7 @@ namespace MvcCodeRouting {
 
          var nonActionParameterTokens = new List<string>();
 
-         if (!String.IsNullOrEmpty(baseRoute))
+         if (baseRoute != null)
             nonActionParameterTokens.AddRange(TokenPattern.Matches(baseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
