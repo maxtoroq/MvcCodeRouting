@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Controllers\AsyncController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
-    <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Admin\AdminController.cs" />
     <Compile Include="Controllers\Admin\Tasks\MaintenanceController.cs" />
@@ -64,6 +63,7 @@
     <Compile Include="Controllers\Api\RoleController.cs" />
     <Compile Include="Controllers\Api\UserController.cs" />
     <Compile Include="Controllers\Book\BookController.cs" />
+    <Compile Include="Controllers\Book\ChapterController.cs" />
     <Compile Include="Controllers\SomeLongNamespace\SomeLongControllerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

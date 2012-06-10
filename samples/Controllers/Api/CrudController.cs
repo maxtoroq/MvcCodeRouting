@@ -21,19 +21,19 @@ namespace Samples.Controllers.Api {
 
       [CustomRoute("{id}")]
       [HttpGet]
-      public ActionResult Entity([FromRoute]TEntityKey id) {
+      public ActionResult Edit([FromRoute]TEntityKey id) {
          throw new NotImplementedException();
       }
 
       [CustomRoute("{id}")]
       [HttpPut]
-      public ActionResult Entity([FromRoute]TEntityKey id, TEntity model) {
+      public ActionResult Edit([FromRoute]TEntityKey id, TEntity model) {
          throw new NotImplementedException();
       }
 
       [CustomRoute("{id}")]
       [HttpDelete]
-      public ActionResult Entity([FromRoute]TEntityKey id, string foo) {
+      public ActionResult Edit([FromRoute]TEntityKey id, string foo) {
          throw new NotImplementedException();
       }
    }

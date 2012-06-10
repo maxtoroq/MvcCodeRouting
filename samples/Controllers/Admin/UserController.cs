@@ -14,6 +14,7 @@ namespace Samples.Controllers.Admin {
          return View();
       }
 
+      [CustomRoute("{id}")]
       public ActionResult Edit([FromRoute]int id) {
 
          this.ViewBag.UserId = id;

@@ -10,27 +10,27 @@ namespace Samples.Controllers.Book {
 
    public class BookController : Controller {
 
-      [FromRoute("id")]
-      public int BookId { get; set; }
-
-      protected override void Initialize(RequestContext requestContext) {
-         
-         base.Initialize(requestContext);
-
-         this.BindRouteProperties();
-      }
-
       public ActionResult Index() {
-         return Content(this.BookId.ToString());
-      }
-
-      [HttpDelete]
-      public ActionResult Index(string foo) {
          throw new NotImplementedException();
       }
 
-      public ActionResult Chapter([FromRoute]int chapterId, [FromRoute]int page = 1) {
-         return Content(chapterId.ToString());
+      public ActionResult Search() {
+         throw new NotImplementedException();
+      }
+
+      public ActionResult New() {
+         throw new NotImplementedException();
+      }
+
+      [CustomRoute("{id}")]
+      public ActionResult Details([FromRoute]int id) {
+         return Content(id.ToString());
+      }
+
+      [CustomRoute("{id}")]
+      [HttpDelete]
+      public ActionResult Details([FromRoute]int id, string foo) {
+         throw new NotImplementedException();
       }
    }
 }
