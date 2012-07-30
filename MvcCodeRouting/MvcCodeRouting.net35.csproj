@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MvcCodeRouting</RootNamespace>
+    <AssemblyName>MvcCodeRouting</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug_net35\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release_net35\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release_net35\MvcCodeRouting.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\MvcCodeRouting.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\aspnet-mvc-2.0\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\CodeRoutingExtensions.cs" />
+    <Compile Include="Api\CodeRoutingSettings.cs" />
+    <Compile Include="Api\CustomRouteAttribute.cs" />
+    <Compile Include="Api\FromRouteAttribute.cs" />
+    <Compile Include="Api\RequireRouteParametersAttribute.cs" />
+    <Compile Include="Api\RouteFormatterArgs.cs" />
+    <Compile Include="Api\RouteSegmentType.cs" />
+    <Compile Include="CodeRoute.cs" />
+    <Compile Include="NET40.cs" />
+    <Compile Include="MetaModel\DescriptedAsyncActionInfo.cs" />
+    <Compile Include="MetaModel\DescriptedControllerInfo.cs" />
+    <Compile Include="MetaModel\ReflectedAsyncActionInfo.cs" />
+    <Compile Include="MetaModel\ReflectedControllerInfo.cs" />
+    <Compile Include="RouteFactory.cs" />
+    <Compile Include="CodeRoutingConstraint.cs" />
+    <Compile Include="DataTokenKeys.cs" />
+    <Compile Include="MetaModel\ActionInfo.cs" />
+    <Compile Include="MetaModel\ActionParameterInfo.cs" />
+    <Compile Include="MetaModel\ActionSignatureComparer.cs" />
+    <Compile Include="MetaModel\ControllerInfo.cs" />
+    <Compile Include="MetaModel\DescriptedActionInfo.cs" />
+    <Compile Include="MetaModel\DescriptedActionParameterInfo.cs" />
+    <Compile Include="MetaModel\ReflectedActionInfo.cs" />
+    <Compile Include="MetaModel\ReflectedActionParameterInfo.cs" />
+    <Compile Include="MetaModel\RegisterInfo.cs" />
+    <Compile Include="MetaModel\TokenInfo.cs" />
+    <Compile Include="MetaModel\TokenInfoCollection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceData.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceDataCollection.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceVirtualDirectory.cs" />
+    <Compile Include="ViewsLocation\AssemblyResourceVirtualFile.cs" />
+    <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
+    <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
+    <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\MvcCodeRouting.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
