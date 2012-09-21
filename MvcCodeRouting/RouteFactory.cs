@@ -225,7 +225,7 @@ namespace MvcCodeRouting {
 
          if (actionCustomRoute != null) {
 
-            if (actionCustomRoute.StartsWith("~/")) {
+            if (actionCustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase)) {
                actionCustomRoute = actionCustomRoute.Substring(2);
 
                segments.Clear();
