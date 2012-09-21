@@ -425,8 +425,12 @@ namespace MvcCodeRouting {
              from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
              where !m.IsSpecialName
                 && BaseType.IsAssignableFrom(m.DeclaringType)
+                && !m.ContainsGenericParameters
                 && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
                 && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
+             let parameters = m.GetParameters()
+             where !parameters.Any(p => p.ParameterType.IsByRef)
+               && !parameters.Any(p => p.IsOut)
              select m;
       }
 

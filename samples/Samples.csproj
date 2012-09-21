@@ -84,7 +84,9 @@
     <Content Include="Views\Shared\UrlGenerationSamples.ascx" />
     <Content Include="Views\User\Index.aspx" />
     <Content Include="Views\User\Profile.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
