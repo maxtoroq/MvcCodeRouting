@@ -1,0 +1,7 @@
+[Bb]in
+[Oo]bj
+[Tt]est[Rr]esults
+*.suo
+*.user
+packages
+NuGet.exe
