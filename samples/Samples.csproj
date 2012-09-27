@@ -113,10 +113,10 @@
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Admin\AdminController.cs" />
+    <Compile Include="Controllers\Admin\CrudController.cs" />
+    <Compile Include="Controllers\Admin\RoleController.cs" />
     <Compile Include="Controllers\Admin\Tasks\MaintenanceController.cs" />
-    <Compile Include="Controllers\Api\CrudController.cs" />
-    <Compile Include="Controllers\Api\RoleController.cs" />
-    <Compile Include="Controllers\Api\UserController.cs" />
+    <Compile Include="Controllers\Admin\UserController.cs" />
     <Compile Include="Controllers\AsyncController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\Book\BookController.cs" />
