@@ -33,6 +33,12 @@ namespace MvcCodeRouting {
       }
 
       protected override string GetName() {
+
+         string name = base.GetName();
+
+         if (name != this.method.Name)
+            return name;
+
          return AsyncMethodActionName(this.method);
       }
 

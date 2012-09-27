@@ -20,7 +20,7 @@ using System.Web.Mvc;
 
 namespace MvcCodeRouting {
 
-   class DescriptedActionInfo : ActionInfo {
+   class DescriptedActionInfo : MvcActionInfo {
 
       readonly ActionDescriptor actionDescr;
       readonly ReflectedActionDescriptor reflectedActionDescr;
@@ -49,7 +49,7 @@ namespace MvcCodeRouting {
       }
 
       protected override string GetName() {
-         return this.actionDescr.ActionName;
+         return base.GetName() ?? this.actionDescr.ActionName;
       }
 
       protected override ActionParameterInfo[] GetParameters() {

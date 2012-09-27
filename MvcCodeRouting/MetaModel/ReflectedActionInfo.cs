@@ -21,7 +21,7 @@ using System.Web.Mvc;
 
 namespace MvcCodeRouting {
 
-   class ReflectedActionInfo : ActionInfo {
+   class ReflectedActionInfo : MvcActionInfo {
 
       readonly MethodInfo method;
 
@@ -40,7 +40,7 @@ namespace MvcCodeRouting {
       }
 
       protected override string GetName() {
-         return this.method.Name;
+         return base.GetName() ?? this.method.Name;
       }
 
       protected override ActionParameterInfo[] GetParameters() {

@@ -68,6 +68,7 @@
     <Compile Include="MetaModel\DescriptedControllerInfo.cs" />
     <Compile Include="MetaModel\ReflectedAsyncActionInfo.cs" />
     <Compile Include="MetaModel\ReflectedControllerInfo.cs" />
+    <Compile Include="Mvc\MvcActionInfo.cs" />
     <Compile Include="RouteFactory.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="DataTokenKeys.cs" />

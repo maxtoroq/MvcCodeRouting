@@ -38,15 +38,8 @@ namespace MvcCodeRouting {
       
       public string Name {
          get {
-            if (_Name == null) {
-
-               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
-                  .Cast<ActionNameAttribute>()
-                  .SingleOrDefault();
-
-               _Name = (nameAttr != null) ?
-                  nameAttr.Name : GetName();
-            }
+            if (_Name == null) 
+               _Name = GetName();
             return _Name;
          }
       }
