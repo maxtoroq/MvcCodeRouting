@@ -199,7 +199,7 @@ namespace MvcCodeRouting {
             if (_Actions == null) {
                _Actions = new Collection<ActionInfo>(
                   (from a in GetActions()
-                   where !a.IsDefined(typeof(NonActionAttribute), inherit: true)
+                   where !ActionInfo.IsNonAction(a)
                    select a).ToArray()
                );
 
@@ -381,6 +381,9 @@ namespace MvcCodeRouting {
 
       public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
 
+         if (!IsMvcController(controllerType))
+            return WebApi.HttpControllerInfo.Create(controllerType, registerInfo);
+
          ControllerDescriptor controllerDescr = null;
 
          if (createActionInvoker != null) {
@@ -406,6 +409,33 @@ namespace MvcCodeRouting {
          return new ReflectedControllerInfo(controllerType, registerInfo);
       }
 
+      public static bool IsSupportedControllerType(Type type) {
+
+         return type.IsPublic
+            && !type.IsAbstract
+            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
+            && (IsMvcController(type) || IsWebApiController(type));
+      }
+
+      static bool IsMvcController(Type type) {
+         return BaseType.IsAssignableFrom(type);
+      }
+
+      static bool IsWebApiController(Type type) {
+
+         Type t = type;
+
+         do {
+            if (t.FullName == "System.Web.Http.ApiController")
+               return true;
+
+            t = t.BaseType;
+
+         } while (t != null);
+
+         return false;
+      }
+
       protected ControllerInfo(Type type, RegisterInfo registerInfo) {
          
          this.Type = type;
@@ -423,14 +453,10 @@ namespace MvcCodeRouting {
 
          return
              from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-             where !m.IsSpecialName
-                && BaseType.IsAssignableFrom(m.DeclaringType)
-                && !m.ContainsGenericParameters
-                && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
+             where BaseType.IsAssignableFrom(m.DeclaringType)
+                && ActionInfo.IsCallableActionMethod(m)
+                && !ActionInfo.IsNonAction(m)
                 && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
-             let parameters = m.GetParameters()
-             where !parameters.Any(p => p.ParameterType.IsByRef)
-               && !parameters.Any(p => p.IsOut)
              select m;
       }
 

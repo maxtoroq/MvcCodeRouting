@@ -41,6 +41,14 @@ namespace MvcCodeRouting.WebApi {
          }
       }
 
+      public bool IsValidAction {
+         get {
+            return (reflectedActionDescr != null) ?
+               IsCallableActionMethod(reflectedActionDescr.MethodInfo)
+               : true;
+         }
+      }
+
       public DescribedHttpActionInfo(HttpActionDescriptor actionDescr, ControllerInfo controller)
          : base(controller) {
 

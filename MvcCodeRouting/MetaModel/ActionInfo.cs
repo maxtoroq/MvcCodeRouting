@@ -153,6 +153,19 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
+      public static bool IsCallableActionMethod(MethodInfo method) {
+         
+         return !method.IsSpecialName
+            && !method.ContainsGenericParameters
+            && !method.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef);
+      }
+
+      public static bool IsNonAction(ICustomAttributeProvider action) {
+
+         return action.GetCustomAttributes(inherit: true)
+            .Any(o => o.GetType().Name == "NonActionAttribute");
+      }
+
       static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {
 
          FromRouteAttribute routeAttr = actionParam.FromRouteAttribute;

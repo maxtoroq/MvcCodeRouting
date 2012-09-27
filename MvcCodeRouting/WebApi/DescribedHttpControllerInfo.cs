@@ -44,6 +44,7 @@ namespace MvcCodeRouting.WebApi {
             .GetActionMapping(this.controllerDescr)
             .SelectMany(x => x)
             .Select(a => new DescribedHttpActionInfo(a, this))
+            .Where(a => a.IsValidAction)
             .ToArray();
       }
 
