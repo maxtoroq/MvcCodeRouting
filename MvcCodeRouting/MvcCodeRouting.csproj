@@ -44,6 +44,12 @@
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
@@ -85,6 +91,10 @@
     <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
     <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
+    <Compile Include="WebApi\DescribedHttpActionInfo.cs" />
+    <Compile Include="WebApi\DescribedHttpActionParameterInfo.cs" />
+    <Compile Include="WebApi\DescribedHttpControllerInfo.cs" />
+    <Compile Include="WebApi\HttpControllerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
