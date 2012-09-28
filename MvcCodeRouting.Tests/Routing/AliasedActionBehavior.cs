@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace MvcCodeRouting.Tests.Routing {
    
    [TestClass]
-   public class AliasedActionBehavior {
+   public class ActionNameBehavior {
 
       RouteCollection routes;
       UrlHelper Url;
@@ -24,21 +24,21 @@ namespace MvcCodeRouting.Tests.Routing {
       [TestMethod]
       public void UseActionAlias() {
 
-         var controller = typeof(AliasedAction.AliasedAction1Controller);
+         var controller = typeof(ActionName.ActionName1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsNotNull(Url.Action("Bar", controller));
 
-         controller = typeof(AliasedAction.AliasedAction2Controller);
+         controller = typeof(ActionName.ActionName2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsNotNull(Url.Action("Bar", controller));
 
-         controller = typeof(AliasedAction.AliasedAction3Controller);
+         controller = typeof(ActionName.ActionName3Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -48,21 +48,22 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.AliasedAction {
+namespace MvcCodeRouting.Tests.Routing.ActionName {
 
-   public class AliasedAction1Controller : Controller {
+   public class ActionName1Controller : Controller {
 
       [ActionName("Bar")]
       public void Foo() { }
    }
 
-   public class AliasedAction2Controller : System.Web.Http.ApiController {
+   public class ActionName2Controller : System.Web.Http.ApiController {
 
+      [System.Web.Http.HttpGet]
       [System.Web.Http.ActionName("Bar")]
       public void Foo() { }
    }
 
-   public class AliasedAction3Controller : AsyncController {
+   public class ActionName3Controller : AsyncController {
 
       [ActionName("Bar")]
       public void FooAsync() { }
