@@ -86,10 +86,20 @@ namespace MvcCodeRouting {
             Settings = settings 
          };
 
-         Route[] newRoutes = RouteFactory.CreateRoutes(registerInfo);
-         
-         foreach (var route in newRoutes)
-            routes.Add(route);
+         object[] newRoutes = RouteFactory.CreateRoutes(registerInfo);
+         List<Route> webRoutes = new List<Route>();
+
+         foreach (var route in newRoutes) {
+
+            Route webRoute = route as Route;
+
+            if (webRoute != null) {
+               webRoutes.Add(webRoute);
+               routes.Add(webRoute);
+            } else { 
+               // TODO:
+            }
+         }
          
          if (newRoutes.Length > 0 
             && registerInfo.Settings.EnableEmbeddedViews) {
@@ -97,7 +107,7 @@ namespace MvcCodeRouting {
             EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo);
          }
 
-         return newRoutes;
+         return webRoutes;
       }
 
       /// <summary>

@@ -70,6 +70,7 @@
     <Compile Include="MetaModel\ReflectedControllerInfo.cs" />
     <Compile Include="Mvc\MvcActionInfo.cs" />
     <Compile Include="Mvc\MvcControllerInfo.cs" />
+    <Compile Include="Mvc\MvcRouteFactory.cs" />
     <Compile Include="RouteFactory.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="DataTokenKeys.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="MetaModel\TokenInfoCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="RouteInfo.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceData.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceDataCollection.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceVirtualDirectory.cs" />
@@ -93,10 +95,12 @@
     <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
     <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
+    <Compile Include="WebApi\CodeHttpRoute.cs" />
     <Compile Include="WebApi\DescribedHttpActionInfo.cs" />
     <Compile Include="WebApi\DescribedHttpActionParameterInfo.cs" />
     <Compile Include="WebApi\DescribedHttpControllerInfo.cs" />
     <Compile Include="WebApi\HttpControllerInfo.cs" />
+    <Compile Include="WebApi\HttpRouteFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

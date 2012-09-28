@@ -277,6 +277,8 @@ namespace MvcCodeRouting {
          }
       }
 
+      public abstract RouteFactory RouteFactory { get; }
+
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }

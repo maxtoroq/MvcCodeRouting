@@ -24,6 +24,12 @@ namespace MvcCodeRouting.WebApi {
    
    abstract class HttpControllerInfo : ControllerInfo {
 
+      readonly RouteFactory _RouteFactory = new HttpRouteFactory();
+
+      public override RouteFactory RouteFactory {
+         get { return _RouteFactory; }
+      }
+
       public static new ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
 
          // TODO: Remove GlobalConfiguration dependency

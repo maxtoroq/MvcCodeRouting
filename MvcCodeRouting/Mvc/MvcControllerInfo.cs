@@ -30,6 +30,12 @@ namespace MvcCodeRouting.Mvc {
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
+      readonly RouteFactory _RouteFactory = new MvcRouteFactory();
+
+      public override RouteFactory RouteFactory {
+         get { return _RouteFactory; }
+      }
+
       [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]
       static MvcControllerInfo() {
 
