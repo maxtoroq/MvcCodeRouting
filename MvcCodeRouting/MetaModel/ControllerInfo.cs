@@ -16,23 +16,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Security;
-using System.Web.Mvc;
-using System.Web.Mvc.Async;
 
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ControllerUrl}")]
    abstract class ControllerInfo : ICustomAttributeProvider {
-
-      internal static readonly Type BaseType = typeof(Controller);
-      static readonly Func<Controller, IActionInvoker> createActionInvoker;
-      static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
       ReadOnlyCollection<string> _CodeRoutingNamespace;
       ReadOnlyCollection<string> _CodeRoutingContext;
@@ -199,7 +190,7 @@ namespace MvcCodeRouting {
             if (_Actions == null) {
                _Actions = new Collection<ActionInfo>(
                   (from a in GetActions()
-                   where !ActionInfo.IsNonAction(a)
+                   where !IsNonAction(a)
                    select a).ToArray()
                );
 
@@ -286,21 +277,6 @@ namespace MvcCodeRouting {
          }
       }
 
-      [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]
-      static ControllerInfo() {
-
-         try {
-            createActionInvoker =
-               (Func<Controller, IActionInvoker>)
-                  Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), BaseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
-
-            getControllerDescriptor =
-               (Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>)
-                  Delegate.CreateDelegate(typeof(Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>), typeof(ControllerActionInvoker).GetMethod("GetControllerDescriptor", BindingFlags.NonPublic | BindingFlags.Instance));
-         
-         } catch (MethodAccessException) { }
-      }
-
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
@@ -381,32 +357,10 @@ namespace MvcCodeRouting {
 
       public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
 
-         if (!IsMvcController(controllerType))
+         if (!Mvc.MvcControllerInfo.IsMvcController(controllerType))
             return WebApi.HttpControllerInfo.Create(controllerType, registerInfo);
 
-         ControllerDescriptor controllerDescr = null;
-
-         if (createActionInvoker != null) {
-
-            Controller instance = null;
-
-            try {
-               instance = (Controller)FormatterServices.GetUninitializedObject(controllerType);
-            } catch (SecurityException) { }
-
-            if (instance != null) {
-
-               ControllerActionInvoker actionInvoker = createActionInvoker(instance) as ControllerActionInvoker;
-
-               if (actionInvoker != null)
-                  controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
-            }
-         }
-
-         if (controllerDescr != null) 
-            return new DescriptedControllerInfo(controllerDescr, controllerType, registerInfo);
-
-         return new ReflectedControllerInfo(controllerType, registerInfo);
+         return Mvc.MvcControllerInfo.Create(controllerType, registerInfo);
       }
 
       public static bool IsSupportedControllerType(Type type) {
@@ -414,11 +368,7 @@ namespace MvcCodeRouting {
          return type.IsPublic
             && !type.IsAbstract
             && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
-            && (IsMvcController(type) || IsWebApiController(type));
-      }
-
-      static bool IsMvcController(Type type) {
-         return BaseType.IsAssignableFrom(type);
+            && (Mvc.MvcControllerInfo.IsMvcController(type) || IsWebApiController(type));
       }
 
       static bool IsWebApiController(Type type) {
@@ -446,19 +396,7 @@ namespace MvcCodeRouting {
       public abstract object[] GetCustomAttributes(bool inherit);
       public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
       public abstract bool IsDefined(Type attributeType, bool inherit);
-
-      protected IEnumerable<MethodInfo> GetCanonicalActionMethods() {
-
-         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(this.Type);
-
-         return
-             from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-             where BaseType.IsAssignableFrom(m.DeclaringType)
-                && ActionInfo.IsCallableActionMethod(m)
-                && !ActionInfo.IsNonAction(m)
-                && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
-             select m;
-      }
+      protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
       TokenInfo CreateTokenInfo(PropertyInfo property) {
 

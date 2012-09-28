@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Mvc {
    
    abstract class MvcActionInfo : ActionInfo {
 

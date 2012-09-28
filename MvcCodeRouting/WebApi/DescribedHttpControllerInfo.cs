@@ -21,7 +21,7 @@ using System.Web.Http.Controllers;
 
 namespace MvcCodeRouting.WebApi {
 
-   class DescribedHttpControllerInfo : ControllerInfo {
+   class DescribedHttpControllerInfo : HttpControllerInfo {
 
       readonly HttpControllerDescriptor controllerDescr;
 

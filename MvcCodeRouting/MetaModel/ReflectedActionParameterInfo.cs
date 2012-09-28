@@ -19,9 +19,9 @@ using System.Text;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Mvc {
 
-   class ReflectedActionParameterInfo : ActionParameterInfo {
+   class ReflectedMvcActionParameterInfo : ActionParameterInfo {
 
       readonly ParameterInfo paramInfo;
 
@@ -41,7 +41,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public ReflectedActionParameterInfo(ParameterInfo paramInfo, ActionInfo action)
+      public ReflectedMvcActionParameterInfo(ParameterInfo paramInfo, ActionInfo action)
          : base(action) {
 
          this.paramInfo = paramInfo;

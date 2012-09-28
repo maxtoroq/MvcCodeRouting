@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Web.Mvc;
 
 namespace MvcCodeRouting {
 
@@ -151,12 +150,6 @@ namespace MvcCodeRouting {
          return !method.IsSpecialName
             && !method.ContainsGenericParameters
             && !method.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef);
-      }
-
-      public static bool IsNonAction(ICustomAttributeProvider action) {
-
-         return action.GetCustomAttributes(inherit: true)
-            .Any(o => o.GetType().Name == "NonActionAttribute");
       }
 
       static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {

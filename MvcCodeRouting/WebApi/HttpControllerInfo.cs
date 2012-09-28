@@ -15,15 +15,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
 namespace MvcCodeRouting.WebApi {
    
-   static class HttpControllerInfo {
+   abstract class HttpControllerInfo : ControllerInfo {
 
-      public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+      public static new ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
 
          // TODO: Remove GlobalConfiguration dependency
 
@@ -35,6 +36,13 @@ namespace MvcCodeRouting.WebApi {
             controllerType,
             registerInfo
          );
+      }
+
+      public HttpControllerInfo(Type type, RegisterInfo registerInfo) 
+         : base(type, registerInfo) { }
+
+      protected override bool IsNonAction(ICustomAttributeProvider action) {
+         return action.IsDefined(typeof(NonActionAttribute), inherit: true);
       }
    }
 }

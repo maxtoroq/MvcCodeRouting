@@ -19,9 +19,9 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Mvc {
    
-   class DescriptedControllerInfo : ControllerInfo {
+   class DescribedMvcControllerInfo : MvcControllerInfo {
 
       readonly ControllerDescriptor controllerDescr;
       string _Name;
@@ -34,7 +34,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public DescriptedControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterInfo registerInfo) 
+      public DescribedMvcControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterInfo registerInfo) 
          : base(type, registerInfo) {
 
          this.controllerDescr = controllerDescr;
@@ -46,8 +46,8 @@ namespace MvcCodeRouting {
             (from a in this.controllerDescr.GetCanonicalActions()
              let asyncActionDescr = a as ReflectedAsyncActionDescriptor
              select (asyncActionDescr != null) ?
-               new DescriptedAsyncActionInfo(asyncActionDescr, this)
-               : new DescriptedActionInfo(a, this))
+               new DescribedMvcAsyncActionInfo(asyncActionDescr, this)
+               : new DescribedMvcActionInfo(a, this))
             .ToArray();
 
          if (actions.Length == 0) {
@@ -55,7 +55,7 @@ namespace MvcCodeRouting {
             // ReflectedAsyncControllerDescriptor.GetCanonicalActions always returns
             // an empty array
 
-            return new ReflectedControllerInfo(this.Type, this.Register).GetActions();
+            return new ReflectedMvcControllerInfo(this.Type, this.Register).GetActions();
          }
 
          return actions;

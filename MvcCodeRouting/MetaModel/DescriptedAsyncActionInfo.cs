@@ -19,9 +19,9 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Mvc {
    
-   class DescriptedAsyncActionInfo : DescriptedActionInfo {
+   class DescribedMvcAsyncActionInfo : DescribedMvcActionInfo {
 
       readonly ReflectedAsyncActionDescriptor actionDescr;
 
@@ -37,7 +37,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public DescriptedAsyncActionInfo(ReflectedAsyncActionDescriptor actionDescr, ControllerInfo controller)
+      public DescribedMvcAsyncActionInfo(ReflectedAsyncActionDescriptor actionDescr, ControllerInfo controller)
          : base(actionDescr, controller) {
 
          this.actionDescr = actionDescr;

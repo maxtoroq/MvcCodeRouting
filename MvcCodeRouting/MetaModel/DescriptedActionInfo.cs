@@ -18,9 +18,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Mvc {
 
-   class DescriptedActionInfo : MvcActionInfo {
+   class DescribedMvcActionInfo : MvcActionInfo {
 
       readonly ActionDescriptor actionDescr;
       readonly ReflectedActionDescriptor reflectedActionDescr;
@@ -41,7 +41,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public DescriptedActionInfo(ActionDescriptor actionDescr, ControllerInfo controller)
+      public DescribedMvcActionInfo(ActionDescriptor actionDescr, ControllerInfo controller)
          : base(controller) {
 
          this.actionDescr = actionDescr;
@@ -53,7 +53,7 @@ namespace MvcCodeRouting {
       }
 
       protected override ActionParameterInfo[] GetParameters() {
-         return this.actionDescr.GetParameters().Select(p => new DescriptedActionParameterInfo(p, this)).ToArray();
+         return this.actionDescr.GetParameters().Select(p => new DescribedMvcActionParameterInfo(p, this)).ToArray();
       }
 
       public override object[] GetCustomAttributes(bool inherit) {
