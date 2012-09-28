@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Routing\AliasedActionBehavior.cs" />
+    <Compile Include="Routing\ActionNameBehavior.cs" />
     <Compile Include="Routing\ControllerReflectionBehavior.cs" />
     <Compile Include="SettingsBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
