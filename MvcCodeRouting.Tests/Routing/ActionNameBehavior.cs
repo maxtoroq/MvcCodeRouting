@@ -22,6 +22,15 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
+      public void EmptyUnlessUsingVerbAttributeInWebApi() {
+
+         var controller = typeof(ActionName.ActionName4Controller);
+
+         // TODO:
+         throw new NotImplementedException();
+      }
+
+      [TestMethod]
       public void UseActionAlias() {
 
          var controller = typeof(ActionName.ActionName1Controller);
@@ -69,5 +78,13 @@ namespace MvcCodeRouting.Tests.Routing.ActionName {
       public void FooAsync() { }
 
       public void FooCompleted() { }
+   }
+
+   public class ActionName4Controller : System.Web.Http.ApiController {
+
+      public void Get() { }
+
+      [HttpGet]
+      public void Find() { }
    }
 }

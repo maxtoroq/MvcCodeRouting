@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 
 namespace MvcCodeRouting.WebApi {
@@ -61,7 +62,20 @@ namespace MvcCodeRouting.WebApi {
       }
 
       protected override string GetName() {
-         return this.actionDescr.ActionName;
+
+         if (this.actionDescr.GetCustomAttributes<HttpGetAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpPostAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpPutAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpDeleteAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpPatchAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpHeadAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<HttpOptionsAttribute>().Any()
+            || this.actionDescr.GetCustomAttributes<AcceptVerbsAttribute>().Any()) {
+            
+            return this.actionDescr.ActionName;
+         }
+
+         return "";
       }
 
       // TODO: Remove ReflectedHttpActionDescriptor.MethodInfo dependency
