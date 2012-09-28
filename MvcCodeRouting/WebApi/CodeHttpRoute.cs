@@ -18,14 +18,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web.Http.Routing;
+using System.Web.Http.WebHost;
 
 namespace MvcCodeRouting.WebApi {
 
    [DebuggerDisplay("{RouteTemplate}")]
    class CodeHttpRoute : HttpRoute {
 
-      public CodeHttpRoute(string url) 
-         : base(url) {
+      public CodeHttpRoute(string routeTemplate, HttpRouteValueDictionary defaults, HttpRouteValueDictionary constraints, HttpRouteValueDictionary dataTokens)
+         : base(routeTemplate, defaults, constraints, dataTokens) {
          
       }
    }

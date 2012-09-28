@@ -16,14 +16,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.WebApi {
    
    class HttpRouteFactory : RouteFactory {
       
       public override object CreateRoute(RouteInfo routeInfo, RegisterInfo registerInfo) {
-         // TODO:
-         throw new NotImplementedException();
+
+         var defaults = new HttpRouteValueDictionary(routeInfo.Defaults);
+         var constraints = new HttpRouteValueDictionary(routeInfo.Constraints);
+         var dataTokens = new HttpRouteValueDictionary(routeInfo.DataTokens);
+
+         return new CodeHttpRoute(routeInfo.RouteTemplate, defaults, constraints, dataTokens);
       }
    }
 }
