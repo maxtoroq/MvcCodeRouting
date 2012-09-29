@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Routing;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -97,7 +99,7 @@ namespace MvcCodeRouting {
                webRoutes.Add(webRoute);
                routes.Add(webRoute);
             } else { 
-               // TODO:
+               webRoutes.Add(RegisterHttpRoute(routes, route));
             }
          }
          
@@ -108,6 +110,13 @@ namespace MvcCodeRouting {
          }
 
          return webRoutes;
+      }
+
+      static Route RegisterHttpRoute(RouteCollection routes, object route) {
+         
+         GlobalConfiguration.Configuration.Routes.Add(null, (IHttpRoute)route);
+
+         return (Route)RouteTable.Routes.Last();
       }
 
       /// <summary>
