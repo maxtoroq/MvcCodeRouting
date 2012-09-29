@@ -34,8 +34,8 @@ namespace MvcCodeRouting.Mvc {
          }
       }
 
-      public DescribedMvcControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterInfo registerInfo) 
-         : base(type, registerInfo) {
+      public DescribedMvcControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings) 
+         : base(type, registerSettings) {
 
          this.controllerDescr = controllerDescr;
       }

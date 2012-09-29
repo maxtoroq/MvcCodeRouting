@@ -23,8 +23,8 @@ namespace MvcCodeRouting.Mvc {
    
    class ReflectedMvcControllerInfo : MvcControllerInfo {
 
-      public ReflectedMvcControllerInfo(Type type, RegisterInfo registerInfo) 
-         : base(type, registerInfo) { }
+      public ReflectedMvcControllerInfo(Type type, RegisterSettings registerSettings) 
+         : base(type, registerSettings) { }
 
       protected internal override ActionInfo[] GetActions() {
 

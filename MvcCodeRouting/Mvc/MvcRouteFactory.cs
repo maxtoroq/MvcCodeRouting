@@ -24,10 +24,10 @@ namespace MvcCodeRouting.Mvc {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
 
-      public override object CreateRoute(RouteInfo routeInfo, RegisterInfo registerInfo) {
+      public override object CreateRoute(RouteInfo routeInfo, RegisterSettings registerSettings) {
 
          ActionInfo first = routeInfo.Actions.First();
-         string baseRoute = registerInfo.BaseRoute;
+         string baseRoute = registerSettings.BaseRoute;
 
          routeInfo.Constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
 

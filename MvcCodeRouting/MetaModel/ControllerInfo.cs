@@ -40,7 +40,7 @@ namespace MvcCodeRouting {
       string _ControllerUrl;
 
       public Type Type { get; private set; }
-      public RegisterInfo Register { get; private set; }
+      public RegisterSettings Register { get; private set; }
 
       public virtual string Name {
          get {
@@ -357,12 +357,12 @@ namespace MvcCodeRouting {
          }
       }
 
-      public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          if (!Mvc.MvcControllerInfo.IsMvcController(controllerType))
-            return WebApi.HttpControllerInfo.Create(controllerType, registerInfo);
+            return WebApi.HttpControllerInfo.Create(controllerType, registerSettings);
 
-         return Mvc.MvcControllerInfo.Create(controllerType, registerInfo);
+         return Mvc.MvcControllerInfo.Create(controllerType, registerSettings);
       }
 
       public static bool IsSupportedControllerType(Type type) {
@@ -388,10 +388,10 @@ namespace MvcCodeRouting {
          return false;
       }
 
-      protected ControllerInfo(Type type, RegisterInfo registerInfo) {
+      protected ControllerInfo(Type type, RegisterSettings registerSettings) {
          
          this.Type = type;
-         this.Register = registerInfo;
+         this.Register = registerSettings;
       }
 
       protected internal abstract ActionInfo[] GetActions();

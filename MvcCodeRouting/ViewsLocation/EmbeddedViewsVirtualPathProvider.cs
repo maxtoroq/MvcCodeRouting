@@ -33,10 +33,10 @@ namespace MvcCodeRouting {
       readonly ConcurrentDictionary<string, AssemblyResourceDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyResourceDataCollection>(VirtualPathComparison.Comparer);
       static bool embeddedViewsEnabled, registered;
 
-      public static void RegisterAssembly(RegisterInfo registerInfo) {
+      public static void RegisterAssembly(RegisterSettings registerSettings) {
 
-         string basePath = String.Join("/", new[] { "Views", registerInfo.ViewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
-         var assemblyData = new AssemblyResourceData(registerInfo, basePath);
+         string basePath = String.Join("/", new[] { "Views", registerSettings.ViewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
+         var assemblyData = new AssemblyResourceData(registerSettings, basePath);
 
          if (assemblyData.HasResources) 
             AssemblyDataTable.Add(assemblyData);

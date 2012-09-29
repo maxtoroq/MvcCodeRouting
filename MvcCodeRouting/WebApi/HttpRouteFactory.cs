@@ -22,7 +22,7 @@ namespace MvcCodeRouting.WebApi {
    
    class HttpRouteFactory : RouteFactory {
       
-      public override object CreateRoute(RouteInfo routeInfo, RegisterInfo registerInfo) {
+      public override object CreateRoute(RouteInfo routeInfo, RegisterSettings registerSettings) {
 
          var defaults = new HttpRouteValueDictionary(routeInfo.Defaults);
          var constraints = new HttpRouteValueDictionary(routeInfo.Constraints);

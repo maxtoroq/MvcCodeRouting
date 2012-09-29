@@ -31,8 +31,8 @@ namespace MvcCodeRouting.WebApi {
          }
       }
 
-      public DescribedHttpControllerInfo(HttpControllerDescriptor controllerDescr, Type type, RegisterInfo registerInfo) 
-         : base(type, registerInfo) {
+      public DescribedHttpControllerInfo(HttpControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings) 
+         : base(type, registerSettings) {
 
          this.controllerDescr = controllerDescr;
       }

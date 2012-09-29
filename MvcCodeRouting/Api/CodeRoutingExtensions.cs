@@ -83,12 +83,12 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerInfo = new RegisterInfo(null, rootController) { 
+         var registerSettings = new RegisterSettings(null, rootController) { 
             BaseRoute = baseRoute, 
             Settings = settings 
          };
 
-         object[] newRoutes = RouteFactory.CreateRoutes(registerInfo);
+         object[] newRoutes = RouteFactory.CreateRoutes(registerSettings);
          List<Route> webRoutes = new List<Route>();
 
          foreach (var route in newRoutes) {
@@ -104,9 +104,9 @@ namespace MvcCodeRouting {
          }
          
          if (newRoutes.Length > 0 
-            && registerInfo.Settings.EnableEmbeddedViews) {
+            && registerSettings.Settings.EnableEmbeddedViews) {
             
-            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo);
+            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerSettings);
          }
 
          return webRoutes;

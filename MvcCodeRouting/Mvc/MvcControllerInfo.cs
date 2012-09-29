@@ -51,7 +51,7 @@ namespace MvcCodeRouting.Mvc {
          } catch (MethodAccessException) { }
       }
 
-      public static new ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+      public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          ControllerDescriptor controllerDescr = null;
 
@@ -73,16 +73,16 @@ namespace MvcCodeRouting.Mvc {
          }
 
          if (controllerDescr != null)
-            return new DescribedMvcControllerInfo(controllerDescr, controllerType, registerInfo);
+            return new DescribedMvcControllerInfo(controllerDescr, controllerType, registerSettings);
 
-         return new ReflectedMvcControllerInfo(controllerType, registerInfo);
+         return new ReflectedMvcControllerInfo(controllerType, registerSettings);
       }
 
       public static bool IsMvcController(Type type) {
          return BaseType.IsAssignableFrom(type);
       }
 
-      public MvcControllerInfo(Type type, RegisterInfo registerInfo) 
+      public MvcControllerInfo(Type type, RegisterSettings registerInfo) 
          : base(type, registerInfo) { }
 
       protected override bool IsNonAction(ICustomAttributeProvider action) {

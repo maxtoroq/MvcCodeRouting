@@ -23,16 +23,16 @@ namespace MvcCodeRouting {
    
    abstract class RouteFactory {
 
-      public static object[] CreateRoutes(RegisterInfo registerInfo) {
+      public static object[] CreateRoutes(RegisterSettings registerSettings) {
 
-         ActionInfo[] actions = registerInfo.GetControllers()
+         ActionInfo[] actions = registerSettings.GetControllers()
             .SelectMany(c => c.Actions)
             .ToArray();
 
          CheckNoAmbiguousUrls(actions);
 
          var groupedActions = GroupActions(actions);
-         object config = registerInfo.Settings.Configuration;
+         object config = registerSettings.Settings.Configuration;
 
          List<object> routes = new List<object>();
 
@@ -44,7 +44,7 @@ namespace MvcCodeRouting {
             if (config != null) 
                routeInfo.DataTokens[DataTokenKeys.Configuration] = config;
 
-            routes.Add(controller.RouteFactory.CreateRoute(routeInfo, registerInfo));
+            routes.Add(controller.RouteFactory.CreateRoute(routeInfo, registerSettings));
          }
 
          return routes.ToArray();
@@ -295,6 +295,6 @@ namespace MvcCodeRouting {
          return routeInfo;
       }
 
-      public abstract object CreateRoute(RouteInfo routeInfo, RegisterInfo registerInfo);
+      public abstract object CreateRoute(RouteInfo routeInfo, RegisterSettings registerSettings);
    }
 }

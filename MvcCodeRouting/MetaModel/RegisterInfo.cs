@@ -21,7 +21,7 @@ using System.Globalization;
 
 namespace MvcCodeRouting {
    
-   class RegisterInfo {
+   class RegisterSettings {
 
       string _BaseRoute;
       Assembly _Assembly;
@@ -92,7 +92,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RegisterInfo(Assembly assembly, Type rootController) {
+      public RegisterSettings(Assembly assembly, Type rootController) {
 
          if (rootController != null) { 
             

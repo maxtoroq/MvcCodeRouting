@@ -30,7 +30,7 @@ namespace MvcCodeRouting.WebApi {
          get { return _RouteFactory; }
       }
 
-      public static new ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+      public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          // TODO: Remove GlobalConfiguration dependency
 
@@ -40,12 +40,12 @@ namespace MvcCodeRouting.WebApi {
                controllerType.Name.Substring(0, controllerType.Name.Length - "Controller".Length),
                controllerType),
             controllerType,
-            registerInfo
+            registerSettings
          );
       }
 
-      public HttpControllerInfo(Type type, RegisterInfo registerInfo) 
-         : base(type, registerInfo) { }
+      public HttpControllerInfo(Type type, RegisterSettings registerSettings) 
+         : base(type, registerSettings) { }
 
       protected override bool IsNonAction(ICustomAttributeProvider action) {
          return action.IsDefined(typeof(NonActionAttribute), inherit: true);

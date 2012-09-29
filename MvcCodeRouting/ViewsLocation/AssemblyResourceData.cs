@@ -35,9 +35,9 @@ namespace MvcCodeRouting {
 
       public bool HasResources { get { return resourceNames.Length > 0; } }
 
-      public AssemblyResourceData(RegisterInfo registerInfo, string basePath) {
+      public AssemblyResourceData(RegisterSettings registerSettings, string basePath) {
 
-         this.assembly = registerInfo.Assembly;
+         this.assembly = registerSettings.Assembly;
          this.assemblyName = this.assembly.GetName().Name;
          this.assemblyNamePartsCount = this.assemblyName.Split('.').Count();
          this.BasePath = basePath;
