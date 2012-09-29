@@ -24,12 +24,12 @@ namespace MvcCodeRouting.Mvc {
 
       static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
 
-      public override object CreateRoute(RouteInfo routeInfo, RegisterSettings registerSettings) {
+      public override object CreateRoute(RouteSettings routeSettings, RegisterSettings registerSettings) {
 
-         ActionInfo first = routeInfo.Actions.First();
+         ActionInfo first = routeSettings.Actions.First();
          string baseRoute = registerSettings.BaseRoute;
 
-         routeInfo.Constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
+         routeSettings.Constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
 
          var nonActionParameterTokens = new List<string>();
 
@@ -39,13 +39,13 @@ namespace MvcCodeRouting.Mvc {
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
          return new CodeRoute(
-            url: routeInfo.RouteTemplate,
-            controllerMapping: routeInfo.ControllerMapping,
-            actionMapping: routeInfo.ActionMapping,
+            url: routeSettings.RouteTemplate,
+            controllerMapping: routeSettings.ControllerMapping,
+            actionMapping: routeSettings.ActionMapping,
             nonActionParameterTokens: nonActionParameterTokens.ToArray()) {
-               Constraints = routeInfo.Constraints,
-               DataTokens = routeInfo.DataTokens,
-               Defaults = routeInfo.Defaults
+               Constraints = routeSettings.Constraints,
+               DataTokens = routeSettings.DataTokens,
+               Defaults = routeSettings.Defaults
             };
       }
    }

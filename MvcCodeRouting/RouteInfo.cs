@@ -20,7 +20,7 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting {
    
-   class RouteInfo {
+   class RouteSettings {
 
       readonly RouteValueDictionary _Defaults = new RouteValueDictionary();
       readonly RouteValueDictionary _Constraints = new RouteValueDictionary();
@@ -36,7 +36,7 @@ namespace MvcCodeRouting {
       public IDictionary<string, string> ControllerMapping { get; set; }
       public IDictionary<string, string> ActionMapping { get; set; }
 
-      public RouteInfo(string routeTemplate, IEnumerable<ActionInfo> actions) {
+      public RouteSettings(string routeTemplate, IEnumerable<ActionInfo> actions) {
          
          this.RouteTemplate = routeTemplate;
          this.Actions = actions.ToArray();

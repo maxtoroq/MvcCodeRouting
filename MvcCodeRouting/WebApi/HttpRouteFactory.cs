@@ -22,13 +22,13 @@ namespace MvcCodeRouting.WebApi {
    
    class HttpRouteFactory : RouteFactory {
       
-      public override object CreateRoute(RouteInfo routeInfo, RegisterSettings registerSettings) {
+      public override object CreateRoute(RouteSettings routeSettings, RegisterSettings registerSettings) {
 
-         var defaults = new HttpRouteValueDictionary(routeInfo.Defaults);
-         var constraints = new HttpRouteValueDictionary(routeInfo.Constraints);
-         var dataTokens = new HttpRouteValueDictionary(routeInfo.DataTokens);
+         var defaults = new HttpRouteValueDictionary(routeSettings.Defaults);
+         var constraints = new HttpRouteValueDictionary(routeSettings.Constraints);
+         var dataTokens = new HttpRouteValueDictionary(routeSettings.DataTokens);
 
-         return new CodeHttpRoute(routeInfo.RouteTemplate, defaults, constraints, dataTokens);
+         return new CodeHttpRoute(routeSettings.RouteTemplate, defaults, constraints, dataTokens);
       }
    }
 }
