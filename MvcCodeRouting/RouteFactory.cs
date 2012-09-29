@@ -266,7 +266,7 @@ namespace MvcCodeRouting {
          if (actionDefault != null)
             routeSettings.Defaults.Add("action", actionDefault);
 
-         TokenInfoCollection parameters = first.RouteParameters;
+         RouteParameterCollection parameters = first.RouteParameters;
 
          foreach (var param in parameters.Where(p => p.IsOptional))
             routeSettings.Defaults.Add(param.Name, UrlParameter.Optional);

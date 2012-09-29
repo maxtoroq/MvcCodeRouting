@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
       ReadOnlyCollection<string> _CodeRoutingContext;
       ReadOnlyCollection<string> _NamespaceSegments;
       ReadOnlyCollection<string> _BaseRouteAndNamespaceSegments;
-      TokenInfoCollection _RouteProperties;
+      RouteParameterCollection _RouteProperties;
       Collection<ActionInfo> _Actions;
       string _Name;
       string _ControllerSegment;
@@ -154,7 +154,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public TokenInfoCollection RouteProperties {
+      public RouteParameterCollection RouteProperties {
          get {
             if (_RouteProperties == null) {
 
@@ -165,19 +165,19 @@ namespace MvcCodeRouting {
 
                types.Reverse();
 
-               var list = new List<TokenInfo>();
+               var list = new List<RouteParameter>();
 
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
                      where p.IsDefined(typeof(FromRouteAttribute), inherit: false /* [1] */)
-                     let rp = CreateTokenInfo(p)
-                     where !list.Any(item => TokenInfo.NameEquals(item.Name, rp.Name))
+                     let rp = CreateRouteParameter(p)
+                     where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
                   );
                }
 
-               _RouteProperties = new TokenInfoCollection(list);
+               _RouteProperties = new RouteParameterCollection(list);
             }
             return _RouteProperties;
 
@@ -400,7 +400,7 @@ namespace MvcCodeRouting {
       public abstract bool IsDefined(Type attributeType, bool inherit);
       protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
-      TokenInfo CreateTokenInfo(PropertyInfo property) {
+      RouteParameter CreateRouteParameter(PropertyInfo property) {
 
          Type propertyType = property.PropertyType;
 
@@ -411,7 +411,7 @@ namespace MvcCodeRouting {
          string name = routeAttr.TokenName ?? property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
-         return new TokenInfo(name, constraint);
+         return new RouteParameter(name, constraint);
       }
    }
 }

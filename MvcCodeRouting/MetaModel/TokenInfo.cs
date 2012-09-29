@@ -24,7 +24,7 @@ using System.Collections.ObjectModel;
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{RouteSegment}")]
-   class TokenInfo : IEquatable<TokenInfo> {
+   class RouteParameter : IEquatable<RouteParameter> {
 
       public string Name { get; private set; }
       public string Constraint { get; private set; }
@@ -37,29 +37,29 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public TokenInfo(string name) {
+      public RouteParameter(string name) {
          this.Name = name;
       }
 
-      public TokenInfo(string name, string constraint) 
+      public RouteParameter(string name, string constraint) 
          : this(name) {
          
          this.Constraint = constraint;
       }
 
-      public TokenInfo(string name, string constraint, bool isOptional) 
+      public RouteParameter(string name, string constraint, bool isOptional) 
          : this(name, constraint) {
          
          this.IsOptional = isOptional;
       }
 
-      public TokenInfo(string name, string constraint, bool isOptional, bool isCatchAll) 
+      public RouteParameter(string name, string constraint, bool isOptional, bool isCatchAll) 
          : this(name, constraint, isOptional) {
          
          this.IsCatchAll = isCatchAll;
       }
 
-      public bool Equals(TokenInfo other) {
+      public bool Equals(RouteParameter other) {
 
          if (other == null)
             return false;
@@ -70,7 +70,7 @@ namespace MvcCodeRouting {
       }
 
       public override bool Equals(object obj) {
-         return Equals(obj as TokenInfo);
+         return Equals(obj as RouteParameter);
       }
 
       public override int GetHashCode() {
