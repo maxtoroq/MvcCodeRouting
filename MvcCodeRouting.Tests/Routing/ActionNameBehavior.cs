@@ -17,7 +17,7 @@ namespace MvcCodeRouting.Tests.Routing {
       [TestInitialize]
       public void Init() {
 
-         this.routes = new RouteCollection();
+         this.routes = TestUtil.GetRouteCollection();
          this.Url = TestUtil.CreateUrlHelper(routes);
       }
 
@@ -31,16 +31,9 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      public void UseActionAlias() {
+      public void UseActionAliasMvc() {
 
          var controller = typeof(ActionName.ActionName1Controller);
-
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
-
-         Assert.IsNotNull(Url.Action("Bar", controller));
-
-         controller = typeof(ActionName.ActionName2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -53,6 +46,17 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsNotNull(Url.Action("Bar", controller));
+      }
+
+      [TestMethod]
+      public void UseActionAliasWebApi() {
+
+         var controller = typeof(ActionName.ActionName2Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         Assert.IsNotNull(Url.HttpRouteUrl(null, controller, new { action = "Bar" }));
       }
    }
 }
