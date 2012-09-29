@@ -87,7 +87,7 @@
     <Compile Include="MetaModel\TokenInfoCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDebugHandler.cs" />
-    <Compile Include="RouteInfo.cs" />
+    <Compile Include="RouteSettings.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceData.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceDataCollection.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceVirtualDirectory.cs" />
