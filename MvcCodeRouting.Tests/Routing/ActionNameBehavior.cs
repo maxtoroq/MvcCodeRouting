@@ -26,8 +26,11 @@ namespace MvcCodeRouting.Tests.Routing {
 
          var controller = typeof(ActionName.ActionName4Controller);
 
-         // TODO:
-         throw new NotImplementedException();
+         routes.Clear();
+         routes.MapCodeRoutes(typeof(ActionName.ActionName4Controller), new CodeRoutingSettings { RootOnly = true });
+
+         Assert.IsNotNull(Url.HttpRouteUrl(null, controller));
+         Assert.IsNotNull(Url.HttpRouteUrl(null, controller, new { action = "Foo" }));
       }
 
       [TestMethod]
@@ -89,6 +92,6 @@ namespace MvcCodeRouting.Tests.Routing.ActionName {
       public void Get() { }
 
       [HttpGet]
-      public void Find() { }
+      public void Foo() { }
    }
 }

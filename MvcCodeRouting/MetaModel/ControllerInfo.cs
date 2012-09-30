@@ -194,7 +194,9 @@ namespace MvcCodeRouting {
                    select a).ToArray()
                );
 
-               CheckOverloads(_Actions);
+               if (!CanDisambiguateActionOverloads)
+                  CheckOverloads(_Actions);
+
                CheckCustomRoutes(_Actions);
             }
             return _Actions;
@@ -278,6 +280,7 @@ namespace MvcCodeRouting {
       }
 
       public abstract RouteFactory RouteFactory { get; }
+      public abstract bool CanDisambiguateActionOverloads { get; }
 
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);

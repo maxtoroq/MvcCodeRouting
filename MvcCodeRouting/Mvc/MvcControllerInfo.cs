@@ -36,6 +36,10 @@ namespace MvcCodeRouting.Mvc {
          get { return _RouteFactory; }
       }
 
+      public override bool CanDisambiguateActionOverloads {
+         get { return false; }
+      }
+
       [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]
       static MvcControllerInfo() {
 

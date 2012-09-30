@@ -30,6 +30,10 @@ namespace MvcCodeRouting.WebApi {
          get { return _RouteFactory; }
       }
 
+      public override bool CanDisambiguateActionOverloads {
+         get { return true; }
+      }
+
       public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          // TODO: Remove GlobalConfiguration dependency
