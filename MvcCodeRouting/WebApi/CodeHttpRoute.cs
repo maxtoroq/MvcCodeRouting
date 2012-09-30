@@ -15,19 +15,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Web.Http.Routing;
-using System.Web.Http.WebHost;
 
 namespace MvcCodeRouting.WebApi {
 
    [DebuggerDisplay("{RouteTemplate}")]
    class CodeHttpRoute : HttpRoute {
 
+      public IDictionary<string, string> ActionMapping { get; set; }
+      public IDictionary<string, string> ControllerMapping { get; set; }
+
       public CodeHttpRoute(string routeTemplate, HttpRouteValueDictionary defaults, HttpRouteValueDictionary constraints, HttpRouteValueDictionary dataTokens)
-         : base(routeTemplate, defaults, constraints, dataTokens) {
-         
-      }
+         : base(routeTemplate, defaults, constraints, dataTokens) { }
    }
 }

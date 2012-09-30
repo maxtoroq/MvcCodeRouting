@@ -93,11 +93,11 @@ namespace MvcCodeRouting {
 
          foreach (var route in newRoutes) {
 
-            Route webRoute = route as Route;
+            Route mvcRoute = route as Route;
 
-            if (webRoute != null) {
-               webRoutes.Add(webRoute);
-               routes.Add(webRoute);
+            if (mvcRoute != null) {
+               webRoutes.Add(mvcRoute);
+               routes.Add(mvcRoute);
             } else { 
                webRoutes.Add(RegisterHttpRoute(routes, route));
             }
@@ -114,9 +114,21 @@ namespace MvcCodeRouting {
 
       static Route RegisterHttpRoute(RouteCollection routes, object route) {
          
+         if (!Object.ReferenceEquals(routes, RouteTable.Routes))
+            throw new InvalidOperationException("routes must be the same instance as RouteTable.Routes");
+
          GlobalConfiguration.Configuration.Routes.Add(null, (IHttpRoute)route);
 
-         return (Route)RouteTable.Routes.Last();
+         var httpRoute = (WebApi.CodeHttpRoute)route;
+         var webRoute = (Route)routes.Last(); // System.Web.Http.WebHost.Routing.HttpWebRoute
+
+         routes.RemoveAt(routes.Count - 1);
+
+         var codeRoute = new WebApi.CodeHttpWebRoute(webRoute, httpRoute);
+
+         routes.Add(codeRoute);
+
+         return codeRoute;
       }
 
       /// <summary>

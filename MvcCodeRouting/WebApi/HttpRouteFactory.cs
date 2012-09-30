@@ -21,6 +21,10 @@ using System.Web.Http.Routing;
 namespace MvcCodeRouting.WebApi {
    
    class HttpRouteFactory : RouteFactory {
+
+      public override object OptionalParameterValue {
+         get { return System.Web.Http.RouteParameter.Optional; }
+      }
       
       public override object CreateRoute(RouteSettings routeSettings, RegisterSettings registerSettings) {
 
@@ -28,7 +32,10 @@ namespace MvcCodeRouting.WebApi {
          var constraints = new HttpRouteValueDictionary(routeSettings.Constraints);
          var dataTokens = new HttpRouteValueDictionary(routeSettings.DataTokens);
 
-         return new CodeHttpRoute(routeSettings.RouteTemplate, defaults, constraints, dataTokens);
+         return new CodeHttpRoute(routeSettings.RouteTemplate, defaults, constraints, dataTokens) {
+            ActionMapping = routeSettings.ActionMapping,
+            ControllerMapping = routeSettings.ControllerMapping
+         };
       }
    }
 }

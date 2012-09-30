@@ -23,6 +23,8 @@ namespace MvcCodeRouting {
    
    abstract class RouteFactory {
 
+      public abstract object OptionalParameterValue { get; }
+
       public static object[] CreateRoutes(RegisterSettings registerSettings) {
 
          ActionInfo[] actions = registerSettings.GetControllers()
@@ -39,12 +41,14 @@ namespace MvcCodeRouting {
          foreach (var group in groupedActions) {
 
             ControllerInfo controller = group.First().Controller;
-            RouteSettings routeSettings = CreateRouteSettings(group);
+            RouteFactory routeFactory = controller.RouteFactory;
+
+            RouteSettings routeSettings = routeFactory.CreateRouteSettings(group);
 
             if (config != null) 
                routeSettings.DataTokens[DataTokenKeys.Configuration] = config;
 
-            routes.Add(controller.RouteFactory.CreateRoute(routeSettings, registerSettings));
+            routes.Add(routeFactory.CreateRoute(routeSettings, registerSettings));
          }
 
          return routes.ToArray();
@@ -182,7 +186,7 @@ namespace MvcCodeRouting {
          return finalGrouping;
       }
 
-      static RouteSettings CreateRouteSettings(IEnumerable<ActionInfo> actions) {
+      RouteSettings CreateRouteSettings(IEnumerable<ActionInfo> actions) {
 
          if (actions == null) throw new ArgumentNullException("actions");
 
@@ -216,6 +220,8 @@ namespace MvcCodeRouting {
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
          string actionCustomRoute = first.CustomRoute;
+         bool allEmptyActionSegment = actionMapping.Values.All(s => s.Length == 0);
+         bool hasEmptyActionSegment = allEmptyActionSegment || actionMapping.Values.Any(s => s.Length == 0);
 
          bool includeActionToken = (actionCustomRoute != null) ?
             first.CustomRouteHasActionToken
@@ -223,7 +229,7 @@ namespace MvcCodeRouting {
 
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool requiresActionMapping = actionFormat && includeActionToken;
-
+         
          if (actionCustomRoute != null) {
 
             if (actionCustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase)) {
@@ -258,24 +264,46 @@ namespace MvcCodeRouting {
          string actionDefault = null;
 
          if (defaultAction != null) {
+            
             actionDefault = (requiresActionMapping) ?
                defaultAction.ActionSegment
                : defaultAction.Name;
+         
+         } else if (hasEmptyActionSegment && !allEmptyActionSegment) {
+            
+            actionDefault = "";
          }
+         
+         if (actionDefault != null) {
 
-         if (actionDefault != null)
-            routeSettings.Defaults.Add("action", actionDefault);
+            object actionDef = (actionDefault.Length == 0) ?
+               (!allEmptyActionSegment) ? this.OptionalParameterValue
+               : null
+               : actionDefault;
+
+            if (actionDef != null)
+               routeSettings.Defaults.Add("action", actionDef);
+         }
 
          RouteParameterCollection parameters = first.RouteParameters;
 
          foreach (var param in parameters.Where(p => p.IsOptional))
-            routeSettings.Defaults.Add(param.Name, UrlParameter.Optional);
+            routeSettings.Defaults.Add(param.Name, this.OptionalParameterValue);
 
          if (includeControllerToken)
             routeSettings.Constraints.Add("controller", String.Join("|", controllerMapping.Values));
 
-         if (includeActionToken)
-            routeSettings.Constraints.Add("action", String.Join("|", actionMapping.Values));
+         if (includeActionToken) {
+
+            string actionConstraint = String.Join("|", actionMapping.Values.Where(s => !String.IsNullOrEmpty(s)));
+
+            if (hasEmptyActionSegment)
+               actionConstraint = String.Concat("(", actionConstraint, ")?");
+
+            routeSettings.Constraints.Add("action", actionConstraint);
+         }
+
+         routeSettings.Constraints[CodeRoutingConstraint.Key] = new CodeRoutingConstraint();
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 

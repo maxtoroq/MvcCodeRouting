@@ -27,18 +27,12 @@ namespace MvcCodeRouting {
    [DebuggerDisplay("{Url}")]
    class CodeRoute : Route {
 
-      readonly IDictionary<string, string> controllerMapping;
-      readonly IDictionary<string, string> actionMapping;
+      public IDictionary<string, string> ControllerMapping { get; set; }
+      public IDictionary<string, string> ActionMapping { get; set; }
+      public IList<string> NonActionParameterTokens { get; set; }
 
-      public Collection<string> NonActionParameterTokens { get; private set; }
-
-      internal CodeRoute(string url, IDictionary<string, string> controllerMapping, IDictionary<string, string> actionMapping, string[] nonActionParameterTokens)
-         : base(url, new MvcRouteHandler()) {
-
-         this.controllerMapping = controllerMapping;
-         this.actionMapping = actionMapping;
-         this.NonActionParameterTokens = new Collection<string>(nonActionParameterTokens);
-      }
+      public CodeRoute(string url, IRouteHandler routeHandler)
+         : base(url, routeHandler) { }
 
       public override RouteData GetRouteData(HttpContextBase httpContext) {
 
@@ -48,23 +42,23 @@ namespace MvcCodeRouting {
             
             RouteValueDictionary values = data.Values;
 
-            if (this.controllerMapping != null) {
+            if (this.ControllerMapping != null) {
                string controller = values["controller"] as string;
 
                if (controller != null) {
 
-                  values["controller"] = this.controllerMapping
+                  values["controller"] = this.ControllerMapping
                      .Single(p => String.Equals(p.Value, controller, StringComparison.OrdinalIgnoreCase))
                      .Key;
                }
             }
 
-            if (this.actionMapping != null) {
+            if (this.ActionMapping != null) {
                string action = values["action"] as string;
 
                if (action != null) {
 
-                  values["action"] = this.actionMapping
+                  values["action"] = this.ActionMapping
                      .Single(p => String.Equals(p.Value, action, StringComparison.OrdinalIgnoreCase))
                      .Key;
                }  
@@ -81,7 +75,7 @@ namespace MvcCodeRouting {
 
          string originalAction = null;
 
-         bool cleanupAction = this.actionMapping != null
+         bool cleanupAction = this.ActionMapping != null
             && SetAction(values, out originalAction);
 
          string originalController;
@@ -91,7 +85,7 @@ namespace MvcCodeRouting {
 
          string controller = null;
 
-         bool cleanupController = this.controllerMapping != null
+         bool cleanupController = this.ControllerMapping != null
             && SetController(values, out controller);
 
          VirtualPathData virtualPath = (!abort)? 
@@ -117,8 +111,8 @@ namespace MvcCodeRouting {
          if (originalAction == null)
             return false;
 
-         values["action"] = this.actionMapping.ContainsKey(originalAction) ?
-            this.actionMapping[originalAction]
+         values["action"] = this.ActionMapping.ContainsKey(originalAction) ?
+            this.ActionMapping[originalAction]
             : originalAction;
 
          return true;
@@ -229,8 +223,8 @@ namespace MvcCodeRouting {
          if (originalController == null)
             return false;
 
-         values["controller"] = this.controllerMapping.ContainsKey(originalController) ?
-            this.controllerMapping[originalController]
+         values["controller"] = this.ControllerMapping.ContainsKey(originalController) ?
+            this.ControllerMapping[originalController]
             : originalController;
 
          return true;
