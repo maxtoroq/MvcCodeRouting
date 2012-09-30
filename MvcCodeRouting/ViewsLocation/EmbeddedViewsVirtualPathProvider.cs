@@ -25,7 +25,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.ViewsLocation {
 
    sealed class EmbeddedViewsVirtualPathProvider : VirtualPathProvider {
 

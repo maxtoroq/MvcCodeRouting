@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.ViewsLocation {
 
    class AssemblyResourceDataCollection : Collection<AssemblyResourceData> {
 
