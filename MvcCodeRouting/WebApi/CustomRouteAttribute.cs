@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2012 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MvcCodeRouting {
-   
+namespace MvcCodeRouting.WebApi {
+
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method.

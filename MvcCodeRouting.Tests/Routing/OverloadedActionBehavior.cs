@@ -52,7 +52,7 @@ namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
 
    public class OverloadedAction2Controller : System.Web.Http.ApiController {
 
-      public void Foo([FromRoute]int a) { }
-      public void Foo([FromRoute]int a, [FromRoute]int b) { }
+      public void Foo([WebApi.FromRoute]int a) { }
+      public void Foo([WebApi.FromRoute]int a, [WebApi.FromRoute]int b) { }
    }
 }

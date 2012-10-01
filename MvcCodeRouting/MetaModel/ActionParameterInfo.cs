@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -24,7 +25,7 @@ namespace MvcCodeRouting {
    
    abstract class ActionParameterInfo : ICustomAttributeProvider {
 
-      FromRouteAttribute _FromRouteAttribute;
+      IFromRouteAttribute _FromRouteAttribute;
       bool _FromRouteAttributeInit;
 
       public ActionInfo Action { get; private set; }
@@ -38,12 +39,38 @@ namespace MvcCodeRouting {
          }
       }
 
-      public FromRouteAttribute FromRouteAttribute {
+      public IFromRouteAttribute FromRouteAttribute {
          get {
             if (!_FromRouteAttributeInit) {
-               _FromRouteAttribute = GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
-                  .Cast<FromRouteAttribute>()
+
+               Type attrType = Action.Controller.FromRouteAttributeType;
+
+               _FromRouteAttribute = GetCustomAttributes(attrType, inherit: true)
+                  .Cast<IFromRouteAttribute>()
                   .SingleOrDefault();
+
+               Type mistakenAttr;
+
+               if (_FromRouteAttribute == null
+                  && attrType != (mistakenAttr = typeof(FromRouteAttribute))) {
+
+                  _FromRouteAttribute = GetCustomAttributes(mistakenAttr, inherit: true)
+                     .Cast<IFromRouteAttribute>()
+                     .SingleOrDefault();
+
+                  if (_FromRouteAttribute != null) {
+                     throw new InvalidOperationException(
+                        String.Format(CultureInfo.InvariantCulture,
+                           "Must use {0} instead of {1} (parameter {2} on {3}).",
+                           attrType.FullName,
+                           mistakenAttr.FullName,
+                           Name,
+                           String.Concat(Action.DeclaringType.FullName, ".", Action.MethodName, "(", String.Join(", ", Action.Parameters.Select(p => p.Type.Name)), ")")
+                        )
+                     );
+                  }
+               }
+
                _FromRouteAttributeInit = true;
             }
             return _FromRouteAttribute;

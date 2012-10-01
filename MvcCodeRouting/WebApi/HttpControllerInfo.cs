@@ -25,6 +25,8 @@ namespace MvcCodeRouting.WebApi {
    abstract class HttpControllerInfo : ControllerInfo {
 
       readonly RouteFactory _RouteFactory = new HttpRouteFactory();
+      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
+      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }
@@ -32,6 +34,14 @@ namespace MvcCodeRouting.WebApi {
 
       public override bool CanDisambiguateActionOverloads {
          get { return true; }
+      }
+
+      public override Type FromRouteAttributeType {
+         get { return _FromRouteAttributeType; }
+      }
+
+      public override Type CustomRouteAttributeType {
+         get { return _CustomRouteAttributeType; }
       }
 
       public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {

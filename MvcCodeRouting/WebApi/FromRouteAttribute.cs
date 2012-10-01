@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2012 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,17 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Web.Http;
+using System.Web.Http.ModelBinding;
+using System.Web.Http.ValueProviders;
+using System.Web.Http.ValueProviders.Providers;
 
-namespace MvcCodeRouting {
-   
+namespace MvcCodeRouting.WebApi {
+
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
@@ -28,7 +32,7 @@ namespace MvcCodeRouting {
    /// after the {controller} token.
    /// </summary>
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
-   public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
+   public sealed class FromRouteAttribute : ModelBinderAttribute, IFromRouteAttribute {
 
       string _TokenName;
 
@@ -71,47 +75,17 @@ namespace MvcCodeRouting {
          this.TokenName = tokenName;
       }
 
-      /// <summary>
-      /// Gets the model binder used to bind the decorated parameter.
-      /// </summary>
-      /// <returns>The model binder.</returns>
-      public override IModelBinder GetBinder() {
-         return this;
-      }
+      public override IEnumerable<ValueProviderFactory> GetValueProviderFactories(HttpConfiguration configuration) {
 
-      /// <summary>
-      /// Binds the decorated parameter to a value by using the specified controller context and
-      /// binding context.
-      /// </summary>
-      /// <param name="controllerContext">The controller context.</param>
-      /// <param name="bindingContext">The binding context.</param>
-      /// <returns>The bound value.</returns>
-      public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
+         if (configuration == null) throw new ArgumentNullException("configuration");
 
-         RouteValueDictionary values = controllerContext.RouteData.Values;
-
-         string paramName = (this.TokenName != null
-            && !String.Equals(bindingContext.ModelName, this.TokenName, StringComparison.OrdinalIgnoreCase)
-            && !values.ContainsKey(bindingContext.ModelName)) ?
-            bindingContext.ModelName
-            : null;
-
-         if (paramName != null) {
-
-            values = new RouteValueDictionary(values) { 
-               { paramName, values[this.TokenName] }
-            };
-
-            bindingContext.ValueProvider = new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture);
-         
-         } else {
+         foreach (ValueProviderFactory valueProviderFactory in base.GetValueProviderFactories(configuration)) {
             
-            bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
+            if (valueProviderFactory is RouteDataValueProviderFactory)
+               return new[] { valueProviderFactory };
          }
 
-         IModelBinder binder = ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
-
-         return binder.BindModel(controllerContext, bindingContext);
+         return new[] { new RouteDataValueProviderFactory() };
       }
    }
 }

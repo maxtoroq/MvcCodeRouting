@@ -31,6 +31,8 @@ namespace MvcCodeRouting.Mvc {
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
       readonly RouteFactory _RouteFactory = new MvcRouteFactory();
+      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
+      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }
@@ -38,6 +40,14 @@ namespace MvcCodeRouting.Mvc {
 
       public override bool CanDisambiguateActionOverloads {
          get { return false; }
+      }
+
+      public override Type FromRouteAttributeType {
+         get { return _FromRouteAttributeType; ; }
+      }
+
+      public override Type CustomRouteAttributeType {
+         get { return _CustomRouteAttributeType; }
       }
 
       [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]

@@ -64,6 +64,8 @@
     <Compile Include="Api\CodeRoutingSettings.cs" />
     <Compile Include="Api\CustomRouteAttribute.cs" />
     <Compile Include="Api\FromRouteAttribute.cs" />
+    <Compile Include="Api\ICustomRouteAttribute.cs" />
+    <Compile Include="Api\IFromRouteAttribute.cs" />
     <Compile Include="Api\RequireRouteParametersAttribute.cs" />
     <Compile Include="Api\RouteFormatterArgs.cs" />
     <Compile Include="Api\RouteSegmentType.cs" />
@@ -101,9 +103,11 @@
     <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
     <Compile Include="WebApi\CodeHttpRoute.cs" />
     <Compile Include="WebApi\CodeHttpWebRoute.cs" />
+    <Compile Include="WebApi\CustomRouteAttribute.cs" />
     <Compile Include="WebApi\DescribedHttpActionInfo.cs" />
     <Compile Include="WebApi\DescribedHttpActionParameterInfo.cs" />
     <Compile Include="WebApi\DescribedHttpControllerInfo.cs" />
+    <Compile Include="WebApi\FromRouteAttribute.cs" />
     <Compile Include="WebApi\HttpControllerInfo.cs" />
     <Compile Include="WebApi\HttpRouteFactory.cs" />
   </ItemGroup>

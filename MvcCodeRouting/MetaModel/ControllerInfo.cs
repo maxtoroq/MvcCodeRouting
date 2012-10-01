@@ -170,7 +170,7 @@ namespace MvcCodeRouting {
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(typeof(FromRouteAttribute), inherit: false /* [1] */)
+                     where p.IsDefined(FromRouteAttributeType, inherit: false /* [1] */)
                      let rp = CreateRouteParameter(p)
                      where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
@@ -252,8 +252,8 @@ namespace MvcCodeRouting {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
-                  .Cast<CustomRouteAttribute>()
+               var attr = GetCustomAttributes(CustomRouteAttributeType, inherit: true)
+                  .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
 
                if (attr != null)
@@ -281,6 +281,8 @@ namespace MvcCodeRouting {
 
       public abstract RouteFactory RouteFactory { get; }
       public abstract bool CanDisambiguateActionOverloads { get; }
+      public abstract Type FromRouteAttributeType { get; }
+      public abstract Type CustomRouteAttributeType { get; }
 
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
@@ -336,7 +338,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      static void CheckCustomRoutes(IEnumerable<ActionInfo> actions) { 
+      void CheckCustomRoutes(IEnumerable<ActionInfo> actions) { 
 
          var sameCustomRouteDifferentNames = 
             (from a in actions
@@ -353,7 +355,7 @@ namespace MvcCodeRouting {
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
                   "Action methods decorated with {0} must have the same name: {1}.",
-                  typeof(CustomRouteAttribute).FullName,
+                  CustomRouteAttributeType.FullName,
                   String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
@@ -407,8 +409,8 @@ namespace MvcCodeRouting {
 
          Type propertyType = property.PropertyType;
 
-         var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
-            .Cast<FromRouteAttribute>()
+         var routeAttr = property.GetCustomAttributes(FromRouteAttributeType, inherit: true)
+            .Cast<IFromRouteAttribute>()
             .Single();
 
          string name = routeAttr.TokenName ?? property.Name;

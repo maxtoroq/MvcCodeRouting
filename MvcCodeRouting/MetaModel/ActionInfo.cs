@@ -110,9 +110,33 @@ namespace MvcCodeRouting {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
-                  .Cast<CustomRouteAttribute>()
+               Type attrType = Controller.CustomRouteAttributeType;
+
+               ICustomRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
+                  .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
+
+               Type mistakenAttr;
+
+               if (attr == null
+                  && attrType != (mistakenAttr = typeof(CustomRouteAttribute))) {
+
+                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
+                     .Cast<ICustomRouteAttribute>()
+                     .SingleOrDefault();
+
+                  if (attr != null) {
+                     throw new InvalidOperationException(
+                        String.Format(CultureInfo.InvariantCulture,
+                           "Must use {0} instead of {1} on {3}.",
+                           attrType.FullName,
+                           mistakenAttr.FullName,
+                           Name,
+                           String.Concat(DeclaringType.FullName, ".", MethodName, "(", String.Join(", ", Parameters.Select(p => p.Type.Name)), ")")
+                        )
+                     );
+                  }
+               }
 
                if (attr != null) 
                   _CustomRoute = attr.Url;
@@ -154,7 +178,7 @@ namespace MvcCodeRouting {
 
       static RouteParameter CreateRouteParameter(ActionParameterInfo actionParam) {
 
-         FromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
+         IFromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
 
          string tokenName = actionParam.Name;
          string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(actionParam.Type, routeAttr);

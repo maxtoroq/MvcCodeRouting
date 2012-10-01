@@ -91,7 +91,7 @@ namespace MvcCodeRouting.Tests.Routing.ActionName {
 
       public void Get() { }
 
-      [HttpGet]
+      [System.Web.Http.HttpGet]
       public void Foo() { }
    }
 }
