@@ -16,16 +16,12 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
 
-namespace MvcCodeRouting.ViewsLocation {
+namespace MvcCodeRouting.Web.Hosting {
 
    sealed class EmbeddedViewsVirtualPathProvider : VirtualPathProvider {
 

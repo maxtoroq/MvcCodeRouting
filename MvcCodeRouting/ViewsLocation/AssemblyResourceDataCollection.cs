@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace MvcCodeRouting.ViewsLocation {
+namespace MvcCodeRouting.Web.Hosting {
 
    class AssemblyResourcesCollection : Collection<AssemblyResources> {
 

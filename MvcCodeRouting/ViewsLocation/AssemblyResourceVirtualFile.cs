@@ -20,7 +20,7 @@ using System.Reflection;
 using System.Text;
 using System.Web.Hosting;
 
-namespace MvcCodeRouting.ViewsLocation {
+namespace MvcCodeRouting.Web.Hosting {
 
    class AssemblyResourceVirtualFile : VirtualFile {
 
