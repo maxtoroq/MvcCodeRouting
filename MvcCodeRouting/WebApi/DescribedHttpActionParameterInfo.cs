@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Http.Controllers;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http {
    
    class DescribedHttpActionParameterInfo : ActionParameterInfo {
 

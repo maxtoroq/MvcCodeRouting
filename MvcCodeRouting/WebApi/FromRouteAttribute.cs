@@ -22,7 +22,7 @@ using System.Web.Http.ModelBinding;
 using System.Web.Http.ValueProviders;
 using System.Web.Http.ValueProviders.Providers;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http {
 
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 

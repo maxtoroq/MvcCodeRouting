@@ -19,7 +19,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
 
    class ReflectedMvcActionParameterInfo : ActionParameterInfo {
 

@@ -19,7 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
    
    class MvcRouteFactory : RouteFactory {
 

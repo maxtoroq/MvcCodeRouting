@@ -19,7 +19,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace MvcCodeRouting.ViewsLocation {
+namespace MvcCodeRouting.Web.Mvc {
    
    class ViewEngineWrapper : IViewEngine {
 

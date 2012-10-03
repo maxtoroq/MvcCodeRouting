@@ -120,12 +120,12 @@ namespace MvcCodeRouting {
 
          GlobalConfiguration.Configuration.Routes.Add(null, (IHttpRoute)route);
 
-         var httpRoute = (WebApi.CodeHttpRoute)route;
+         var httpRoute = (Web.Http.CodeHttpRoute)route;
          var webRoute = (Route)routes.Last(); // System.Web.Http.WebHost.Routing.HttpWebRoute
 
          routes.RemoveAt(routes.Count - 1);
 
-         var codeRoute = new WebApi.CodeHttpWebRoute(webRoute, httpRoute);
+         var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
 
          routes.Add(codeRoute);
 
@@ -144,10 +144,10 @@ namespace MvcCodeRouting {
 
             IViewEngine engine = engines[i];
 
-            if (engine.GetType() == typeof(ViewEngineWrapper))
+            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper))
                continue;
 
-            engines[i] = new ViewEngineWrapper(engine);
+            engines[i] = new Web.Mvc.ViewEngineWrapper(engine);
          }
 
          EmbeddedViewsVirtualPathProvider.RegisterIfNecessary();

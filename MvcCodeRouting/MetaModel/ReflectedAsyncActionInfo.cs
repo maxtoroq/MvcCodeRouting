@@ -18,7 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
 
    class ReflectedMvcAsyncActionInfo : ReflectedMvcActionInfo {
 

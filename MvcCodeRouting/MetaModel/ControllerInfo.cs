@@ -364,10 +364,10 @@ namespace MvcCodeRouting {
 
       public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
-         if (!Mvc.MvcControllerInfo.IsMvcController(controllerType))
-            return WebApi.HttpControllerInfo.Create(controllerType, registerSettings);
+         if (!Web.Mvc.MvcControllerInfo.IsMvcController(controllerType))
+            return Web.Http.HttpControllerInfo.Create(controllerType, registerSettings);
 
-         return Mvc.MvcControllerInfo.Create(controllerType, registerSettings);
+         return Web.Mvc.MvcControllerInfo.Create(controllerType, registerSettings);
       }
 
       public static bool IsSupportedControllerType(Type type) {
@@ -375,7 +375,7 @@ namespace MvcCodeRouting {
          return type.IsPublic
             && !type.IsAbstract
             && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
-            && (Mvc.MvcControllerInfo.IsMvcController(type) || IsWebApiController(type));
+            && (Web.Mvc.MvcControllerInfo.IsMvcController(type) || IsWebApiController(type));
       }
 
       static bool IsWebApiController(Type type) {

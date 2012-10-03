@@ -19,7 +19,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
    
    class DescribedMvcControllerInfo : MvcControllerInfo {
 

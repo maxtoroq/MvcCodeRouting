@@ -20,7 +20,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http {
    
    abstract class HttpControllerInfo : ControllerInfo {
 

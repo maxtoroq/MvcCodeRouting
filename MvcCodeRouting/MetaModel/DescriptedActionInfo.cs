@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
 
    class DescribedMvcActionInfo : MvcActionInfo {
 

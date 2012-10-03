@@ -22,7 +22,7 @@ using System.Security;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting.Mvc {
+namespace MvcCodeRouting.Web.Mvc {
    
    abstract class MvcControllerInfo : ControllerInfo {
 

@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Routing;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http.WebHost {
    
    class CodeHttpWebRoute : CodeRoute {
 

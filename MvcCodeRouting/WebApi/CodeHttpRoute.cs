@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Web.Http.Routing;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http {
 
    [DebuggerDisplay("{RouteTemplate}")]
    class CodeHttpRoute : HttpRoute {

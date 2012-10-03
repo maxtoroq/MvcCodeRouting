@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Http.Routing;
 
-namespace MvcCodeRouting.WebApi {
+namespace MvcCodeRouting.Web.Http {
    
    class HttpRouteFactory : RouteFactory {
 
