@@ -25,7 +25,7 @@ namespace MvcCodeRouting.ViewsLocation {
    class AssemblyResourceVirtualDirectory : VirtualDirectory {
 
       readonly VirtualDirectory prevDirectory;
-      readonly AssemblyResourceData assemblyData;
+      readonly AssemblyResources assemblyData;
 
       List<VirtualFile> _Files;
       List<VirtualDirectory> _Directories;
@@ -71,7 +71,7 @@ namespace MvcCodeRouting.ViewsLocation {
          }
       }
 
-      public AssemblyResourceVirtualDirectory(string virtualPath, VirtualDirectory prevDirectory, AssemblyResourceData assemblyData)
+      public AssemblyResourceVirtualDirectory(string virtualPath, VirtualDirectory prevDirectory, AssemblyResources assemblyData)
          : base(virtualPath) {
 
          this.prevDirectory = prevDirectory;

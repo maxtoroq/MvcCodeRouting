@@ -20,11 +20,11 @@ using System.Text;
 
 namespace MvcCodeRouting.ViewsLocation {
 
-   class AssemblyResourceDataCollection : Collection<AssemblyResourceData> {
+   class AssemblyResourcesCollection : Collection<AssemblyResources> {
 
-      public static readonly AssemblyResourceDataCollection Null = new AssemblyResourceDataCollection();
+      public static readonly AssemblyResourcesCollection Null = new AssemblyResourcesCollection();
 
-      public void AddRange(IEnumerable<AssemblyResourceData> items) {
+      public void AddRange(IEnumerable<AssemblyResources> items) {
 
          foreach (var item in items)
             this.Add(item);
@@ -36,12 +36,12 @@ namespace MvcCodeRouting.ViewsLocation {
             return false;
 
          string resourceName;
-         AssemblyResourceData data;
+         AssemblyResources data;
 
          return ResourceExists(virtualPath, isFile, out resourceName, out data);
       }
 
-      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out AssemblyResourceData data) {
+      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out AssemblyResources data) {
 
          for (int i = 0; i < this.Count; i++) {
 

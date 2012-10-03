@@ -22,7 +22,7 @@ using System.Web.Hosting;
 
 namespace MvcCodeRouting.ViewsLocation {
 
-   class AssemblyResourceData {
+   class AssemblyResources {
 
       public readonly string BasePath;
       readonly string[] basePathParts;
@@ -35,9 +35,9 @@ namespace MvcCodeRouting.ViewsLocation {
 
       public bool HasResources { get { return resourceNames.Length > 0; } }
 
-      public AssemblyResourceData(RegisterSettings registerSettings, string basePath) {
+      public AssemblyResources(Assembly assembly, string basePath) {
 
-         this.assembly = registerSettings.Assembly;
+         this.assembly = assembly;
          this.assemblyName = this.assembly.GetName().Name;
          this.assemblyNamePartsCount = this.assemblyName.Split('.').Count();
          this.BasePath = basePath;

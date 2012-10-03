@@ -29,14 +29,14 @@ namespace MvcCodeRouting.ViewsLocation {
 
    sealed class EmbeddedViewsVirtualPathProvider : VirtualPathProvider {
 
-      static readonly List<AssemblyResourceData> AssemblyDataTable = new List<AssemblyResourceData>();
-      readonly ConcurrentDictionary<string, AssemblyResourceDataCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyResourceDataCollection>(VirtualPathComparison.Comparer);
+      static readonly List<AssemblyResources> AssemblyDataTable = new List<AssemblyResources>();
+      readonly ConcurrentDictionary<string, AssemblyResourcesCollection> virtualPathCache = new ConcurrentDictionary<string, AssemblyResourcesCollection>(VirtualPathComparison.Comparer);
       static bool embeddedViewsEnabled, registered;
 
       public static void RegisterAssembly(RegisterSettings registerSettings) {
 
          string basePath = String.Join("/", new[] { "Views", registerSettings.ViewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
-         var assemblyData = new AssemblyResourceData(registerSettings, basePath);
+         var assemblyData = new AssemblyResources(registerSettings.Assembly, basePath);
 
          if (assemblyData.HasResources) 
             AssemblyDataTable.Add(assemblyData);
@@ -80,7 +80,7 @@ namespace MvcCodeRouting.ViewsLocation {
          VirtualDirectory prev = base.GetDirectory(virtualDir);
 
          string resourceName;
-         AssemblyResourceData assemblyData;
+         AssemblyResources assemblyData;
 
          if (GetAssemblyData(virtualDir).ResourceExists(virtualDir, false, out resourceName, out assemblyData))
             return assemblyData.CreateVirtualDirectory(virtualDir, prev);
@@ -96,7 +96,7 @@ namespace MvcCodeRouting.ViewsLocation {
             return base.GetFile(virtualPath);
 
          string resourceName;
-         AssemblyResourceData assemblyData;
+         AssemblyResources assemblyData;
 
          if (GetAssemblyData(virtualPath).ResourceExists(virtualPath, true, out resourceName, out assemblyData))
             return assemblyData.CreateVirtualFile(virtualPath, resourceName);
@@ -114,7 +114,7 @@ namespace MvcCodeRouting.ViewsLocation {
          return null;
       }
 
-      AssemblyResourceDataCollection GetAssemblyData(string virtualPath) {
+      AssemblyResourcesCollection GetAssemblyData(string virtualPath) {
 
          string appRelativePath = VirtualPathUtility.ToAppRelative(virtualPath);
          
@@ -124,7 +124,7 @@ namespace MvcCodeRouting.ViewsLocation {
          List<string> parts = appRelativePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
 
          if (parts.Count < 1 || !parts[0].Equals("Views", VirtualPathComparison.Comparison))
-            return AssemblyResourceDataCollection.Null;
+            return AssemblyResourcesCollection.Null;
 
          return this.virtualPathCache.GetOrAdd(virtualPath, (s) => {
 
@@ -135,7 +135,7 @@ namespace MvcCodeRouting.ViewsLocation {
             if (isFile) 
                parts.RemoveAt(parts.Count - 1);
 
-            var result = new AssemblyResourceDataCollection();
+            var result = new AssemblyResourcesCollection();
 
             for (int i = 0; i < parts.Count; i++) {
                string basePath = String.Join("/", parts.Take(parts.Count - i));
