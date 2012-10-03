@@ -74,9 +74,6 @@
     <Compile Include="MetaModel\DescriptedControllerInfo.cs" />
     <Compile Include="MetaModel\ReflectedAsyncActionInfo.cs" />
     <Compile Include="MetaModel\ReflectedControllerInfo.cs" />
-    <Compile Include="Mvc\MvcActionInfo.cs" />
-    <Compile Include="Mvc\MvcControllerInfo.cs" />
-    <Compile Include="Mvc\MvcRouteFactory.cs" />
     <Compile Include="RouteFactory.cs" />
     <Compile Include="CodeRoutingConstraint.cs" />
     <Compile Include="DataTokenKeys.cs" />
@@ -101,15 +98,18 @@
     <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
     <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
-    <Compile Include="WebApi\CodeHttpRoute.cs" />
-    <Compile Include="WebApi\CodeHttpWebRoute.cs" />
-    <Compile Include="WebApi\CustomRouteAttribute.cs" />
-    <Compile Include="WebApi\DescribedHttpActionInfo.cs" />
-    <Compile Include="WebApi\DescribedHttpActionParameterInfo.cs" />
-    <Compile Include="WebApi\DescribedHttpControllerInfo.cs" />
-    <Compile Include="WebApi\FromRouteAttribute.cs" />
-    <Compile Include="WebApi\HttpControllerInfo.cs" />
-    <Compile Include="WebApi\HttpRouteFactory.cs" />
+    <Compile Include="Web.Http\CodeHttpRoute.cs" />
+    <Compile Include="Web.Http\CustomRouteAttribute.cs" />
+    <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
+    <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />
+    <Compile Include="Web.Http\DescribedHttpControllerInfo.cs" />
+    <Compile Include="Web.Http\FromRouteAttribute.cs" />
+    <Compile Include="Web.Http\HttpControllerInfo.cs" />
+    <Compile Include="Web.Http\HttpRouteFactory.cs" />
+    <Compile Include="Web.Http\WebHost\CodeHttpWebRoute.cs" />
+    <Compile Include="Web.Mvc\MvcActionInfo.cs" />
+    <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
