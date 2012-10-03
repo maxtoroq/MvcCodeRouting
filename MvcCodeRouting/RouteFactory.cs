@@ -19,7 +19,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
    
    abstract class RouteFactory {
 

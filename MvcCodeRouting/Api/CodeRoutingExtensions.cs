@@ -22,6 +22,7 @@ using System.Web.Http;
 using System.Web.Http.Routing;
 using System.Web.Mvc;
 using System.Web.Routing;
+using MvcCodeRouting.Web;
 using MvcCodeRouting.Web.Hosting;
 
 namespace MvcCodeRouting {

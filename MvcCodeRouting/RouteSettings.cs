@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Routing;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
    
    class RouteSettings {
 

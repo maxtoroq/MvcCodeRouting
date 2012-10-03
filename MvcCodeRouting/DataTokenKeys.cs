@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
    
    static class DataTokenKeys {
       public const string Namespaces = "Namespaces";

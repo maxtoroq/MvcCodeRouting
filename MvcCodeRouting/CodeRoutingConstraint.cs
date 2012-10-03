@@ -19,7 +19,7 @@ using System.Text;
 using System.Web;
 using System.Web.Routing;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
    
    class CodeRoutingConstraint : IRouteConstraint {
 
