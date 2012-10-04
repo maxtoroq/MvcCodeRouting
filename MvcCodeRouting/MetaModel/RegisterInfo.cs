@@ -21,7 +21,7 @@ using System.Globalization;
 
 namespace MvcCodeRouting {
    
-   class RegisterInfo {
+   class RegisterSettings {
 
       string _BaseRoute;
       Assembly _Assembly;
@@ -92,11 +92,11 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RegisterInfo(Assembly assembly, Type rootController) {
+      public RegisterSettings(Assembly assembly, Type rootController) {
 
          if (rootController != null) { 
             
-            if (!IsController(rootController))
+            if (!ControllerInfo.IsSupportedControllerType(rootController))
                throw new InvalidOperationException("The specified root controller is not a valid controller type.");
 
             if (assembly != null && rootController.Assembly != assembly)
@@ -126,15 +126,7 @@ namespace MvcCodeRouting {
             new[] { this.RootController }
             : this.Assembly.GetTypes();
 
-         return types.Where(t => IsController(t));
-      }
-
-      static bool IsController(Type t) {
-
-         return t.IsPublic
-            && !t.IsAbstract
-            && ControllerInfo.BaseType.IsAssignableFrom(t)
-            && t.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase);
+         return types.Where(t => ControllerInfo.IsSupportedControllerType(t));
       }
    }
 }

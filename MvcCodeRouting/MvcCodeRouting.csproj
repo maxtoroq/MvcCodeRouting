@@ -43,7 +43,17 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
@@ -54,6 +64,8 @@
     <Compile Include="Api\CodeRoutingSettings.cs" />
     <Compile Include="Api\CustomRouteAttribute.cs" />
     <Compile Include="Api\FromRouteAttribute.cs" />
+    <Compile Include="Api\ICustomRouteAttribute.cs" />
+    <Compile Include="Api\IFromRouteAttribute.cs" />
     <Compile Include="Api\RequireRouteParametersAttribute.cs" />
     <Compile Include="Api\RouteFormatterArgs.cs" />
     <Compile Include="Api\RouteSegmentType.cs" />
@@ -78,6 +90,7 @@
     <Compile Include="MetaModel\TokenInfoCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="RouteSettings.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceData.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceDataCollection.cs" />
     <Compile Include="ViewsLocation\AssemblyResourceVirtualDirectory.cs" />
@@ -85,6 +98,18 @@
     <Compile Include="ViewsLocation\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="ViewsLocation\ViewEngineWrapper.cs" />
     <Compile Include="ViewsLocation\VirtualPathComparison.cs" />
+    <Compile Include="Web.Http\CodeHttpRoute.cs" />
+    <Compile Include="Web.Http\CustomRouteAttribute.cs" />
+    <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
+    <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />
+    <Compile Include="Web.Http\DescribedHttpControllerInfo.cs" />
+    <Compile Include="Web.Http\FromRouteAttribute.cs" />
+    <Compile Include="Web.Http\HttpControllerInfo.cs" />
+    <Compile Include="Web.Http\HttpRouteFactory.cs" />
+    <Compile Include="Web.Http\WebHost\CodeHttpWebRoute.cs" />
+    <Compile Include="Web.Mvc\MvcActionInfo.cs" />
+    <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

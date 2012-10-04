@@ -16,37 +16,42 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
    
-   static class RouteFactory {
+   abstract class RouteFactory {
 
-      static readonly Regex TokenPattern = new Regex(@"\{(.+?)\}");
+      public abstract object OptionalParameterValue { get; }
 
-      public static Route[] CreateRoutes(RegisterInfo registerInfo) {
+      public static object[] CreateRoutes(RegisterSettings registerSettings) {
 
-         ActionInfo[] actions = registerInfo.GetControllers()
+         ActionInfo[] actions = registerSettings.GetControllers()
             .SelectMany(c => c.Actions)
             .ToArray();
 
          CheckNoAmbiguousUrls(actions);
 
          var groupedActions = GroupActions(actions);
+         object config = registerSettings.Settings.Configuration;
 
-         CodeRoute[] codeRoutes = groupedActions.Select(g => CreateRoute(g)).ToArray();
+         List<object> routes = new List<object>();
 
-         object config = registerInfo.Settings.Configuration;
+         foreach (var group in groupedActions) {
 
-         if (config != null) {
-            for (int i = 0; i < codeRoutes.Length; i++) 
-               codeRoutes[i].DataTokens[DataTokenKeys.Configuration] = config;
+            ControllerInfo controller = group.First().Controller;
+            RouteFactory routeFactory = controller.RouteFactory;
+
+            RouteSettings routeSettings = routeFactory.CreateRouteSettings(group);
+
+            if (config != null) 
+               routeSettings.DataTokens[DataTokenKeys.Configuration] = config;
+
+            routes.Add(routeFactory.CreateRoute(routeSettings, registerSettings));
          }
 
-         return codeRoutes;
+         return routes.ToArray();
       }
 
       static void CheckNoAmbiguousUrls(IEnumerable<ActionInfo> actions) {
@@ -181,7 +186,7 @@ namespace MvcCodeRouting {
          return finalGrouping;
       }
 
-      static CodeRoute CreateRoute(IEnumerable<ActionInfo> actions) {
+      RouteSettings CreateRouteSettings(IEnumerable<ActionInfo> actions) {
 
          if (actions == null) throw new ArgumentNullException("actions");
 
@@ -215,6 +220,8 @@ namespace MvcCodeRouting {
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
 
          string actionCustomRoute = first.CustomRoute;
+         bool allEmptyActionSegment = actionMapping.Values.All(s => s.Length == 0);
+         bool hasEmptyActionSegment = allEmptyActionSegment || actionMapping.Values.Any(s => s.Length == 0);
 
          bool includeActionToken = (actionCustomRoute != null) ?
             first.CustomRouteHasActionToken
@@ -222,7 +229,7 @@ namespace MvcCodeRouting {
 
          bool actionFormat = actionMapping.Any(p => !String.Equals(p.Key, p.Value, StringComparison.Ordinal));
          bool requiresActionMapping = actionFormat && includeActionToken;
-
+         
          if (actionCustomRoute != null) {
 
             if (actionCustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase)) {
@@ -242,10 +249,13 @@ namespace MvcCodeRouting {
 
          string url = String.Join("/", segments.Where(s => !String.IsNullOrEmpty(s)));
 
-         var defaults = new RouteValueDictionary();
+         var routeSettings = new RouteSettings(url, actions) {
+            ActionMapping = (requiresActionMapping) ? actionMapping : null,
+            ControllerMapping = (requiresControllerMapping) ? controllerMapping : null,
+         };
 
          if (!includeControllerToken)
-            defaults.Add("controller", controllerMapping.Keys.First());
+            routeSettings.Defaults.Add("controller", controllerMapping.Keys.First());
 
          ActionInfo defaultAction = (includeActionToken) ?
             actions.FirstOrDefault(a => a.IsDefaultAction)
@@ -254,26 +264,46 @@ namespace MvcCodeRouting {
          string actionDefault = null;
 
          if (defaultAction != null) {
+            
             actionDefault = (requiresActionMapping) ?
                defaultAction.ActionSegment
                : defaultAction.Name;
+         
+         } else if (hasEmptyActionSegment && !allEmptyActionSegment) {
+            
+            actionDefault = "";
+         }
+         
+         if (actionDefault != null) {
+
+            object actionDef = (actionDefault.Length == 0) ?
+               (!allEmptyActionSegment) ? this.OptionalParameterValue
+               : null
+               : actionDefault;
+
+            if (actionDef != null)
+               routeSettings.Defaults.Add("action", actionDef);
          }
 
-         if (actionDefault != null)
-            defaults.Add("action", actionDefault);
-
-         TokenInfoCollection parameters = first.RouteParameters;
+         RouteParameterCollection parameters = first.RouteParameters;
 
          foreach (var param in parameters.Where(p => p.IsOptional))
-            defaults.Add(param.Name, UrlParameter.Optional);
-
-         var constraints = new RouteValueDictionary();
+            routeSettings.Defaults.Add(param.Name, this.OptionalParameterValue);
 
          if (includeControllerToken)
-            constraints.Add("controller", String.Join("|", controllerMapping.Values));
+            routeSettings.Constraints.Add("controller", String.Join("|", controllerMapping.Values));
 
-         if (includeActionToken)
-            constraints.Add("action", String.Join("|", actionMapping.Values));
+         if (includeActionToken) {
+
+            string actionConstraint = String.Join("|", actionMapping.Values.Where(s => !String.IsNullOrEmpty(s)));
+
+            if (hasEmptyActionSegment)
+               actionConstraint = String.Concat("(", actionConstraint, ")?");
+
+            routeSettings.Constraints.Add("action", actionConstraint);
+         }
+
+         routeSettings.Constraints[CodeRoutingConstraint.Key] = new CodeRoutingConstraint();
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 
@@ -282,34 +312,17 @@ namespace MvcCodeRouting {
             if (param.IsOptional)
                regex = String.Concat("(", regex, ")?");
 
-            constraints.Add(param.Name, regex);
+            routeSettings.Constraints.Add(param.Name, regex);
          }
 
-         constraints.Add(CodeRoutingConstraint.Key, new CodeRoutingConstraint());
+         routeSettings.DataTokens[DataTokenKeys.Namespaces] = new string[1] { first.Controller.Namespace };
+         routeSettings.DataTokens[DataTokenKeys.BaseRoute] = baseRoute;
+         routeSettings.DataTokens[DataTokenKeys.RouteContext] = String.Join("/", first.Controller.CodeRoutingContext);
+         routeSettings.DataTokens[DataTokenKeys.ViewsLocation] = String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{')));
 
-         var dataTokens = new RouteValueDictionary { 
-            { DataTokenKeys.Namespaces, new string[1] { first.Controller.Namespace } },
-            { DataTokenKeys.BaseRoute, baseRoute },
-            { DataTokenKeys.RouteContext, String.Join("/", first.Controller.CodeRoutingContext) },
-            { DataTokenKeys.ViewsLocation, String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{'))) }
-         };
-
-         var nonActionParameterTokens = new List<string>();
-
-         if (baseRoute != null)
-            nonActionParameterTokens.AddRange(TokenPattern.Matches(baseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
-
-         nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
-
-         return new CodeRoute(
-            url: url,
-            controllerMapping: (requiresControllerMapping) ? controllerMapping : null,
-            actionMapping: (requiresActionMapping) ? actionMapping : null,
-            nonActionParameterTokens: nonActionParameterTokens.ToArray()) {
-               Constraints = constraints,
-               DataTokens = dataTokens,
-               Defaults = defaults
-            };
+         return routeSettings;
       }
+
+      public abstract object CreateRoute(RouteSettings routeSettings, RegisterSettings registerSettings);
    }
 }

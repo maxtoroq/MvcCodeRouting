@@ -190,7 +190,7 @@ namespace MvcCodeRouting {
          return formattedSegment;
       }
 
-      internal string GetConstraintForType(Type type, FromRouteAttribute routeAttr) {
+      internal string GetConstraintForType(Type type, IFromRouteAttribute routeAttr) {
 
          bool isNullableValueType = type.IsGenericType 
             && type.GetGenericTypeDefinition() == typeof(Nullable<>);

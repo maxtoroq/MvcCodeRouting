@@ -19,12 +19,12 @@ using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Mvc {
    
-   class ReflectedControllerInfo : ControllerInfo {
+   class ReflectedMvcControllerInfo : MvcControllerInfo {
 
-      public ReflectedControllerInfo(Type type, RegisterInfo registerInfo) 
-         : base(type, registerInfo) { }
+      public ReflectedMvcControllerInfo(Type type, RegisterSettings registerSettings) 
+         : base(type, registerSettings) { }
 
       protected internal override ActionInfo[] GetActions() {
 
@@ -33,11 +33,11 @@ namespace MvcCodeRouting {
          List<MethodInfo> methods = GetCanonicalActionMethods().ToList();
 
          if (controllerIsAsync) { 
-            MethodInfo[] asyncMethods = methods.Where(m => ReflectedAsyncActionInfo.IsAsyncMethod(m)).ToArray();
+            MethodInfo[] asyncMethods = methods.Where(m => ReflectedMvcAsyncActionInfo.IsAsyncMethod(m)).ToArray();
 
             MethodInfo[] completedMethods =
                (from method in asyncMethods
-                let actionName = ReflectedAsyncActionInfo.AsyncMethodActionName(method)
+                let actionName = ReflectedMvcAsyncActionInfo.AsyncMethodActionName(method)
                 select methods.Where(m => m.Name.Equals(actionName + "Completed", StringComparison.OrdinalIgnoreCase)))
                 .SelectMany(p => p)
                 .ToArray();
@@ -48,10 +48,23 @@ namespace MvcCodeRouting {
 
          return
             (from m in methods
-             let info = (controllerIsAsync && ReflectedAsyncActionInfo.IsAsyncMethod(m)) ?
-                new ReflectedAsyncActionInfo(m, this)
-                : new ReflectedActionInfo(m, this)
+             let info = (controllerIsAsync && ReflectedMvcAsyncActionInfo.IsAsyncMethod(m)) ?
+                new ReflectedMvcAsyncActionInfo(m, this)
+                : new ReflectedMvcActionInfo(m, this)
              select info).ToArray();
+      }
+
+      IEnumerable<MethodInfo> GetCanonicalActionMethods() {
+
+         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(this.Type);
+
+         return
+             from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+             where MvcControllerInfo.IsMvcController(m.DeclaringType)
+                && ActionInfo.IsCallableActionMethod(m)
+                && !IsNonAction(m)
+                && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
+             select m;
       }
 
       public override object[] GetCustomAttributes(bool inherit) {

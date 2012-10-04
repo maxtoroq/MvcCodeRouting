@@ -18,13 +18,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Mvc {
 
-   class ReflectedAsyncActionInfo : ReflectedActionInfo {
+   class ReflectedMvcAsyncActionInfo : ReflectedMvcActionInfo {
 
       readonly MethodInfo method;
 
-      public ReflectedAsyncActionInfo(MethodInfo method, ControllerInfo controller) 
+      public ReflectedMvcAsyncActionInfo(MethodInfo method, ControllerInfo controller) 
          : base(method, controller) {
 
          if (!IsAsyncMethod(method)) throw new InvalidOperationException();
@@ -33,6 +33,12 @@ namespace MvcCodeRouting {
       }
 
       protected override string GetName() {
+
+         string name = base.GetName();
+
+         if (name != this.method.Name)
+            return name;
+
          return AsyncMethodActionName(this.method);
       }
 

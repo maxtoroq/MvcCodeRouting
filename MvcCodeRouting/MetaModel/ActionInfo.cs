@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Web.Mvc;
 
 namespace MvcCodeRouting {
 
@@ -32,21 +31,14 @@ namespace MvcCodeRouting {
       bool _CustomRouteInit;
       bool? _CustomRouteHasActionToken;
       Collection<ActionParameterInfo> _Parameters;
-      TokenInfoCollection _RouteParameters;
+      RouteParameterCollection _RouteParameters;
 
       public ControllerInfo Controller { get; private set; }
       
       public string Name {
          get {
-            if (_Name == null) {
-
-               ActionNameAttribute nameAttr = GetCustomAttributes(typeof(ActionNameAttribute), inherit: true)
-                  .Cast<ActionNameAttribute>()
-                  .SingleOrDefault();
-
-               _Name = (nameAttr != null) ?
-                  nameAttr.Name : GetName();
-            }
+            if (_Name == null) 
+               _Name = GetName();
             return _Name;
          }
       }
@@ -70,13 +62,13 @@ namespace MvcCodeRouting {
          }
       }
 
-      public TokenInfoCollection RouteParameters {
+      public RouteParameterCollection RouteParameters {
          get {
             if (_RouteParameters == null) {
-               _RouteParameters = new TokenInfoCollection(
+               _RouteParameters = new RouteParameterCollection(
                   (from p in Parameters
                    where p.FromRouteAttribute != null
-                   select CreateTokenInfo(p))
+                   select CreateRouteParameter(p))
                   .ToList()
                );
 
@@ -88,8 +80,8 @@ namespace MvcCodeRouting {
                   ActionParameterInfo id = Parameters.FirstOrDefault(p => p.Name.Equals("id", StringComparison.OrdinalIgnoreCase));
 
                   if (id != null) {
-                     _RouteParameters = new TokenInfoCollection(
-                        new[] { CreateTokenInfo(id) }
+                     _RouteParameters = new RouteParameterCollection(
+                        new[] { CreateRouteParameter(id) }
                      );
                   }
                }
@@ -118,9 +110,33 @@ namespace MvcCodeRouting {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
-                  .Cast<CustomRouteAttribute>()
+               Type attrType = Controller.CustomRouteAttributeType;
+
+               ICustomRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
+                  .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
+
+               Type mistakenAttr;
+
+               if (attr == null
+                  && attrType != (mistakenAttr = typeof(CustomRouteAttribute))) {
+
+                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
+                     .Cast<ICustomRouteAttribute>()
+                     .SingleOrDefault();
+
+                  if (attr != null) {
+                     throw new InvalidOperationException(
+                        String.Format(CultureInfo.InvariantCulture,
+                           "Must use {0} instead of {1} on {3}.",
+                           attrType.FullName,
+                           mistakenAttr.FullName,
+                           Name,
+                           String.Concat(DeclaringType.FullName, ".", MethodName, "(", String.Join(", ", Parameters.Select(p => p.Type.Name)), ")")
+                        )
+                     );
+                  }
+               }
 
                if (attr != null) 
                   _CustomRoute = attr.Url;
@@ -153,9 +169,16 @@ namespace MvcCodeRouting {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      static TokenInfo CreateTokenInfo(ActionParameterInfo actionParam) {
+      public static bool IsCallableActionMethod(MethodInfo method) {
+         
+         return !method.IsSpecialName
+            && !method.ContainsGenericParameters
+            && !method.GetParameters().Any(p => p.IsOut || p.ParameterType.IsByRef);
+      }
 
-         FromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
+      static RouteParameter CreateRouteParameter(ActionParameterInfo actionParam) {
+
+         IFromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
 
          string tokenName = actionParam.Name;
          string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(actionParam.Type, routeAttr);
@@ -170,7 +193,7 @@ namespace MvcCodeRouting {
                tokenName = routeAttr.TokenName;
          }
 
-         return new TokenInfo(tokenName, constraint, isOptional, isCatchAll);
+         return new RouteParameter(tokenName, constraint, isOptional, isCatchAll);
       }
 
       protected ActionInfo(ControllerInfo controller) {
@@ -184,7 +207,7 @@ namespace MvcCodeRouting {
       public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
       public abstract bool IsDefined(Type attributeType, bool inherit);
 
-      void CheckCatchAllParamIsLast(IList<TokenInfo> parameters) {
+      void CheckCatchAllParamIsLast(IList<RouteParameter> parameters) {
 
          for (int i = 0; i < parameters.Count; i++) {
 

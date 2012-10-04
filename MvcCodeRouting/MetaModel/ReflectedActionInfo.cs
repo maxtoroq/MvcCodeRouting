@@ -19,9 +19,9 @@ using System.Text;
 using System.Reflection;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Mvc {
 
-   class ReflectedActionInfo : ActionInfo {
+   class ReflectedMvcActionInfo : MvcActionInfo {
 
       readonly MethodInfo method;
 
@@ -33,18 +33,18 @@ namespace MvcCodeRouting {
          get { return method.DeclaringType; }
       }
 
-      public ReflectedActionInfo(MethodInfo method, ControllerInfo controller)
+      public ReflectedMvcActionInfo(MethodInfo method, ControllerInfo controller)
          : base(controller) {
 
          this.method = method;
       }
 
       protected override string GetName() {
-         return this.method.Name;
+         return base.GetName() ?? this.method.Name;
       }
 
       protected override ActionParameterInfo[] GetParameters() {
-         return this.method.GetParameters().Select(p => new ReflectedActionParameterInfo(p, this)).ToArray();
+         return this.method.GetParameters().Select(p => new ReflectedMvcActionParameterInfo(p, this)).ToArray();
       }
 
       public override object[] GetCustomAttributes(bool inherit) {

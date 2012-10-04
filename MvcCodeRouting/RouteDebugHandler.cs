@@ -13,12 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Reflection;
+using MvcCodeRouting.Web;
 
 namespace MvcCodeRouting {
 
@@ -29,6 +30,7 @@ namespace MvcCodeRouting {
    public class RouteDebugHandler : IHttpHandler {
 
       string format;
+      TextWriter writer;
 
       /// <summary>
       /// Gets a value indicating whether another request can use the <see cref="IHttpHandler"/>
@@ -66,15 +68,17 @@ namespace MvcCodeRouting {
          }.Where(s => formats.Contains(s))
          .First();
 
+         this.writer = response.Output;
+
          response.ContentType = "text/html";
 
          switch (this.format) {
             case "csharp":
-               response.Write(ToCSharpMapRouteCalls(RouteTable.Routes));
+               RenderRoutesCSharp(RouteTable.Routes);
                break;
             
             case "vb":
-               response.Write(ToVBMapRouteCalls(RouteTable.Routes));
+               RenderRoutesVB(RouteTable.Routes);
                break;
 
             default:
@@ -82,129 +86,142 @@ namespace MvcCodeRouting {
          }
       }
 
-      string ToCSharpMapRouteCalls(RouteCollection routes) {
+      void RenderRoutesCSharp(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
-         StringBuilder sb = new StringBuilder();
-         sb.Append("<!DOCTYPE html>");
-         sb.Append("<html>");
-         AppendHtmlHead(sb);
-         sb.Append("<body class='csharp'>");
-         AppendTopComments(sb, "//");
+         writer.Write("<!DOCTYPE html>");
+         writer.Write("<html>");
+         RenderHtmlHead();
+         writer.Write("<body class='csharp'>");
+         RenderTopComments("//");
 
          foreach (Route item in routes.OfType<Route>()) {
 
-            string mapRoute = ToCSharpMapRouteCall(item);
-
-            if (!String.IsNullOrEmpty(mapRoute)) {
-               sb.Append(mapRoute)
-                  .AppendLine()
-                  .AppendLine();
-            }
+            RenderRouteCSharp(item);
+            writer.WriteLine();
+            writer.WriteLine();
          }
 
-         sb.Append("</body>")
-            .Append("</html>");
-
-         return sb.ToString();
+         writer.Write("</body>");
+         writer.Write("</html>");
       }
 
-      static string ToCSharpMapRouteCall(Route route) {
+      void RenderRouteCSharp(Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
-
-         StringBuilder sb = new StringBuilder();
 
          Type handlerType = route.RouteHandler.GetType();
 
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
-
-            sb.AppendFormat("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>);", route.Url);
+            RenderIgnoreRouteCSharp(route);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+            RenderMapRouteCSharp(route);
+         
+         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+            RenderMapHttpRouteCSharp(route);
+         
+         } else {
+            writer.Write("<span class='comment'>// route: \"{0}\", handler: {1}</span>", route.Url, handlerType.AssemblyQualifiedName);
+         }
+      }
 
-            sb.AppendFormat("routes.MapRoute(<span class='keyword'>null</span>, <span class='string'>\"{0}\"</span>", route.Url);
+      void RenderIgnoreRouteCSharp(Route route) {
+         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>);", route.Url);
+      }
 
-            int i = 0;
+      void RenderMapRouteCSharp(Route route, bool httpRoute = false) {
 
-            if (route.Defaults != null && route.Defaults.Count > 0) {
+         writer.Write("routes.");
+         writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
+         writer.Write("(<span class='keyword'>null</span>, <span class='string'>\"{0}\"</span>", route.Url);
 
-               sb.Append(", ")
-                  .AppendLine()
-                  .Append("    <span class='keyword'>new</span> { ");
+         int i = 0;
 
-               foreach (var item in route.Defaults) {
+         if (route.Defaults != null && route.Defaults.Count > 0) {
 
-                  if (i > 0)
-                     sb.Append(", ");
+            writer.Write(", ");
+            writer.WriteLine();
+            writer.Write("    <span class='keyword'>new</span> { ");
 
-                  sb.AppendFormat("{0} = {1}", item.Key, ValueToCSharpString(item.Value));
+            foreach (var item in route.Defaults) {
 
-                  i++;
-               }
+               if (i > 0)
+                  writer.Write(", ");
 
-               sb.Append(" }");
+               writer.Write("{0} = {1}", item.Key, ValueToCSharpString(item.Value));
 
-               RouteValueDictionary constraints = (route.Constraints != null) ?
-                  new RouteValueDictionary(route.Constraints)
-                  : new RouteValueDictionary();
-
-               constraints.Remove(CodeRoutingConstraint.Key);
-
-               if (constraints.Count > 0) {
-
-                  sb.Append(", ")
-                     .AppendLine()
-                     .Append("    <span class='keyword'>new</span> { ");
-
-                  int j = 0;
-
-                  foreach (var item in constraints) {
-
-                     if (j > 0)
-                        sb.Append(", ");
-
-                     sb.AppendFormat("{0} = {1}", item.Key, ValueToCSharpString(item.Value, constraint: true));
-
-                     j++;
-                  }
-
-                  sb.Append(" }");
-               }
+               i++;
             }
+
+            writer.Write(" }");
+
+            var constraints = (route.Constraints != null) ?
+               new RouteValueDictionary(route.Constraints)
+               : new RouteValueDictionary();
+
+            constraints.Remove(CodeRoutingConstraint.Key);
+
+            if (constraints.Count > 0) {
+
+               writer.Write(", ");
+               writer.WriteLine();
+               writer.Write("    <span class='keyword'>new</span> { ");
+
+               int j = 0;
+
+               foreach (var item in constraints) {
+
+                  if (j > 0)
+                     writer.Write(", ");
+
+                  writer.Write("{0} = {1}", item.Key, ValueToCSharpString(item.Value, constraint: true));
+
+                  j++;
+               }
+
+               writer.Write(" }");
+            }
+         }
+
+         if (!httpRoute) {
 
             string[] namespaces;
 
             if (route.DataTokens != null && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
 
-               sb.Append(", ")
-                  .AppendLine()
-                  .Append("    <span class='keyword'>new</span>[] { ");
+               writer.Write(", ");
+               writer.WriteLine();
+               writer.Write("    <span class='keyword'>new</span>[] { ");
 
                for (int j = 0; j < namespaces.Length; j++) {
                   if (j > 0)
-                     sb.Append(", ");
+                     writer.Write(", ");
 
-                  sb.Append("<span class='string'>\"")
-                     .Append(namespaces[j])
-                     .Append("\"</span>");
+                  writer.Write("<span class='string'>\"");
+                  writer.Write(namespaces[j]);
+                  writer.Write("\"</span>");
                }
 
-               sb.Append(" }");
-            }
+               writer.Write(" }");
+            } 
+         }
 
-            sb.Append(");");
+         writer.Write(");");
 
 #if DEBUG
          string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
 
-         if (crContext != null)
-            sb.AppendLine().AppendFormat("    <span class='comment'>// {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
-#endif
+         if (crContext != null) {
+            writer.WriteLine();
+            writer.Write("    <span class='comment'>// {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
          }
+#endif
+      }
 
-         return sb.ToString();
+      void RenderMapHttpRouteCSharp(Route route) {
+         RenderMapRouteCSharp(route, httpRoute: true);
       }
 
       static string ValueToCSharpString(object val, bool constraint = false) {
@@ -221,6 +238,9 @@ namespace MvcCodeRouting {
          else if (type == typeof(UrlParameter))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
+         else if (type.FullName == "System.Web.Http.RouteParameter")
+            stringVal = "<span class='type'>RouteParameter</span>.Optional";
+
          else if (constraint)
             stringVal = String.Concat("<span class='keyword'>new</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
 
@@ -230,129 +250,142 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      string ToVBMapRouteCalls(RouteCollection routes) {
+      void RenderRoutesVB(RouteCollection routes) {
 
          if (routes == null) throw new ArgumentNullException("routes");
 
-         StringBuilder sb = new StringBuilder();
-         sb.Append("<!DOCTYPE html>");
-         sb.Append("<html>");
-         AppendHtmlHead(sb);
-         sb.Append("<body class='vb'>");
-         AppendTopComments(sb, "'");
+         writer.Write("<!DOCTYPE html>");
+         writer.Write("<html>");
+         RenderHtmlHead();
+         writer.Write("<body class='vb'>");
+         RenderTopComments("'");
 
          foreach (Route item in routes.OfType<Route>()) {
 
-            string mapRoute = ToVBMapRouteCall(item);
-
-            if (!String.IsNullOrEmpty(mapRoute)) {
-               sb.Append(mapRoute)
-                  .AppendLine()
-                  .AppendLine();
-            }
+            RenderRouteVB(item);
+            writer.WriteLine();
+            writer.WriteLine();
          }
 
-         sb.Append("</body>")
-            .Append("</html>");
-
-         return sb.ToString();
+         writer.Write("</body>");
+         writer.Write("</html>");
       }
 
-      static string ToVBMapRouteCall(Route route) {
+      void RenderRouteVB(Route route) {
 
          if (route == null) throw new ArgumentNullException("route");
-
-         StringBuilder sb = new StringBuilder();
 
          Type handlerType = route.RouteHandler.GetType();
 
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
-
-            sb.AppendFormat("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>)", route.Url);
+            RenderIgnoreRouteVB(route);
 
          } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+            RenderMapRouteVB(route);
+         
+         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+            RenderMapHttpRouteVB(route);
 
-            sb.AppendFormat("routes.MapRoute(<span class='keyword'>Nothing</span>, <span class='string'>\"{0}\"</span>", route.Url);
+         } else {
+            writer.Write("<span class='comment'>' route: \"{0}\", handler: {1}</span>", route.Url, handlerType.AssemblyQualifiedName);
+         }
+      }
 
-            int i = 0;
+      void RenderIgnoreRouteVB(Route route) {
+         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>)", route.Url);
+      }
 
-            if (route.Defaults != null && route.Defaults.Count > 0) {
+      void RenderMapRouteVB(Route route, bool httpRoute = false) {
 
-               sb.Append(", _")
-                  .AppendLine()
-                  .Append("    <span class='keyword'>New With</span> {");
+         writer.Write("routes.");
+         writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
+         writer.Write("(<span class='keyword'>Nothing</span>, <span class='string'>\"{0}\"</span>", route.Url);
 
-               foreach (var item in route.Defaults) {
+         int i = 0;
 
-                  if (i > 0)
-                     sb.Append(", ");
+         if (route.Defaults != null && route.Defaults.Count > 0) {
 
-                  sb.AppendFormat(".{0} = {1}", item.Key, ValueToVBString(item.Value));
+            writer.Write(", _");
+            writer.WriteLine();
+            writer.Write("    <span class='keyword'>New With</span> {");
 
-                  i++;
-               }
+            foreach (var item in route.Defaults) {
 
-               sb.Append("}");
+               if (i > 0)
+                  writer.Write(", ");
 
-               RouteValueDictionary constraints = (route.Constraints != null) ?
-                  new RouteValueDictionary(route.Constraints)
-                  : new RouteValueDictionary();
+               writer.Write(".{0} = {1}", item.Key, ValueToVBString(item.Value));
 
-               constraints.Remove(CodeRoutingConstraint.Key);
-
-               if (constraints.Count > 0) {
-
-                  sb.Append(", _")
-                     .AppendLine()
-                     .Append("    <span class='keyword'>New With</span> {");
-
-                  int j = 0;
-
-                  foreach (var item in constraints) {
-
-                     if (j > 0)
-                        sb.Append(", ");
-
-                     sb.AppendFormat(".{0} = {1}", item.Key, ValueToVBString(item.Value, constraint: true));
-
-                     j++;
-                  }
-
-                  sb.Append("}");
-               }
+               i++;
             }
+
+            writer.Write("}");
+
+            var constraints = (route.Constraints != null) ?
+               new RouteValueDictionary(route.Constraints)
+               : new RouteValueDictionary();
+
+            constraints.Remove(CodeRoutingConstraint.Key);
+
+            if (constraints.Count > 0) {
+
+               writer.Write(", _");
+               writer.WriteLine();
+               writer.Write("    <span class='keyword'>New With</span> {");
+
+               int j = 0;
+
+               foreach (var item in constraints) {
+
+                  if (j > 0)
+                     writer.Write(", ");
+
+                  writer.Write(".{0} = {1}", item.Key, ValueToVBString(item.Value, constraint: true));
+
+                  j++;
+               }
+
+               writer.Write("}");
+            }
+         }
+
+         if (!httpRoute) {
 
             string[] namespaces;
 
             if (route.DataTokens != null && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
 
-               sb.Append(", _")
-                  .AppendLine()
-                  .Append("    <span class='keyword'>New String</span>() {");
+               writer.Write(", _");
+               writer.WriteLine();
+               writer.Write("    <span class='keyword'>New String</span>() {");
 
                for (int j = 0; j < namespaces.Length; j++) {
                   if (j > 0)
-                     sb.Append(", ");
+                     writer.Write(", ");
 
-                  sb.Append("<span class='string'>\"")
-                     .Append(namespaces[j])
-                     .Append("\"</span>");
+                  writer.Write("<span class='string'>\"");
+                  writer.Write(namespaces[j]);
+                  writer.Write("\"</span>");
                }
 
-               sb.Append("}");
-            }
-
-            sb.Append(")");
-
-            string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
-
-#if DEBUG
-         if (crContext != null)
-            sb.AppendLine().AppendFormat("    <span class='comment'>' {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
-#endif
+               writer.Write("}");
+            } 
          }
 
-         return sb.ToString();
+         writer.Write(")");
+
+         string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
+
+#if DEBUG
+         if (crContext != null) {
+            writer.WriteLine();
+            writer.Write("    <span class='comment'>' {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
+         }
+#endif
+      }
+
+      void RenderMapHttpRouteVB(Route route) {
+         RenderMapRouteVB(route, httpRoute: true);
       }
 
       static string ValueToVBString(object val, bool constraint = false) {
@@ -368,6 +401,9 @@ namespace MvcCodeRouting {
 
          else if (type == typeof(UrlParameter))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
+         
+         else if (type.FullName == "System.Web.Http.RouteParameter")
+            stringVal = "<span class='type'>RouteParameter</span>.Optional";
 
          else if (constraint)
             stringVal = String.Concat("<span class='keyword'>New</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
@@ -378,40 +414,39 @@ namespace MvcCodeRouting {
          return stringVal;
       }
 
-      void AppendTopComments(StringBuilder sb, string lineCommentChars) { 
+      void RenderTopComments(string lineCommentChars) { 
 
          Assembly thisAssembly = Assembly.GetExecutingAssembly();
          AssemblyName name = thisAssembly.GetName();
 
-         sb.Append("<span class='comment'>")
-            .Append(lineCommentChars)
-            .AppendFormat(" {0} v{1}", name.Name, name.Version)
-            .AppendLine()
-            .Append(lineCommentChars)
-            .Append(" <a href='http://mvccoderouting.codeplex.com/'>http://mvccoderouting.codeplex.com/</a>")
-            .AppendLine()
-            .Append(lineCommentChars)
-            .Append(" Format: <a" + (this.format == "csharp" ? " class='self'" : " href='?format=csharp'"))
-            .Append(">C#</a> - <a" + (this.format == "vb" ? " class='self'" : " href='?format=vb'"))
-            .Append(">Visual Basic</a>")
-            .Append("</span>")
-            .AppendLine()
-            .AppendLine();
+         writer.Write("<span class='comment'>");
+         writer.Write(lineCommentChars);
+         writer.Write(" {0} v{1}", name.Name, name.Version);
+         writer.WriteLine();
+         writer.Write(lineCommentChars);
+         writer.Write(" <a href='http://mvccoderouting.codeplex.com/'>http://mvccoderouting.codeplex.com/</a>");
+         writer.WriteLine();
+         writer.Write(lineCommentChars);
+         writer.Write(" Format: <a" + (this.format == "csharp" ? " class='self'" : " href='?format=csharp'"));
+         writer.Write(">C#</a> - <a" + (this.format == "vb" ? " class='self'" : " href='?format=vb'"));
+         writer.Write(">Visual Basic</a>");
+         writer.Write("</span>");
+         writer.WriteLine();
+         writer.WriteLine();
       }
 
-      static void AppendHtmlHead(StringBuilder sb) {
+      void RenderHtmlHead() {
 
-         sb.Append("<head>")
-            .Append("<style type='text/css'>")
-            .AppendLine("body { white-space: pre; font-family: Consolas, 'Courier New'; font-size: 80%; }")
-            .AppendLine(".comment, .comment a { color: #008000; }")
-            .AppendLine(".string { color: #ac1414; }")
-            .AppendLine(".keyword { color: #0026fd; }")
-            .AppendLine(".type { color: #2b91af; }")
-            .AppendLine("a.self { font-weight: bold; }")
-            .Append("</style>")
-            .Append("</head>")
-            ;
+         writer.Write("<head>");
+         writer.Write("<style type='text/css'>");
+         writer.WriteLine("body { white-space: pre; font-family: Consolas, 'Courier New'; font-size: 80%; }");
+         writer.WriteLine(".comment, .comment a { color: #008000; }");
+         writer.WriteLine(".string { color: #ac1414; }");
+         writer.WriteLine(".keyword { color: #0026fd; }");
+         writer.WriteLine(".type { color: #2b91af; }");
+         writer.WriteLine("a.self { font-weight: bold; }");
+         writer.Write("</style>");
+         writer.Write("</head>");
       }
    }
 }

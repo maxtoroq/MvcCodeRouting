@@ -13,7 +13,7 @@ namespace Samples.Controllers {
          return View();
       }
 
-      public ActionResult Profile([FromRoute]string username) {
+      public new ActionResult Profile([FromRoute]string username) {
 
          this.ViewBag.Username = username;
 

@@ -18,8 +18,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Routing;
 using System.Web.Mvc;
 using System.Web.Routing;
+using MvcCodeRouting.Web;
+using MvcCodeRouting.Web.Hosting;
 
 namespace MvcCodeRouting {
 
@@ -81,23 +85,52 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerInfo = new RegisterInfo(null, rootController) { 
+         var registerSettings = new RegisterSettings(null, rootController) { 
             BaseRoute = baseRoute, 
             Settings = settings 
          };
 
-         Route[] newRoutes = RouteFactory.CreateRoutes(registerInfo);
-         
-         foreach (var route in newRoutes)
-            routes.Add(route);
+         object[] newRoutes = RouteFactory.CreateRoutes(registerSettings);
+         List<Route> webRoutes = new List<Route>();
+
+         foreach (var route in newRoutes) {
+
+            Route mvcRoute = route as Route;
+
+            if (mvcRoute != null) {
+               webRoutes.Add(mvcRoute);
+               routes.Add(mvcRoute);
+            } else { 
+               webRoutes.Add(RegisterHttpRoute(routes, route));
+            }
+         }
          
          if (newRoutes.Length > 0 
-            && registerInfo.Settings.EnableEmbeddedViews) {
+            && registerSettings.Settings.EnableEmbeddedViews) {
             
-            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerInfo);
+            EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerSettings);
          }
 
-         return newRoutes;
+         return webRoutes;
+      }
+
+      static Route RegisterHttpRoute(RouteCollection routes, object route) {
+         
+         if (!Object.ReferenceEquals(routes, RouteTable.Routes))
+            throw new InvalidOperationException("routes must be the same instance as RouteTable.Routes");
+
+         GlobalConfiguration.Configuration.Routes.Add(null, (IHttpRoute)route);
+
+         var httpRoute = (Web.Http.CodeHttpRoute)route;
+         var webRoute = (Route)routes.Last(); // System.Web.Http.WebHost.Routing.HttpWebRoute
+
+         routes.RemoveAt(routes.Count - 1);
+
+         var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
+
+         routes.Add(codeRoute);
+
+         return codeRoute;
       }
 
       /// <summary>
@@ -112,10 +145,10 @@ namespace MvcCodeRouting {
 
             IViewEngine engine = engines[i];
 
-            if (engine.GetType() == typeof(ViewEngineWrapper))
+            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper))
                continue;
 
-            engines[i] = new ViewEngineWrapper(engine);
+            engines[i] = new Web.Mvc.ViewEngineWrapper(engine);
          }
 
          EmbeddedViewsVirtualPathProvider.RegisterIfNecessary();

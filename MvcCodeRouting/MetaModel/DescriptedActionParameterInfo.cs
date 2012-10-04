@@ -18,9 +18,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Mvc {
 
-   class DescriptedActionParameterInfo : ActionParameterInfo {
+   class DescribedMvcActionParameterInfo : ActionParameterInfo {
 
       readonly ParameterDescriptor paramDescr;
       readonly ReflectedParameterDescriptor reflectedParamDescr;
@@ -41,7 +41,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public DescriptedActionParameterInfo(ParameterDescriptor paramDescr, ActionInfo action)
+      public DescribedMvcActionParameterInfo(ParameterDescriptor paramDescr, ActionInfo action)
          : base(action) {
 
          this.paramDescr = paramDescr;

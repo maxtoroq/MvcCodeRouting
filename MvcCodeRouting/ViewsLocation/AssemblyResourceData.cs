@@ -20,9 +20,9 @@ using System.Text;
 using System.Web;
 using System.Web.Hosting;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Hosting {
 
-   class AssemblyResourceData {
+   class AssemblyResources {
 
       public readonly string BasePath;
       readonly string[] basePathParts;
@@ -35,9 +35,9 @@ namespace MvcCodeRouting {
 
       public bool HasResources { get { return resourceNames.Length > 0; } }
 
-      public AssemblyResourceData(RegisterInfo registerInfo, string basePath) {
+      public AssemblyResources(Assembly assembly, string basePath) {
 
-         this.assembly = registerInfo.Assembly;
+         this.assembly = assembly;
          this.assemblyName = this.assembly.GetName().Name;
          this.assemblyNamePartsCount = this.assemblyName.Split('.').Count();
          this.BasePath = basePath;

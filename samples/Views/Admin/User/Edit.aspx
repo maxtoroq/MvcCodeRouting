@@ -2,7 +2,7 @@
 
 <asp:Content ContentPlaceHolderID="content" runat="server">
 
-   <h1>Edit User <%: ViewBag.UserId %></h1>
+   <h1>Edit User <%: ViewBag.Id %></h1>
 
    <%: Html.ActionLink("« Back to list", "")%>
 

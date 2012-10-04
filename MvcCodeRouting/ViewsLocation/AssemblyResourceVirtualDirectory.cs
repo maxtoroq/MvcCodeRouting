@@ -20,12 +20,12 @@ using System.Text;
 using System.Web;
 using System.Web.Hosting;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Hosting {
 
    class AssemblyResourceVirtualDirectory : VirtualDirectory {
 
       readonly VirtualDirectory prevDirectory;
-      readonly AssemblyResourceData assemblyData;
+      readonly AssemblyResources assemblyData;
 
       List<VirtualFile> _Files;
       List<VirtualDirectory> _Directories;
@@ -71,7 +71,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public AssemblyResourceVirtualDirectory(string virtualPath, VirtualDirectory prevDirectory, AssemblyResourceData assemblyData)
+      public AssemblyResourceVirtualDirectory(string virtualPath, VirtualDirectory prevDirectory, AssemblyResources assemblyData)
          : base(virtualPath) {
 
          this.prevDirectory = prevDirectory;

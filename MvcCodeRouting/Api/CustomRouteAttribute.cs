@@ -24,7 +24,7 @@ namespace MvcCodeRouting {
    /// action method.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-   public sealed class CustomRouteAttribute : Attribute {
+   public sealed class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
 
       /// <summary>
       /// The URL pattern.

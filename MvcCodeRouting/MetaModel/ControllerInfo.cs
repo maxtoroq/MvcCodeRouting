@@ -16,29 +16,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Security;
-using System.Web.Mvc;
-using System.Web.Mvc.Async;
+using MvcCodeRouting.Web;
 
 namespace MvcCodeRouting {
    
    [DebuggerDisplay("{ControllerUrl}")]
    abstract class ControllerInfo : ICustomAttributeProvider {
 
-      internal static readonly Type BaseType = typeof(Controller);
-      static readonly Func<Controller, IActionInvoker> createActionInvoker;
-      static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
-
       ReadOnlyCollection<string> _CodeRoutingNamespace;
       ReadOnlyCollection<string> _CodeRoutingContext;
       ReadOnlyCollection<string> _NamespaceSegments;
       ReadOnlyCollection<string> _BaseRouteAndNamespaceSegments;
-      TokenInfoCollection _RouteProperties;
+      RouteParameterCollection _RouteProperties;
       Collection<ActionInfo> _Actions;
       string _Name;
       string _ControllerSegment;
@@ -49,7 +41,7 @@ namespace MvcCodeRouting {
       string _ControllerUrl;
 
       public Type Type { get; private set; }
-      public RegisterInfo Register { get; private set; }
+      public RegisterSettings Register { get; private set; }
 
       public virtual string Name {
          get {
@@ -163,7 +155,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      public TokenInfoCollection RouteProperties {
+      public RouteParameterCollection RouteProperties {
          get {
             if (_RouteProperties == null) {
 
@@ -174,19 +166,19 @@ namespace MvcCodeRouting {
 
                types.Reverse();
 
-               var list = new List<TokenInfo>();
+               var list = new List<RouteParameter>();
 
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(typeof(FromRouteAttribute), inherit: false /* [1] */)
-                     let rp = CreateTokenInfo(p)
-                     where !list.Any(item => TokenInfo.NameEquals(item.Name, rp.Name))
+                     where p.IsDefined(FromRouteAttributeType, inherit: false /* [1] */)
+                     let rp = CreateRouteParameter(p)
+                     where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
                   );
                }
 
-               _RouteProperties = new TokenInfoCollection(list);
+               _RouteProperties = new RouteParameterCollection(list);
             }
             return _RouteProperties;
 
@@ -199,11 +191,13 @@ namespace MvcCodeRouting {
             if (_Actions == null) {
                _Actions = new Collection<ActionInfo>(
                   (from a in GetActions()
-                   where !a.IsDefined(typeof(NonActionAttribute), inherit: true)
+                   where !IsNonAction(a)
                    select a).ToArray()
                );
 
-               CheckOverloads(_Actions);
+               if (!CanDisambiguateActionOverloads)
+                  CheckOverloads(_Actions);
+
                CheckCustomRoutes(_Actions);
             }
             return _Actions;
@@ -259,8 +253,8 @@ namespace MvcCodeRouting {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(typeof(CustomRouteAttribute), inherit: true)
-                  .Cast<CustomRouteAttribute>()
+               var attr = GetCustomAttributes(CustomRouteAttributeType, inherit: true)
+                  .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
 
                if (attr != null)
@@ -286,20 +280,10 @@ namespace MvcCodeRouting {
          }
       }
 
-      [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]
-      static ControllerInfo() {
-
-         try {
-            createActionInvoker =
-               (Func<Controller, IActionInvoker>)
-                  Delegate.CreateDelegate(typeof(Func<Controller, IActionInvoker>), BaseType.GetMethod("CreateActionInvoker", BindingFlags.NonPublic | BindingFlags.Instance));
-
-            getControllerDescriptor =
-               (Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>)
-                  Delegate.CreateDelegate(typeof(Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor>), typeof(ControllerActionInvoker).GetMethod("GetControllerDescriptor", BindingFlags.NonPublic | BindingFlags.Instance));
-         
-         } catch (MethodAccessException) { }
-      }
+      public abstract RouteFactory RouteFactory { get; }
+      public abstract bool CanDisambiguateActionOverloads { get; }
+      public abstract Type FromRouteAttributeType { get; }
+      public abstract Type CustomRouteAttributeType { get; }
 
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
@@ -355,7 +339,7 @@ namespace MvcCodeRouting {
          }
       }
 
-      static void CheckCustomRoutes(IEnumerable<ActionInfo> actions) { 
+      void CheckCustomRoutes(IEnumerable<ActionInfo> actions) { 
 
          var sameCustomRouteDifferentNames = 
             (from a in actions
@@ -372,80 +356,68 @@ namespace MvcCodeRouting {
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
                   "Action methods decorated with {0} must have the same name: {1}.",
-                  typeof(CustomRouteAttribute).FullName,
+                  CustomRouteAttributeType.FullName,
                   String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
          }
       }
 
-      public static ControllerInfo Create(Type controllerType, RegisterInfo registerInfo) {
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
-         ControllerDescriptor controllerDescr = null;
+         if (!Web.Mvc.MvcControllerInfo.IsMvcController(controllerType))
+            return Web.Http.HttpControllerInfo.Create(controllerType, registerSettings);
 
-         if (createActionInvoker != null) {
-
-            Controller instance = null;
-
-            try {
-               instance = (Controller)FormatterServices.GetUninitializedObject(controllerType);
-            } catch (SecurityException) { }
-
-            if (instance != null) {
-
-               ControllerActionInvoker actionInvoker = createActionInvoker(instance) as ControllerActionInvoker;
-
-               if (actionInvoker != null)
-                  controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
-            }
-         }
-
-         if (controllerDescr != null) 
-            return new DescriptedControllerInfo(controllerDescr, controllerType, registerInfo);
-
-         return new ReflectedControllerInfo(controllerType, registerInfo);
+         return Web.Mvc.MvcControllerInfo.Create(controllerType, registerSettings);
       }
 
-      protected ControllerInfo(Type type, RegisterInfo registerInfo) {
+      public static bool IsSupportedControllerType(Type type) {
+
+         return type.IsPublic
+            && !type.IsAbstract
+            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
+            && (Web.Mvc.MvcControllerInfo.IsMvcController(type) || IsWebApiController(type));
+      }
+
+      static bool IsWebApiController(Type type) {
+
+         Type t = type;
+
+         do {
+            if (t.FullName == "System.Web.Http.ApiController")
+               return true;
+
+            t = t.BaseType;
+
+         } while (t != null);
+
+         return false;
+      }
+
+      protected ControllerInfo(Type type, RegisterSettings registerSettings) {
          
          this.Type = type;
-         this.Register = registerInfo;
+         this.Register = registerSettings;
       }
 
       protected internal abstract ActionInfo[] GetActions();
       public abstract object[] GetCustomAttributes(bool inherit);
       public abstract object[] GetCustomAttributes(Type attributeType, bool inherit);
       public abstract bool IsDefined(Type attributeType, bool inherit);
+      protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
-      protected IEnumerable<MethodInfo> GetCanonicalActionMethods() {
-
-         bool controllerIsDisposable = typeof(IDisposable).IsAssignableFrom(this.Type);
-
-         return
-             from m in this.Type.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-             where !m.IsSpecialName
-                && BaseType.IsAssignableFrom(m.DeclaringType)
-                && !m.ContainsGenericParameters
-                && !m.IsDefined(typeof(NonActionAttribute), inherit: true)
-                && !(controllerIsDisposable && m.Name == "Dispose" && m.ReturnType == typeof(void) && m.GetParameters().Length == 0)
-             let parameters = m.GetParameters()
-             where !parameters.Any(p => p.ParameterType.IsByRef)
-               && !parameters.Any(p => p.IsOut)
-             select m;
-      }
-
-      TokenInfo CreateTokenInfo(PropertyInfo property) {
+      RouteParameter CreateRouteParameter(PropertyInfo property) {
 
          Type propertyType = property.PropertyType;
 
-         var routeAttr = property.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
-            .Cast<FromRouteAttribute>()
+         var routeAttr = property.GetCustomAttributes(FromRouteAttributeType, inherit: true)
+            .Cast<IFromRouteAttribute>()
             .Single();
 
          string name = routeAttr.TokenName ?? property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
-         return new TokenInfo(name, constraint);
+         return new RouteParameter(name, constraint);
       }
    }
 }

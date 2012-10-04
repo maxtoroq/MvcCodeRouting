@@ -5,13 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using MvcCodeRouting;
 
-namespace Samples.Controllers.Api {
-   
+namespace Samples.Controllers.Admin {
+
+   [Authorize]
    public abstract class CrudController<TEntity, TEntityKey> : Controller {
 
       [HttpGet]
       public ActionResult Index() {
-         throw new NotImplementedException();
+         return View();
       }
 
       [HttpPost]
@@ -22,7 +23,10 @@ namespace Samples.Controllers.Api {
       [CustomRoute("{id}")]
       [HttpGet]
       public ActionResult Edit([FromRoute]TEntityKey id) {
-         throw new NotImplementedException();
+
+         this.ViewBag.Id = id;
+
+         return View();
       }
 
       [CustomRoute("{id}")]
