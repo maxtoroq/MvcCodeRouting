@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Controllers {
 
    class RouteParameterCollection : ReadOnlyCollection<RouteParameter>, IEquatable<RouteParameterCollection> {
 

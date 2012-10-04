@@ -20,7 +20,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Controllers {
 
    [DebuggerDisplay("{ActionUrl}")]
    abstract class ActionInfo : ICustomAttributeProvider {

@@ -21,7 +21,7 @@ using System.Linq;
 using System.Reflection;
 using MvcCodeRouting.Web;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Controllers {
    
    [DebuggerDisplay("{ControllerUrl}")]
    abstract class ControllerInfo : ICustomAttributeProvider {

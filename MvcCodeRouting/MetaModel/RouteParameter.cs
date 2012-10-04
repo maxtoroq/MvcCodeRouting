@@ -21,7 +21,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Controllers {
    
    [DebuggerDisplay("{RouteSegment}")]
    class RouteParameter : IEquatable<RouteParameter> {
