@@ -304,8 +304,6 @@ namespace MvcCodeRouting.Web {
             routeSettings.Constraints.Add("action", actionConstraint);
          }
 
-         routeSettings.Constraints[CodeRoutingConstraint.Key] = new CodeRoutingConstraint();
-
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
 
             string regex = param.Constraint;

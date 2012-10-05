@@ -66,7 +66,7 @@ namespace MvcCodeRouting.Web.Mvc {
          } catch (MethodAccessException) { }
       }
 
-      public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          ControllerDescriptor controllerDescr = null;
 

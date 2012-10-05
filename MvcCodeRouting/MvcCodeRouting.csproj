@@ -91,6 +91,7 @@
     <Compile Include="Web.Http\DescribedHttpControllerInfo.cs" />
     <Compile Include="Web.Http\FromRouteAttribute.cs" />
     <Compile Include="Web.Http\HttpControllerInfo.cs" />
+    <Compile Include="Web.Http\HttpRouteContextConstraint.cs" />
     <Compile Include="Web.Http\HttpRouteFactory.cs" />
     <Compile Include="Web.Http\WebHost\CodeHttpWebRoute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Web\CodeRoute.cs" />
     <Compile Include="Web\CodeRoutingConstraint.cs" />
     <Compile Include="Web\DataTokenKeys.cs" />
+    <Compile Include="Web\ICodeRoute.cs" />
     <Compile Include="Web\RouteFactory.cs" />
     <Compile Include="Web\RouteSettings.cs" />
   </ItemGroup>

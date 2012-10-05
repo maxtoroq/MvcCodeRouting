@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2012 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
 // limitations under the License.
 
 using System;
-using System.Web;
-using System.Web.Routing;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web {
+namespace MvcCodeRouting.Web.Http {
    
-   class CodeRoutingConstraint : IRouteConstraint {
+   class HttpRouteContextConstraint : IHttpRouteConstraint {
 
-      public const string Key = "__routecontext";
-
-      public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
-         return CodeRouteExtensions.RouteContextConstraint(routeDirection == RouteDirection.UrlGeneration, values, route.DataTokens);
+      public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection) {
+         return CodeRouteExtensions.RouteContextConstraint(routeDirection == HttpRouteDirection.UriGeneration, values, route.DataTokens);
       }
    }
 }

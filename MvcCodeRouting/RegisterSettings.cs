@@ -24,6 +24,7 @@ namespace MvcCodeRouting {
    
    class RegisterSettings {
 
+      readonly Func<Type, bool> isSupportedController;
       string _BaseRoute;
       Assembly _Assembly;
       CodeRoutingSettings _Settings;
@@ -93,11 +94,15 @@ namespace MvcCodeRouting {
          }
       }
 
-      public RegisterSettings(Assembly assembly, Type rootController) {
+      public RegisterSettings(Assembly assembly, Type rootController, Func<Type, bool> isSupportedController) {
+
+         if (isSupportedController == null) throw new ArgumentNullException("isSupportedController");
+
+         this.isSupportedController = isSupportedController;
 
          if (rootController != null) { 
             
-            if (!ControllerInfo.IsSupportedControllerType(rootController))
+            if (!IsValidControllerType(rootController))
                throw new InvalidOperationException("The specified root controller is not a valid controller type.");
 
             if (assembly != null && rootController.Assembly != assembly)
@@ -115,9 +120,9 @@ namespace MvcCodeRouting {
 
          return
             from t in GetControllerTypes()
-            let c = ControllerInfo.Create(t, this)
-            where !this.Settings.IgnoredControllers.Contains(c.Type)
-              && c.IsInRootNamespace
+            where !this.Settings.IgnoredControllers.Contains(t)
+            let c = CreateControllerInfo(t)
+            where c.IsInRootNamespace
             select c;
       }
 
@@ -127,7 +132,23 @@ namespace MvcCodeRouting {
             new[] { this.RootController }
             : this.Assembly.GetTypes();
 
-         return types.Where(t => ControllerInfo.IsSupportedControllerType(t));
+         return types.Where(t => IsValidControllerType(t));
+      }
+
+      bool IsValidControllerType(Type type) {
+
+         return type.IsPublic
+            && !type.IsAbstract
+            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
+            && isSupportedController(type);
+      }
+
+      ControllerInfo CreateControllerInfo(Type controllerType) {
+
+         if (Web.Mvc.MvcControllerInfo.IsMvcController(controllerType))
+            return Web.Mvc.MvcControllerInfo.Create(controllerType, this);
+
+         return Web.Http.HttpControllerInfo.Create(controllerType, this);
       }
    }
 }

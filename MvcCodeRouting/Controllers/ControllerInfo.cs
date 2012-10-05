@@ -363,37 +363,6 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
-      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
-
-         if (!Web.Mvc.MvcControllerInfo.IsMvcController(controllerType))
-            return Web.Http.HttpControllerInfo.Create(controllerType, registerSettings);
-
-         return Web.Mvc.MvcControllerInfo.Create(controllerType, registerSettings);
-      }
-
-      public static bool IsSupportedControllerType(Type type) {
-
-         return type.IsPublic
-            && !type.IsAbstract
-            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
-            && (Web.Mvc.MvcControllerInfo.IsMvcController(type) || IsWebApiController(type));
-      }
-
-      static bool IsWebApiController(Type type) {
-
-         Type t = type;
-
-         do {
-            if (t.FullName == "System.Web.Http.ApiController")
-               return true;
-
-            t = t.BaseType;
-
-         } while (t != null);
-
-         return false;
-      }
-
       protected ControllerInfo(Type type, RegisterSettings registerSettings) {
          
          this.Type = type;

@@ -45,7 +45,7 @@ namespace MvcCodeRouting.Web.Http {
          get { return _CustomRouteAttributeType; }
       }
 
-      public static new ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
          // TODO: Remove GlobalConfiguration dependency
 

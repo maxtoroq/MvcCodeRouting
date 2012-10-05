@@ -30,12 +30,9 @@ namespace MvcCodeRouting.Web.Http.WebHost {
       readonly Route originalRoute;
 
       public CodeHttpWebRoute(Route originalRoute, CodeHttpRoute httpRoute) 
-         : base(originalRoute.Url, originalRoute.RouteHandler) {
+         : base(originalRoute.Url, originalRoute.Defaults, originalRoute.Constraints, originalRoute.DataTokens, originalRoute.RouteHandler) {
 
          this.originalRoute = originalRoute;
-         this.Constraints = originalRoute.Constraints;
-         this.DataTokens = originalRoute.DataTokens;
-         this.Defaults = originalRoute.Defaults;
 
          this.ActionMapping = httpRoute.ActionMapping;
          this.ControllerMapping = httpRoute.ControllerMapping;

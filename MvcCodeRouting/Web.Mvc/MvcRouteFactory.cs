@@ -42,10 +42,7 @@ namespace MvcCodeRouting.Web.Mvc {
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
-         return new CodeRoute(routeSettings.RouteTemplate, new MvcRouteHandler()) {
-            Constraints = routeSettings.Constraints,
-            DataTokens = routeSettings.DataTokens,
-            Defaults = routeSettings.Defaults,
+         return new CodeRoute(routeSettings.RouteTemplate, routeSettings.Defaults, routeSettings.Constraints, routeSettings.DataTokens, new MvcRouteHandler()) {
             ActionMapping = routeSettings.ActionMapping,
             ControllerMapping = routeSettings.ControllerMapping,
             NonActionParameterTokens = nonActionParameterTokens

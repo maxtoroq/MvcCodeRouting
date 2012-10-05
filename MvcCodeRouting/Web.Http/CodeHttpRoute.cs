@@ -15,17 +15,39 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
 
    [DebuggerDisplay("{RouteTemplate}")]
-   class CodeHttpRoute : HttpRoute {
+   class CodeHttpRoute : HttpRoute, ICodeRoute {
 
       public IDictionary<string, string> ActionMapping { get; set; }
       public IDictionary<string, string> ControllerMapping { get; set; }
 
       public CodeHttpRoute(string routeTemplate, HttpRouteValueDictionary defaults, HttpRouteValueDictionary constraints, HttpRouteValueDictionary dataTokens)
-         : base(routeTemplate, defaults, constraints, dataTokens) { }
+         : base(routeTemplate, defaults, constraints, dataTokens) {
+
+         // TODO: not working
+         //this.Constraints[CodeRoutingConstraint.Key] = new HttpRouteContextConstraint();
+      }
+
+      public override IHttpRouteData GetRouteData(string virtualPathRoot, HttpRequestMessage request) {
+
+         IHttpRouteData data = base.GetRouteData(virtualPathRoot, request);
+
+         if (data != null)
+            this.IncomingMapping(data.Values);
+
+         return data;
+      }
+
+      public override IHttpVirtualPathData GetVirtualPath(HttpRequestMessage request, IDictionary<string, object> values) {
+         
+         IHttpRouteData requestRouteData = request.GetRouteData();
+
+         return this.DoGetVirtualPath(values, requestRouteData.Values, requestRouteData.Route.DataTokens, () => base.GetVirtualPath(request, values));
+      }
    }
 }
