@@ -109,7 +109,7 @@ namespace MvcCodeRouting.Web {
 
          if ((originalController = values["controller"] as string) == null
             || (currentRouteContext = requestRouteDataTokens[DataTokenKeys.RouteContext] as string) == null
-            || values.ContainsKey(CodeRoutingConstraint.Key))
+            || values.ContainsKey(RouteContextConstraint.Key))
             return false;
 
          string routeContext = currentRouteContext;
@@ -179,7 +179,7 @@ namespace MvcCodeRouting.Web {
             values["controller"] = theController.ToString();
          }
 
-         values[CodeRoutingConstraint.Key] = routeContext;
+         values[RouteContextConstraint.Key] = routeContext;
 
          return true;
       }
@@ -211,19 +211,19 @@ namespace MvcCodeRouting.Web {
          if (virtualPath == null)
             values["controller"] = originalController;
 
-         values.Remove(CodeRoutingConstraint.Key);
+         values.Remove(RouteContextConstraint.Key);
       }
 
       static void CleanupController(IDictionary<string, object> values, string originalController) {
          values["controller"] = originalController;
       }
 
-      public static bool RouteContextConstraint(bool urlGeneration, IDictionary<string, object> values, IDictionary<string, object> routeDataTokens) {
+      public static bool ProcessRouteContextConstraint(bool urlGeneration, IDictionary<string, object> values, IDictionary<string, object> routeDataTokens) {
 
          if (!urlGeneration)
             return true;
 
-         string valuesContext = values[CodeRoutingConstraint.Key] as string ?? "";
+         string valuesContext = values[RouteContextConstraint.Key] as string ?? "";
          string routeContext = routeDataTokens[DataTokenKeys.RouteContext] as string ?? "";
 
          return String.Equals(valuesContext, routeContext, StringComparison.OrdinalIgnoreCase);

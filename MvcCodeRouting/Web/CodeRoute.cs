@@ -30,7 +30,7 @@ namespace MvcCodeRouting.Web {
       public CodeRoute(string url, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens, IRouteHandler routeHandler)
          : base(url, defaults, constraints, dataTokens, routeHandler) {
 
-         this.Constraints[CodeRoutingConstraint.Key] = new CodeRoutingConstraint();
+         this.Constraints[RouteContextConstraint.Key] = new RouteContextConstraint();
       }
 
       public override RouteData GetRouteData(HttpContextBase httpContext) {

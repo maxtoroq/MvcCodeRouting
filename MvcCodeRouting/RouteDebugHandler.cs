@@ -161,7 +161,7 @@ namespace MvcCodeRouting {
                new RouteValueDictionary(route.Constraints)
                : new RouteValueDictionary();
 
-            constraints.Remove(CodeRoutingConstraint.Key);
+            constraints.Remove(RouteContextConstraint.Key);
 
             if (constraints.Count > 0) {
 
@@ -325,7 +325,7 @@ namespace MvcCodeRouting {
                new RouteValueDictionary(route.Constraints)
                : new RouteValueDictionary();
 
-            constraints.Remove(CodeRoutingConstraint.Key);
+            constraints.Remove(RouteContextConstraint.Key);
 
             if (constraints.Count > 0) {
 

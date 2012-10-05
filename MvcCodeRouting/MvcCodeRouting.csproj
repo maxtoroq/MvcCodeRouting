@@ -107,9 +107,9 @@
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
     <Compile Include="Web\CodeRoute.cs" />
-    <Compile Include="Web\CodeRoutingConstraint.cs" />
     <Compile Include="Web\DataTokenKeys.cs" />
     <Compile Include="Web\ICodeRoute.cs" />
+    <Compile Include="Web\RouteContextConstraint.cs" />
     <Compile Include="Web\RouteFactory.cs" />
     <Compile Include="Web\RouteSettings.cs" />
   </ItemGroup>

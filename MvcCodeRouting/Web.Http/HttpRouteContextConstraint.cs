@@ -22,7 +22,7 @@ namespace MvcCodeRouting.Web.Http {
    class HttpRouteContextConstraint : IHttpRouteConstraint {
 
       public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection) {
-         return CodeRouteExtensions.RouteContextConstraint(routeDirection == HttpRouteDirection.UriGeneration, values, route.DataTokens);
+         return CodeRouteExtensions.ProcessRouteContextConstraint(routeDirection == HttpRouteDirection.UriGeneration, values, route.DataTokens);
       }
    }
 }

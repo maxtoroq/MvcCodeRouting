@@ -18,12 +18,12 @@ using System.Web.Routing;
 
 namespace MvcCodeRouting.Web {
    
-   class CodeRoutingConstraint : IRouteConstraint {
+   class RouteContextConstraint : IRouteConstraint {
 
       public const string Key = "__routecontext";
 
       public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
-         return CodeRouteExtensions.RouteContextConstraint(routeDirection == RouteDirection.UrlGeneration, values, route.DataTokens);
+         return CodeRouteExtensions.ProcessRouteContextConstraint(routeDirection == RouteDirection.UrlGeneration, values, route.DataTokens);
       }
    }
 }
