@@ -27,11 +27,7 @@ namespace MvcCodeRouting.Web.Http {
       public IDictionary<string, string> ControllerMapping { get; set; }
 
       public CodeHttpRoute(string routeTemplate, HttpRouteValueDictionary defaults, HttpRouteValueDictionary constraints, HttpRouteValueDictionary dataTokens)
-         : base(routeTemplate, defaults, constraints, dataTokens) {
-
-         // TODO: not working
-         //this.Constraints[CodeRoutingConstraint.Key] = new HttpRouteContextConstraint();
-      }
+         : base(routeTemplate, defaults, constraints, dataTokens) { }
 
       public override IHttpRouteData GetRouteData(string virtualPathRoot, HttpRequestMessage request) {
 

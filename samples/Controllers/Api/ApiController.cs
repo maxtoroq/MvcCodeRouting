@@ -16,15 +16,13 @@ namespace Samples.Controllers.Api {
             : Url.Route("3", new { controller = "User" });
 
          return new api {
-            links = new[] { 
-               new link { text = "Users", href = usersUrl }
-            }
+            users = new link { text = "Users", href = usersUrl }
          };
       }
    }
 
    public class api {
-      public link[] links { get; set; }
+      public link users { get; set; }
    }
 
    public class link {

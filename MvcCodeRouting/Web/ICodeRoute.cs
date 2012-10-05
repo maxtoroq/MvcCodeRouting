@@ -21,8 +21,9 @@ namespace MvcCodeRouting.Web {
    
    interface ICodeRoute {
 
-      IDictionary<string, string> ControllerMapping { get; set; }
-      IDictionary<string, string> ActionMapping { get; set; }
+      IDictionary<string, object> DataTokens { get; }
+      IDictionary<string, string> ControllerMapping { get; }
+      IDictionary<string, string> ActionMapping { get; }
    }
 
    static class CodeRouteExtensions {
@@ -57,176 +58,149 @@ namespace MvcCodeRouting.Web {
          if (values == null)
             return getVirtualPath();
 
-         string originalAction = null;
+         string controllerRef;
+         string valuesRouteContext = GetRouteContext(values, requestRouteValues, requestRouteDataTokens, out controllerRef);
 
-         bool cleanupAction = route.ActionMapping != null
-            && SetAction(route, values, out originalAction);
+         if (valuesRouteContext == null)
+            return null;
+         
+         string thisRouteContext = (string)route.DataTokens[DataTokenKeys.RouteContext];
 
-         string originalController;
-         bool abort;
+         if (!String.Equals(valuesRouteContext, thisRouteContext, StringComparison.OrdinalIgnoreCase)) {
 
-         bool cleanupRouteContext = SetRouteContext(values, requestRouteValues, requestRouteDataTokens, out originalController, out abort);
+            if (controllerRef != null)
+               values["controller"] = controllerRef;
 
-         string controller = null;
-
-         bool cleanupController = route.ControllerMapping != null
-            && SetController(route, values, out controller);
-
-         TVirtualPathData virtualPath = (!abort) ?
-            getVirtualPath()
-            : null;
-
-         if (cleanupAction)
-            CleanupAction(values, originalAction);
-
-         if (cleanupRouteContext)
-            CleanupRouteContext(virtualPath, values, originalController);
-
-         if (cleanupController && !cleanupRouteContext)
-            CleanupController(values, controller);
-
-         return virtualPath;
-      }
-
-      static bool SetAction(this ICodeRoute route, IDictionary<string, object> values, out string originalAction) {
-
-         originalAction = values["action"] as string;
-
-         if (originalAction == null)
-            return false;
-
-         values["action"] = route.ActionMapping.ContainsKey(originalAction) ?
-            route.ActionMapping[originalAction]
-            : originalAction;
-
-         return true;
-      }
-
-      static bool SetRouteContext(IDictionary<string, object> values, IDictionary<string, object> requestRouteValues, IDictionary<string, object> requestRouteDataTokens, out string originalController, out bool abort) {
-
-         string currentRouteContext;
-         abort = false;
-
-         if ((originalController = values["controller"] as string) == null
-            || (currentRouteContext = requestRouteDataTokens[DataTokenKeys.RouteContext] as string) == null
-            || values.ContainsKey(RouteContextConstraint.Key))
-            return false;
-
-         string routeContext = currentRouteContext;
-
-         if (originalController.Length > 0) {
-
-            var theController = new StringBuilder(originalController);
-
-            List<string> routeContextSegments = (routeContext.Length > 0) ?
-               routeContext.Split('/').ToList()
-               : new List<string>();
-
-            if (theController[0] == '~') {
-
-               routeContextSegments.Clear();
-
-               if (theController.Length > 1
-                  && theController[1] == '~') {
-
-                  theController.Remove(0, 2);
-
-               } else {
-
-                  string baseRoute = requestRouteDataTokens[DataTokenKeys.BaseRoute] as string;
-
-                  if (!String.IsNullOrEmpty(baseRoute))
-                     routeContextSegments.AddRange(baseRoute.Split('/'));
-
-                  theController.Remove(0, 1);
-               }
-
-            } else if (theController[0] == '+') {
-
-               string currentController = (string)requestRouteValues["controller"];
-               routeContextSegments.Add(currentController);
-
-               theController.Remove(0, 1);
-
-            } else if (theController[0] == '.'
-               && theController.Length > 1
-               && theController[1] == '.') {
-
-               if (routeContextSegments.Count == 0) {
-                  abort = true;
-                  return false;
-               }
-
-               routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
-               theController.Remove(0, 2);
-            }
-
-            if (theController.Length > 1) {
-
-               string[] controllerSegments = theController.ToString().Split('.');
-
-               if (controllerSegments.Length > 1) {
-
-                  routeContextSegments.AddRange(controllerSegments.Take(controllerSegments.Length - 1));
-
-                  theController.Clear();
-                  theController.Append(controllerSegments.Last());
-               }
-            }
-
-            routeContext = String.Join("/", routeContextSegments);
-
-            values["controller"] = theController.ToString();
+            return null;
          }
 
-         values[RouteContextConstraint.Key] = routeContext;
+         string unmappedController = null;
+         string unmappedAction = null;
 
-         return true;
-      }
+         bool controllerWasMapped = MapValue("controller", values, route.ControllerMapping, out unmappedController);
+         bool actionWasMapped = MapValue("action", values, route.ActionMapping, out unmappedAction);
 
-      static bool SetController(this ICodeRoute route, IDictionary<string, object> values, out string originalController) {
-
-         originalController = values["controller"] as string;
-
-         if (originalController == null)
-            return false;
-
-         values["controller"] = route.ControllerMapping.ContainsKey(originalController) ?
-            route.ControllerMapping[originalController]
-            : originalController;
-
-         return true;
-      }
-
-      static void CleanupAction(IDictionary<string, object> values, string originalAction) {
-         values["action"] = originalAction;
-      }
-
-      static void CleanupRouteContext(object virtualPath, IDictionary<string, object> values, string originalController) {
+         TVirtualPathData virtualPath = getVirtualPath();
 
          // See issue #291
          // When the route matches don't change the controller back to it's original value
          // because it's used by ASP.NET MVC on child requests (e.g. Html.Action())
          // to locate the controller (DefaultControllerFactory).
-         if (virtualPath == null)
-            values["controller"] = originalController;
+         if (virtualPath == null && controllerRef != null)
+            values["controller"] = controllerRef;
 
-         values.Remove(RouteContextConstraint.Key);
+         if (actionWasMapped) 
+            values["action"] = unmappedAction;
+
+         return virtualPath;
       }
 
-      static void CleanupController(IDictionary<string, object> values, string originalController) {
-         values["controller"] = originalController;
+      static string GetRouteContext(IDictionary<string, object> values, IDictionary<string, object> requestRouteValues, IDictionary<string, object> requestRouteDataTokens, out string originalController) {
+
+         originalController = null;
+
+         if (values.ContainsKey("controller"))
+            originalController = (string)values["controller"];
+
+         const string routeContextKey = "__routecontext";
+
+         if (values.ContainsKey(routeContextKey))
+            return (string)values[routeContextKey];
+         
+         string routeContext = null;
+
+         if (requestRouteDataTokens.ContainsKey(DataTokenKeys.RouteContext))
+            routeContext = (string)requestRouteDataTokens[DataTokenKeys.RouteContext];
+
+         if (routeContext == null)
+            return null;
+
+         if (String.IsNullOrEmpty(originalController))
+            return routeContext;
+
+         var theController = new StringBuilder(originalController);
+
+         List<string> routeContextSegments = (routeContext.Length > 0) ?
+            routeContext.Split('/').ToList()
+            : new List<string>();
+
+         if (theController[0] == '~') {
+
+            routeContextSegments.Clear();
+
+            if (theController.Length > 1
+               && theController[1] == '~') {
+
+               theController.Remove(0, 2);
+
+            } else {
+
+               string baseRoute = requestRouteDataTokens[DataTokenKeys.BaseRoute] as string;
+
+               if (!String.IsNullOrEmpty(baseRoute))
+                  routeContextSegments.AddRange(baseRoute.Split('/'));
+
+               theController.Remove(0, 1);
+            }
+
+         } else if (theController[0] == '+') {
+
+            string currentController = (string)requestRouteValues["controller"];
+            routeContextSegments.Add(currentController);
+
+            theController.Remove(0, 1);
+
+         } else if (theController[0] == '.'
+            && theController.Length > 1
+            && theController[1] == '.') {
+
+            if (routeContextSegments.Count == 0) 
+               return null;
+
+            routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
+            theController.Remove(0, 2);
+         }
+
+         if (theController.Length > 1) {
+
+            string[] controllerSegments = theController.ToString().Split('.');
+
+            if (controllerSegments.Length > 1) {
+
+               routeContextSegments.AddRange(controllerSegments.Take(controllerSegments.Length - 1));
+
+               theController.Clear();
+               theController.Append(controllerSegments.Last());
+            }
+         }
+
+         routeContext = String.Join("/", routeContextSegments);
+
+         values["controller"] = theController.ToString();
+
+         return routeContext;
       }
 
-      public static bool ProcessRouteContextConstraint(bool urlGeneration, IDictionary<string, object> values, IDictionary<string, object> routeDataTokens) {
+      static bool MapValue(string name, IDictionary<string, object> values, IDictionary<string, string> mapping, out string originalValue) {
 
-         if (!urlGeneration)
-            return true;
+         object originalObject;
 
-         string valuesContext = values[RouteContextConstraint.Key] as string ?? "";
-         string routeContext = routeDataTokens[DataTokenKeys.RouteContext] as string ?? "";
+         if (!values.TryGetValue(name, out originalObject)) {
+            originalValue = null;
+            return false;
+         }
 
-         return String.Equals(valuesContext, routeContext, StringComparison.OrdinalIgnoreCase);
+         originalValue = originalObject as string;
+
+         if (originalValue == null
+            || mapping == null
+            || !mapping.ContainsKey(originalValue)) {
+            return false;
+         }
+
+         values[name] = mapping[originalValue];
+
+         return true;
       }
    }
 }

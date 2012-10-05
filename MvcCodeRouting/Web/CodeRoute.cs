@@ -27,11 +27,12 @@ namespace MvcCodeRouting.Web {
       public IDictionary<string, string> ActionMapping { get; set; }
       public IList<string> NonActionParameterTokens { get; set; }
 
-      public CodeRoute(string url, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens, IRouteHandler routeHandler)
-         : base(url, defaults, constraints, dataTokens, routeHandler) {
-
-         this.Constraints[RouteContextConstraint.Key] = new RouteContextConstraint();
+      IDictionary<string, object> ICodeRoute.DataTokens {
+         get { return this.DataTokens; }
       }
+
+      public CodeRoute(string url, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens, IRouteHandler routeHandler)
+         : base(url, defaults, constraints, dataTokens, routeHandler) { }
 
       public override RouteData GetRouteData(HttpContextBase httpContext) {
 

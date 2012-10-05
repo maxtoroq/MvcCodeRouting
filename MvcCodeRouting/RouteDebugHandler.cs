@@ -161,8 +161,6 @@ namespace MvcCodeRouting {
                new RouteValueDictionary(route.Constraints)
                : new RouteValueDictionary();
 
-            constraints.Remove(RouteContextConstraint.Key);
-
             if (constraints.Count > 0) {
 
                writer.Write(", ");
@@ -324,8 +322,6 @@ namespace MvcCodeRouting {
             var constraints = (route.Constraints != null) ?
                new RouteValueDictionary(route.Constraints)
                : new RouteValueDictionary();
-
-            constraints.Remove(RouteContextConstraint.Key);
 
             if (constraints.Count > 0) {
 
