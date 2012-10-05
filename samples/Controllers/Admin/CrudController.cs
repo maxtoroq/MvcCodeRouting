@@ -10,8 +10,19 @@ namespace Samples.Controllers.Admin {
    [Authorize]
    public abstract class CrudController<TEntity, TEntityKey> : Controller {
 
+      protected virtual IQueryable<TEntity> GetAll() {
+         return Enumerable.Empty<TEntity>().AsQueryable();
+      }
+
+      protected virtual TEntity GetById(TEntityKey id) {
+         return default(TEntity);
+      }
+
       [HttpGet]
       public ActionResult Index() {
+
+         this.ViewData.Model = GetAll();
+
          return View();
       }
 
@@ -24,7 +35,7 @@ namespace Samples.Controllers.Admin {
       [HttpGet]
       public ActionResult Edit([FromRoute]TEntityKey id) {
 
-         this.ViewBag.Id = id;
+         this.ViewData.Model = GetById(id);
 
          return View();
       }
