@@ -21,6 +21,9 @@ namespace Samples.SelfHost {
 
          config.Routes.MapCodeRoutes(typeof(Samples.Controllers.Api.ApiController));
 
+         // TODO: Enable extension method without MVC dependency
+         CodeRoutingHttpExtensions.EnableCodeRouting(config);
+
          var server = new HttpSelfHostServer(config);
 
          server.OpenAsync().Wait();

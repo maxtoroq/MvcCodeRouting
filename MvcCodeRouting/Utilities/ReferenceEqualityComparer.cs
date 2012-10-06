@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2012 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace MvcCodeRouting.Web {
-   
-   static class DataTokenKeys {
-      public const string Namespaces = "Namespaces";
-      public const string Configuration = "Configuration";
-      public const string BaseRoute = "MvcCodeRouting.BaseRoute";
-      public const string RouteContext = "MvcCodeRouting.RouteContext";
-      public const string ViewsLocation = "MvcCodeRouting.ViewsLocation";
-      public const string Controllers = "MvcCodeRouting.Controllers";
+namespace MvcCodeRouting {
+
+   class ReferenceEqualityComparer<T> : IEqualityComparer<T> {
+
+      public static readonly IEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();
+
+      public bool Equals(T x, T y) {
+         return Object.ReferenceEquals(x, y);
+      }
+
+      public int GetHashCode(T obj) {
+         return RuntimeHelpers.GetHashCode(obj);
+      }
    }
 }

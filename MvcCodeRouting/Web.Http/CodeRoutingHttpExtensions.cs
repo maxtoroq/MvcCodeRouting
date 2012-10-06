@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
@@ -60,6 +61,10 @@ namespace MvcCodeRouting.Web.Http {
 
       static bool IsSupportedControllerSelfHost(Type type) {
          return typeof(ApiController).IsAssignableFrom(type);
+      }
+
+      public static void EnableCodeRouting(this HttpConfiguration configuration) {
+         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomControllerSelector());
       }
    }
 }

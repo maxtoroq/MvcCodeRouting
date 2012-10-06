@@ -78,6 +78,7 @@
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="RouteSegmentType.cs" />
+    <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
     <Compile Include="Web.Hosting\AssemblyResourcesCollection.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
     <Compile Include="Web.Http\CodeHttpRoute.cs" />
     <Compile Include="Web.Http\CodeRoutingHttpExtensions.cs" />
+    <Compile Include="Web.Http\CustomControllerSelector.cs" />
     <Compile Include="Web.Http\CustomRouteAttribute.cs" />
     <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
     <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />

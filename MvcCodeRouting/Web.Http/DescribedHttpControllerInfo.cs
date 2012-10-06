@@ -32,6 +32,10 @@ namespace MvcCodeRouting.Web.Http {
          }
       }
 
+      public HttpControllerDescriptor Descriptor {
+         get { return controllerDescr; }
+      }
+
       public DescribedHttpControllerInfo(HttpControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings) 
          : base(type, registerSettings) {
 

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Http.Routing;
+using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Http {
    
@@ -31,6 +32,11 @@ namespace MvcCodeRouting.Web.Http {
          var defaults = new HttpRouteValueDictionary(routeSettings.Defaults);
          var constraints = new HttpRouteValueDictionary(routeSettings.Constraints);
          var dataTokens = new HttpRouteValueDictionary(routeSettings.DataTokens);
+
+         dataTokens[DataTokenKeys.Controllers] = routeSettings.Actions
+            .Select(a => a.Controller)
+            .Distinct(ReferenceEqualityComparer<ControllerInfo>.Instance)
+            .ToDictionary(c => c.Name, c => ((DescribedHttpControllerInfo)c).Descriptor);
 
          return new CodeHttpRoute(routeSettings.RouteTemplate, defaults, constraints, dataTokens) {
             ActionMapping = routeSettings.ActionMapping,
