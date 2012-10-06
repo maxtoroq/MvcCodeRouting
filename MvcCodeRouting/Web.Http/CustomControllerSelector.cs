@@ -24,21 +24,24 @@ using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
    
-   class CustomControllerSelector : IHttpControllerSelector {
+   class CustomControllerSelector : DefaultHttpControllerSelector {
 
-      public HttpControllerDescriptor SelectController(HttpRequestMessage request) {
+      public CustomControllerSelector(HttpConfiguration configuration) 
+         : base(configuration) { }
+
+      public override HttpControllerDescriptor SelectController(HttpRequestMessage request) {
 
          IHttpRouteData routeData = request.GetRouteData();
 
-         string controller = (string)routeData.Values["controller"];
+         string controller;
+         CodeHttpRoute codeRoute;
 
-         var controllersForRoute = (IDictionary<string, HttpControllerDescriptor>)routeData.Route.DataTokens[DataTokenKeys.Controllers];
+         if ((controller = routeData.Values["controller"] as string) == null 
+            || (codeRoute = routeData.Route as CodeHttpRoute) == null) {
+            return base.SelectController(request);
+         }
 
-         return controllersForRoute[controller];
-      }
-
-      public IDictionary<string, HttpControllerDescriptor> GetControllerMapping() {
-         throw new NotImplementedException();
+         return codeRoute.ControllerDescriptors[controller];
       }
    }
 }

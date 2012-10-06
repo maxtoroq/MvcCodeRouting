@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
@@ -25,6 +26,7 @@ namespace MvcCodeRouting.Web.Http {
 
       public IDictionary<string, string> ActionMapping { get; set; }
       public IDictionary<string, string> ControllerMapping { get; set; }
+      public IDictionary<string, HttpControllerDescriptor> ControllerDescriptors { get; set; }
 
       public CodeHttpRoute(string routeTemplate, HttpRouteValueDictionary defaults, HttpRouteValueDictionary constraints, HttpRouteValueDictionary dataTokens)
          : base(routeTemplate, defaults, constraints, dataTokens) { }

@@ -95,6 +95,7 @@
     <Compile Include="Web.Http\FromRouteAttribute.cs" />
     <Compile Include="Web.Http\HttpControllerInfo.cs" />
     <Compile Include="Web.Http\HttpRouteFactory.cs" />
+    <Compile Include="Web.Http\HttpRouteMapper.cs" />
     <Compile Include="Web.Http\WebHost\CodeHttpWebRoute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionParameterInfo.cs" />

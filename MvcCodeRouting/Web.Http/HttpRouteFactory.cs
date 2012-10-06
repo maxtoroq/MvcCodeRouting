@@ -33,14 +33,13 @@ namespace MvcCodeRouting.Web.Http {
          var constraints = new HttpRouteValueDictionary(routeSettings.Constraints);
          var dataTokens = new HttpRouteValueDictionary(routeSettings.DataTokens);
 
-         dataTokens[DataTokenKeys.Controllers] = routeSettings.Actions
-            .Select(a => a.Controller)
-            .Distinct(ReferenceEqualityComparer<ControllerInfo>.Instance)
-            .ToDictionary(c => c.Name, c => ((DescribedHttpControllerInfo)c).Descriptor);
-
          return new CodeHttpRoute(routeSettings.RouteTemplate, defaults, constraints, dataTokens) {
             ActionMapping = routeSettings.ActionMapping,
-            ControllerMapping = routeSettings.ControllerMapping
+            ControllerMapping = routeSettings.ControllerMapping,
+            ControllerDescriptors = routeSettings.Actions
+               .Select(a => a.Controller)
+               .DistinctReference()
+               .ToDictionary(c => c.Name, c => ((DescribedHttpControllerInfo)c).Descriptor)
          };
       }
    }

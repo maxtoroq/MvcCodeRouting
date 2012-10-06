@@ -32,4 +32,11 @@ namespace MvcCodeRouting {
          return RuntimeHelpers.GetHashCode(obj);
       }
    }
+
+   static class ReferenceEqualityComparerExtensions {
+
+      public static IEnumerable<TSource> DistinctReference<TSource>(this IEnumerable<TSource> source) {
+         return source.Distinct<TSource>(ReferenceEqualityComparer<TSource>.Instance);
+      }
+   }
 }

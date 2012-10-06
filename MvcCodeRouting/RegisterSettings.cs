@@ -19,6 +19,7 @@ using System.Text;
 using System.Reflection;
 using System.Globalization;
 using MvcCodeRouting.Controllers;
+using System.Web.Http;
 
 namespace MvcCodeRouting {
    
@@ -30,6 +31,7 @@ namespace MvcCodeRouting {
       CodeRoutingSettings _Settings;
       string _RootNamespace;
       string _ViewsLocation;
+      object _HttpConfiguration;
 
       public string BaseRoute {
          get { return _BaseRoute; }
@@ -92,6 +94,15 @@ namespace MvcCodeRouting {
             }
             return _ViewsLocation;
          }
+      }
+
+      public object HttpConfiguration {
+         get {
+            if (_HttpConfiguration == null)
+               return GlobalConfiguration.Configuration;
+            return _HttpConfiguration;
+         }
+         set { _HttpConfiguration = value; }
       }
 
       public RegisterSettings(Assembly assembly, Type rootController, Func<Type, bool> isSupportedController) {

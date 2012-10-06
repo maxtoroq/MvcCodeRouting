@@ -25,46 +25,11 @@ namespace MvcCodeRouting.Web.Http {
    
    public static class CodeRoutingHttpExtensions {
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
-         return MapCodeRoutes(routes, rootController, null);
-      }
+      public static HttpRouteMapper EnableCodeRouting(this HttpConfiguration configuration) {
+         
+         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomControllerSelector(configuration));
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, null, rootController, settings);
-      }
-
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController) {
-         return MapCodeRoutes(routes, baseRoute, rootController, null);
-      }
-
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
-
-         if (routes == null) throw new ArgumentNullException("routes");
-         if (rootController == null) throw new ArgumentNullException("rootController");
-
-         var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerSelfHost) {
-            BaseRoute = baseRoute,
-            Settings = settings
-         };
-
-         List<IHttpRoute> newRoutes = RouteFactory.CreateRoutes(registerSettings)
-            .Cast<IHttpRoute>()
-            .ToList();
-
-         foreach (IHttpRoute route in newRoutes) {
-            // TODO: in Web API v1 name cannot be null
-            routes.Add((routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
-         }
-
-         return newRoutes;
-      }
-
-      static bool IsSupportedControllerSelfHost(Type type) {
-         return typeof(ApiController).IsAssignableFrom(type);
-      }
-
-      public static void EnableCodeRouting(this HttpConfiguration configuration) {
-         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomControllerSelector());
+         return new HttpRouteMapper(configuration);
       }
    }
 }

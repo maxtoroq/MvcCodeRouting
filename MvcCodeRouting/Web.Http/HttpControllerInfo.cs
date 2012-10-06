@@ -47,11 +47,9 @@ namespace MvcCodeRouting.Web.Http {
 
       public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
 
-         // TODO: Remove GlobalConfiguration dependency
-
          return new DescribedHttpControllerInfo(
             new HttpControllerDescriptor(
-               GlobalConfiguration.Configuration,
+               (HttpConfiguration)registerSettings.HttpConfiguration,
                controllerType.Name.Substring(0, controllerType.Name.Length - "Controller".Length),
                controllerType),
             controllerType,

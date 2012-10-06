@@ -101,7 +101,7 @@ namespace MvcCodeRouting {
                webRoutes.Add(mvcRoute);
                routes.Add(mvcRoute);
             } else { 
-               webRoutes.Add(RegisterHttpRoute(routes, route));
+               webRoutes.Add(RegisterHttpRoute(routes, route, registerSettings));
             }
          }
          
@@ -132,12 +132,14 @@ namespace MvcCodeRouting {
          return false;
       }
 
-      static Route RegisterHttpRoute(RouteCollection routes, object route) {
+      static Route RegisterHttpRoute(RouteCollection routes, object route, RegisterSettings registerSettings) {
          
          if (!Object.ReferenceEquals(routes, RouteTable.Routes))
             throw new InvalidOperationException("routes must be the same instance as RouteTable.Routes");
 
-         GlobalConfiguration.Configuration.Routes.Add(null, (IHttpRoute)route);
+         var httpConfig = (HttpConfiguration)registerSettings.HttpConfiguration;
+
+         httpConfig.Routes.Add(null, (IHttpRoute)route);
 
          var httpRoute = (Web.Http.CodeHttpRoute)route;
          var webRoute = (Route)routes.Last(); // System.Web.Http.WebHost.Routing.HttpWebRoute
