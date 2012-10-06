@@ -85,6 +85,7 @@
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
     <Compile Include="Web.Http\CodeHttpRoute.cs" />
+    <Compile Include="Web.Http\CodeRoutingHttpExtensions.cs" />
     <Compile Include="Web.Http\CustomRouteAttribute.cs" />
     <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
     <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />

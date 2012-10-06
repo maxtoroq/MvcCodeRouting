@@ -151,44 +151,6 @@ namespace MvcCodeRouting {
          return codeRoute;
       }
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
-         return MapCodeRoutes(routes, rootController, null);
-      }
-
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, null, rootController, settings);
-      }
-
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController) {
-         return MapCodeRoutes(routes, baseRoute, rootController, null);
-      }
-
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
-
-         if (routes == null) throw new ArgumentNullException("routes");
-         if (rootController == null) throw new ArgumentNullException("rootController");
-
-         var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerSelfHost) {
-            BaseRoute = baseRoute,
-            Settings = settings
-         };
-
-         List<IHttpRoute> newRoutes = RouteFactory.CreateRoutes(registerSettings)
-            .Cast<IHttpRoute>()
-            .ToList();
-
-         foreach (IHttpRoute route in newRoutes) {
-            // TODO: in Web API v1 name cannot be null
-            routes.Add((routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
-         }
-
-         return newRoutes;
-      }
-
-      static bool IsSupportedControllerSelfHost(Type type) {
-         return typeof(ApiController).IsAssignableFrom(type);
-      }
-
       /// <summary>
       /// Enables namespace-aware views location. Always call after you are done adding view engines.
       /// </summary>

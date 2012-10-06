@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
 using MvcCodeRouting;
+using MvcCodeRouting.Web.Http;
 
 namespace Samples.SelfHost {
 
