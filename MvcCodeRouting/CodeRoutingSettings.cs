@@ -16,9 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Web.Http;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
@@ -33,9 +31,10 @@ namespace MvcCodeRouting {
 
       static readonly CodeRoutingSettings _Defaults = new CodeRoutingSettings(defaultsConstructor: true);
 
-      Func<RouteFormatterArgs, string> _RouteFormatter;
       readonly IDictionary<Type, string> _DefaultConstraints = new Dictionary<Type, string>();
       readonly Collection<Type> _IgnoredControllers = new Collection<Type>();
+      Func<RouteFormatterArgs, string> _RouteFormatter;
+      object _HttpConfiguration;
 
       /// <summary>
       /// The settings that all new <see cref="CodeRoutingSettings"/> instances inherit.
@@ -100,6 +99,16 @@ namespace MvcCodeRouting {
       /// </summary>
       public object Configuration { get; set; }
 
+      public object HttpConfiguration {
+         get { return _HttpConfiguration; }
+         set {
+            if (value != null && !typeof(HttpConfiguration).IsAssignableFrom(value.GetType()))
+               throw new ArgumentException("value must be an instance of {0}.".FormatInvariant(typeof(HttpConfiguration).FullName), "value");
+
+            _HttpConfiguration = value;
+         }
+      }
+
       /// <summary>
       /// Initializes a new instance of the <see cref="CodeRoutingSettings"/> class,
       /// using the values from the <see cref="CodeRoutingSettings.Defaults"/> property.
@@ -141,6 +150,7 @@ namespace MvcCodeRouting {
             this.DefaultConstraints.Add(item.Key, item.Value);
 
          this.Configuration = settings.Configuration;
+         this.HttpConfiguration = settings.HttpConfiguration;
       }
 
       /// <summary>
@@ -155,6 +165,7 @@ namespace MvcCodeRouting {
          this.RouteFormatter = null;
          this.UseImplicitIdToken = false;
          this.Configuration = null;
+         this.HttpConfiguration = null;
 
          this.IgnoredControllers.Clear();
 

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web.Http;
 using System.Web.Http.SelfHost;
 using MvcCodeRouting;
 using MvcCodeRouting.Web.Http;
@@ -19,8 +15,9 @@ namespace Samples.SelfHost {
          CodeRoutingSettings.Defaults.RouteFormatter = args =>
             Regex.Replace(args.OriginalSegment, @"([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
 
-         CodeRoutingHttpExtensions.EnableCodeRouting(config)
-            .MapCodeRoutes(typeof(Samples.Controllers.Api.ApiController));
+         CodeRoutingSettings.Defaults.HttpConfiguration = config;
+
+         config.Routes.MapCodeRoutes(typeof(Samples.Controllers.Api.ApiController));
 
          var server = new HttpSelfHostServer(config);
 

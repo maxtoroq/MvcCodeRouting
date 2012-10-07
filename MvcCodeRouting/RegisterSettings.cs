@@ -14,12 +14,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Globalization;
-using MvcCodeRouting.Controllers;
+using System.Linq;
+using System.Reflection;
 using System.Web.Http;
+using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting {
    
@@ -98,12 +97,19 @@ namespace MvcCodeRouting {
 
       public object HttpConfiguration {
          get {
-            if (_HttpConfiguration == null)
-               return GlobalConfiguration.Configuration;
+            if (_HttpConfiguration == null) {
+               _HttpConfiguration = Settings.HttpConfiguration;
+
+               if (_HttpConfiguration == null && UseHttpGlobalConfiguration)
+                  _HttpConfiguration = GlobalConfiguration.Configuration;
+
+               return _HttpConfiguration;
+            }
             return _HttpConfiguration;
          }
-         set { _HttpConfiguration = value; }
       }
+
+      public bool UseHttpGlobalConfiguration { get; set; }
 
       public RegisterSettings(Assembly assembly, Type rootController, Func<Type, bool> isSupportedController) {
 

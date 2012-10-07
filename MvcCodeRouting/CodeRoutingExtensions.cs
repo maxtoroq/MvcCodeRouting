@@ -87,7 +87,8 @@ namespace MvcCodeRouting {
 
          var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerWebHost) { 
             BaseRoute = baseRoute, 
-            Settings = settings 
+            Settings = settings,
+            UseHttpGlobalConfiguration = true
          };
 
          object[] newRoutes = RouteFactory.CreateRoutes(registerSettings);
@@ -134,21 +135,57 @@ namespace MvcCodeRouting {
 
       static Route RegisterHttpRoute(RouteCollection routes, object route, RegisterSettings registerSettings) {
          
-         if (!Object.ReferenceEquals(routes, RouteTable.Routes))
-            throw new InvalidOperationException("routes must be the same instance as RouteTable.Routes");
+         HttpConfiguration httpConfig = (HttpConfiguration)registerSettings.HttpConfiguration;
 
-         var httpConfig = (HttpConfiguration)registerSettings.HttpConfiguration;
+         HttpConfiguration globalHttpConfig = GlobalConfiguration.Configuration;
+         RouteCollection globalRoutes = RouteTable.Routes;
 
-         httpConfig.Routes.Add(null, (IHttpRoute)route);
+         bool httpConfigIsGlobal = Object.ReferenceEquals(httpConfig, globalHttpConfig);
+         bool routesIsGlobal = Object.ReferenceEquals(routes, globalRoutes);
+
+         string name = (httpConfigIsGlobal) ?
+            null
+            : Guid.NewGuid().ToString();
+
+         httpConfig.Routes.Add(name, (IHttpRoute)route);
 
          var httpRoute = (Web.Http.CodeHttpRoute)route;
-         var webRoute = (Route)routes.Last(); // System.Web.Http.WebHost.Routing.HttpWebRoute
+
+         // System.Web.Http.WebHost.Routing.HttpWebRoute
+         Route webRoute; 
+         
+         if (routesIsGlobal) {
+
+            if (httpConfigIsGlobal) {
+               webRoute = (Route)routes.Last();
+
+            } else {
+               globalHttpConfig.Routes.Add(name, httpRoute);
+               webRoute = (Route)routes.Last();
+               globalHttpConfig.Routes.Remove(name);
+            }
+
+         } else {
+
+            if (httpConfigIsGlobal) {
+               webRoute = (Route)globalRoutes.Last();
+
+            } else {
+               globalHttpConfig.Routes.Add(name, httpRoute);
+               webRoute = (Route)globalRoutes.Last();
+               globalHttpConfig.Routes.Remove(name);
+            }
+
+            globalRoutes.RemoveAt(globalRoutes.Count - 1);
+         }
 
          routes.RemoveAt(routes.Count - 1);
 
          var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
 
          routes.Add(codeRoute);
+
+         Web.Http.CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
 
          return codeRoute;
       }

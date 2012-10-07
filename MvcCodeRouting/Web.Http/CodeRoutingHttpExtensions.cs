@@ -25,11 +25,58 @@ namespace MvcCodeRouting.Web.Http {
    
    public static class CodeRoutingHttpExtensions {
 
-      public static HttpRouteMapper EnableCodeRouting(this HttpConfiguration configuration) {
-         
-         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
+         return MapCodeRoutes(routes, rootController, null);
+      }
 
-         return new HttpRouteMapper(configuration);
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController, CodeRoutingSettings settings) {
+         return MapCodeRoutes(routes, null, rootController, settings);
+      }
+
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController) {
+         return MapCodeRoutes(routes, baseRoute, rootController, null);
+      }
+
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
+
+         if (rootController == null) throw new ArgumentNullException("rootController");
+
+         var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerSelfHost) {
+            BaseRoute = baseRoute,
+            Settings = settings
+         };
+
+         if (registerSettings.HttpConfiguration == null) {
+            throw new ArgumentException(
+               "You must first specify an {0} instance using the HttpConfiguration property of {1}.".FormatInvariant(
+                  typeof(HttpConfiguration).FullName,
+                  typeof(CodeRoutingSettings).FullName
+               )
+            );
+         }
+
+         List<IHttpRoute> newRoutes = RouteFactory.CreateRoutes(registerSettings)
+            .Cast<IHttpRoute>()
+            .ToList();
+
+         foreach (IHttpRoute route in newRoutes) {
+            // TODO: in Web API v1 name cannot be null
+            routes.Add((routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
+         }
+
+         EnableCodeRouting((HttpConfiguration)registerSettings.HttpConfiguration);
+
+         return newRoutes;
+      }
+
+      static bool IsSupportedControllerSelfHost(Type type) {
+         return typeof(ApiController).IsAssignableFrom(type);
+      }
+
+      internal static void EnableCodeRouting(HttpConfiguration configuration) {
+         
+         if (!(configuration.Services.GetHttpControllerSelector() is CustomHttpControllerSelector))
+            configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
       }
    }
 }
