@@ -87,7 +87,7 @@
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
     <Compile Include="Web.Http\CodeHttpRoute.cs" />
     <Compile Include="Web.Http\CodeRoutingHttpExtensions.cs" />
-    <Compile Include="Web.Http\CustomControllerSelector.cs" />
+    <Compile Include="Web.Http\CustomHttpControllerSelector.cs" />
     <Compile Include="Web.Http\CustomRouteAttribute.cs" />
     <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
     <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />
