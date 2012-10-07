@@ -24,9 +24,9 @@ using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
    
-   class CustomControllerSelector : DefaultHttpControllerSelector {
+   class CustomHttpControllerSelector : DefaultHttpControllerSelector {
 
-      public CustomControllerSelector(HttpConfiguration configuration) 
+      public CustomHttpControllerSelector(HttpConfiguration configuration) 
          : base(configuration) { }
 
       public override HttpControllerDescriptor SelectController(HttpRequestMessage request) {

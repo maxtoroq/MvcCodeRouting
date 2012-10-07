@@ -27,7 +27,7 @@ namespace MvcCodeRouting.Web.Http {
 
       public static HttpRouteMapper EnableCodeRouting(this HttpConfiguration configuration) {
          
-         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomControllerSelector(configuration));
+         configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
 
          return new HttpRouteMapper(configuration);
       }
