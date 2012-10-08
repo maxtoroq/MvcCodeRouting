@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "samples\Samples.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.SelfHost", "samples.selfhost\Samples.SelfHost.csproj", "{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http", "MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj", "{1047C724-56F3-4791-9B07-EEE2CB5C45B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
