@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using MvcCodeRouting.Controllers;
@@ -36,8 +34,8 @@ namespace MvcCodeRouting.Web.Http {
          get { return controllerDescr; }
       }
 
-      public DescribedHttpControllerInfo(HttpControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings) 
-         : base(type, registerSettings) {
+      public DescribedHttpControllerInfo(HttpControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) 
+         : base(type, registerSettings, provider) {
 
          this.controllerDescr = controllerDescr;
       }

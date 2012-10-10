@@ -13,9 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
 using MvcCodeRouting.Controllers;
@@ -35,8 +33,8 @@ namespace MvcCodeRouting.Web.Mvc {
          }
       }
 
-      public DescribedMvcControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings) 
-         : base(type, registerSettings) {
+      public DescribedMvcControllerInfo(ControllerDescriptor controllerDescr, Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) 
+         : base(type, registerSettings, provider) {
 
          this.controllerDescr = controllerDescr;
       }
@@ -56,7 +54,7 @@ namespace MvcCodeRouting.Web.Mvc {
             // ReflectedAsyncControllerDescriptor.GetCanonicalActions always returns
             // an empty array
 
-            return new ReflectedMvcControllerInfo(this.Type, this.Register).GetActions();
+            return new ReflectedMvcControllerInfo(this.Type, this.Register, this.Provider).GetActions();
          }
 
          return actions;

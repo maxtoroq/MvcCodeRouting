@@ -70,6 +70,10 @@
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj">
+      <Project>{1047c724-56f3-4791-9b07-eee2cb5c45b7}</Project>
+      <Name>MvcCodeRouting.Web.Http</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcCodeRouting\MvcCodeRouting.csproj">
       <Project>{94d52e7e-6949-439f-80ed-212daa85db6c}</Project>
       <Name>MvcCodeRouting</Name>

@@ -13,10 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using MvcCodeRouting.Controllers;
@@ -25,40 +22,46 @@ namespace MvcCodeRouting.Web.Http {
    
    abstract class HttpControllerInfo : ControllerInfo {
 
-      readonly RouteFactory _RouteFactory = new HttpRouteFactory();
-      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
-      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings, CodeRoutingProvider provider) {
 
-      public override RouteFactory RouteFactory {
-         get { return _RouteFactory; }
-      }
+         HttpConfiguration configuration = registerSettings.HttpConfiguration as HttpConfiguration;
 
-      public override bool CanDisambiguateActionOverloads {
-         get { return true; }
-      }
+         if (configuration == null) {
+            
+            if (registerSettings.UseGlobalHttpConfiguration) {
+               configuration = GlobalConfiguration.Configuration;
+            } else {
+               object httpConfig;
 
-      public override Type FromRouteAttributeType {
-         get { return _FromRouteAttributeType; }
-      }
+               if (registerSettings.Settings.Properties.TryGetValue("HttpConfiguration", out httpConfig))
+                  configuration = httpConfig as HttpConfiguration;
+            }
 
-      public override Type CustomRouteAttributeType {
-         get { return _CustomRouteAttributeType; }
-      }
+            if (configuration == null) {
+               throw new ArgumentException(
+                  "You must first specify an {0} instance using the HttpConfiguration key on {1}.Properties.".FormatInvariant(
+                     typeof(HttpConfiguration).FullName,
+                     typeof(CodeRoutingSettings).FullName
+                  )
+               );
+            }
 
-      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
-
+            registerSettings.HttpConfiguration = configuration;
+         }
+         
          return new DescribedHttpControllerInfo(
             new HttpControllerDescriptor(
-               (HttpConfiguration)registerSettings.HttpConfiguration,
+               configuration,
                controllerType.Name.Substring(0, controllerType.Name.Length - "Controller".Length),
                controllerType),
             controllerType,
-            registerSettings
+            registerSettings,
+            provider
          );
       }
 
-      public HttpControllerInfo(Type type, RegisterSettings registerSettings) 
-         : base(type, registerSettings) { }
+      public HttpControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider)
+         : base(type, registerSettings, provider) { }
 
       protected override bool IsNonAction(ICustomAttributeProvider action) {
          return action.IsDefined(typeof(NonActionAttribute), inherit: true);

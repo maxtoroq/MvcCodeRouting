@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Web.Mvc;
 using MvcCodeRouting.Controllers;
 
@@ -24,8 +23,8 @@ namespace MvcCodeRouting.Web.Mvc {
    
    class ReflectedMvcControllerInfo : MvcControllerInfo {
 
-      public ReflectedMvcControllerInfo(Type type, RegisterSettings registerSettings) 
-         : base(type, registerSettings) { }
+      public ReflectedMvcControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) 
+         : base(type, registerSettings, provider) { }
 
       protected internal override ActionInfo[] GetActions() {
 

@@ -43,17 +43,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
@@ -65,6 +55,7 @@
     <Compile Include="Controllers\ActionInfo.cs" />
     <Compile Include="Controllers\ActionParameterInfo.cs" />
     <Compile Include="Controllers\ActionSignatureComparer.cs" />
+    <Compile Include="CodeRoutingProvider.cs" />
     <Compile Include="Controllers\ControllerInfo.cs" />
     <Compile Include="Controllers\ICustomRouteAttribute.cs" />
     <Compile Include="Controllers\IFromRouteAttribute.cs" />
@@ -86,22 +77,12 @@
     <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
-    <Compile Include="Web.Http\CodeHttpRoute.cs" />
-    <Compile Include="Web.Http\CodeRoutingHttpExtensions.cs" />
-    <Compile Include="Web.Http\CustomHttpControllerSelector.cs" />
-    <Compile Include="Web.Http\CustomRouteAttribute.cs" />
-    <Compile Include="Web.Http\DescribedHttpActionInfo.cs" />
-    <Compile Include="Web.Http\DescribedHttpActionParameterInfo.cs" />
-    <Compile Include="Web.Http\DescribedHttpControllerInfo.cs" />
-    <Compile Include="Web.Http\FromRouteAttribute.cs" />
-    <Compile Include="Web.Http\HttpControllerInfo.cs" />
-    <Compile Include="Web.Http\HttpRouteFactory.cs" />
-    <Compile Include="Web.Http\WebHost\CodeHttpWebRoute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\MvcActionInfo.cs" />
+    <Compile Include="Web.Mvc\MvcCodeRoutingProvider.cs" />
     <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcActionInfo.cs" />

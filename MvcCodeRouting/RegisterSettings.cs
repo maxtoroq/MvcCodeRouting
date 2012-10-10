@@ -17,20 +17,18 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Web.Http;
+using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting {
    
    class RegisterSettings {
 
-      readonly Func<Type, bool> isSupportedController;
       string _BaseRoute;
       Assembly _Assembly;
       CodeRoutingSettings _Settings;
       string _RootNamespace;
       string _ViewsLocation;
-      object _HttpConfiguration;
 
       public string BaseRoute {
          get { return _BaseRoute; }
@@ -95,32 +93,19 @@ namespace MvcCodeRouting {
          }
       }
 
-      public object HttpConfiguration {
-         get {
-            if (_HttpConfiguration == null) {
-               _HttpConfiguration = Settings.HttpConfiguration;
+      // These are used by Web.Http
+      internal bool UseGlobalHttpConfiguration { get; set; }
+      internal object HttpConfiguration { get; set; }
+      internal RouteCollection RouteCollection { get; set; }
 
-               if (_HttpConfiguration == null && UseHttpGlobalConfiguration)
-                  _HttpConfiguration = GlobalConfiguration.Configuration;
+      public RegisterSettings(Assembly assembly, Type rootController) {
 
-               return _HttpConfiguration;
-            }
-            return _HttpConfiguration;
-         }
-      }
+         if (rootController != null) {
 
-      public bool UseHttpGlobalConfiguration { get; set; }
-
-      public RegisterSettings(Assembly assembly, Type rootController, Func<Type, bool> isSupportedController) {
-
-         if (isSupportedController == null) throw new ArgumentNullException("isSupportedController");
-
-         this.isSupportedController = isSupportedController;
-
-         if (rootController != null) { 
-            
-            if (!IsValidControllerType(rootController))
+            if (CodeRoutingProvider.GetProviderForControllerType(rootController) == null
+               || !IsValidControllerType(rootController)) {
                throw new InvalidOperationException("The specified root controller is not a valid controller type.");
+            }
 
             if (assembly != null && rootController.Assembly != assembly)
                throw new InvalidOperationException("The specified root controller does not belong to the specified assembly.");
@@ -138,8 +123,9 @@ namespace MvcCodeRouting {
          return
             from t in GetControllerTypes()
             where !this.Settings.IgnoredControllers.Contains(t)
-            let c = CreateControllerInfo(t)
-            where c.IsInRootNamespace
+            let c = CodeRoutingProvider.AnalyzeControllerType(t, this)
+            where c != null 
+               && c.IsInRootNamespace
             select c;
       }
 
@@ -156,16 +142,7 @@ namespace MvcCodeRouting {
 
          return type.IsPublic
             && !type.IsAbstract
-            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase)
-            && isSupportedController(type);
-      }
-
-      ControllerInfo CreateControllerInfo(Type controllerType) {
-
-         if (Web.Mvc.MvcControllerInfo.IsMvcController(controllerType))
-            return Web.Mvc.MvcControllerInfo.Create(controllerType, this);
-
-         return Web.Http.HttpControllerInfo.Create(controllerType, this);
+            && type.Name.EndsWith("Controller", StringComparison.OrdinalIgnoreCase);
       }
    }
 }
