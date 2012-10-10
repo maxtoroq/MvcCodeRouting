@@ -39,7 +39,7 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_FromRouteAttributeInit) {
 
-               Type attrType = Action.Controller.FromRouteAttributeType;
+               Type attrType = Action.Controller.Provider.FromRouteAttributeType;
 
                _FromRouteAttribute = GetCustomAttributes(attrType, inherit: true)
                   .Cast<IFromRouteAttribute>()

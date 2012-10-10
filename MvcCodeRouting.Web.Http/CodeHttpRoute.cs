@@ -23,7 +23,7 @@ namespace MvcCodeRouting.Web.Http {
 
    [DebuggerDisplay("{RouteTemplate}")]
    class CodeHttpRoute : HttpRoute, ICodeRoute {
-
+      
       public IDictionary<string, string> ActionMapping { get; set; }
       public IDictionary<string, string> ControllerMapping { get; set; }
       public IDictionary<string, HttpControllerDescriptor> ControllerDescriptors { get; set; }

@@ -31,26 +31,6 @@ namespace MvcCodeRouting.Web.Mvc {
       static readonly Func<Controller, IActionInvoker> createActionInvoker;
       static readonly Func<ControllerActionInvoker, ControllerContext, ControllerDescriptor> getControllerDescriptor;
 
-      readonly RouteFactory _RouteFactory = new MvcRouteFactory();
-      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
-      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
-
-      public override RouteFactory RouteFactory {
-         get { return _RouteFactory; }
-      }
-
-      public override bool CanDisambiguateActionOverloads {
-         get { return false; }
-      }
-
-      public override Type FromRouteAttributeType {
-         get { return _FromRouteAttributeType; ; }
-      }
-
-      public override Type CustomRouteAttributeType {
-         get { return _CustomRouteAttributeType; }
-      }
-
       [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Not a big deal.")]
       static MvcControllerInfo() {
 
@@ -66,7 +46,7 @@ namespace MvcCodeRouting.Web.Mvc {
          } catch (MethodAccessException) { }
       }
 
-      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
+      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings, CodeRoutingProvider provider) {
 
          ControllerDescriptor controllerDescr = null;
 
@@ -88,17 +68,17 @@ namespace MvcCodeRouting.Web.Mvc {
          }
 
          if (controllerDescr != null)
-            return new DescribedMvcControllerInfo(controllerDescr, controllerType, registerSettings);
+            return new DescribedMvcControllerInfo(controllerDescr, controllerType, registerSettings, provider);
 
-         return new ReflectedMvcControllerInfo(controllerType, registerSettings);
+         return new ReflectedMvcControllerInfo(controllerType, registerSettings, provider);
       }
 
       public static bool IsMvcController(Type type) {
          return BaseType.IsAssignableFrom(type);
       }
 
-      public MvcControllerInfo(Type type, RegisterSettings registerInfo) 
-         : base(type, registerInfo) { }
+      public MvcControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) 
+         : base(type, registerSettings, provider) { }
 
       protected override bool IsNonAction(ICustomAttributeProvider action) {
          return action.IsDefined(typeof(NonActionAttribute), inherit: true);

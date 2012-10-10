@@ -13,17 +13,12 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Web.Http;
-using System.Web.Http.Controllers;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Http {
    
-   abstract class HttpControllerInfo : ControllerInfo {
+   class HttpCodeRoutingProvider : CodeRoutingProvider {
 
       readonly RouteFactory _RouteFactory = new HttpRouteFactory();
       readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
@@ -45,23 +40,12 @@ namespace MvcCodeRouting.Web.Http {
          get { return _CustomRouteAttributeType; }
       }
 
-      public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings) {
-
-         return new DescribedHttpControllerInfo(
-            new HttpControllerDescriptor(
-               (HttpConfiguration)registerSettings.HttpConfiguration,
-               controllerType.Name.Substring(0, controllerType.Name.Length - "Controller".Length),
-               controllerType),
-            controllerType,
-            registerSettings
-         );
+      protected override bool SupportsControllerType(Type controllerType) {
+         return typeof(ApiController).IsAssignableFrom(controllerType);
       }
 
-      public HttpControllerInfo(Type type, RegisterSettings registerSettings) 
-         : base(type, registerSettings) { }
-
-      protected override bool IsNonAction(ICustomAttributeProvider action) {
-         return action.IsDefined(typeof(NonActionAttribute), inherit: true);
+      protected override ControllerInfo CreateControllerInfo(Type controllerType, RegisterSettings registerSettings) {
+         return HttpControllerInfo.Create(controllerType, registerSettings, this);
       }
    }
 }

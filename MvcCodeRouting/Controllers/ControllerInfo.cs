@@ -42,6 +42,7 @@ namespace MvcCodeRouting.Controllers {
 
       public Type Type { get; private set; }
       public RegisterSettings Register { get; private set; }
+      public CodeRoutingProvider Provider { get; private set; }
 
       public virtual string Name {
          get {
@@ -171,7 +172,7 @@ namespace MvcCodeRouting.Controllers {
                foreach (var type in types) {
                   list.AddRange(
                      from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(FromRouteAttributeType, inherit: false /* [1] */)
+                     where p.IsDefined(Provider.FromRouteAttributeType, inherit: false /* [1] */)
                      let rp = CreateRouteParameter(p)
                      where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
@@ -195,7 +196,7 @@ namespace MvcCodeRouting.Controllers {
                    select a).ToArray()
                );
 
-               if (!CanDisambiguateActionOverloads)
+               if (!Provider.CanDisambiguateActionOverloads)
                   CheckOverloads(_Actions);
 
                CheckCustomRoutes(_Actions);
@@ -253,7 +254,7 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(CustomRouteAttributeType, inherit: true)
+               var attr = GetCustomAttributes(Provider.CustomRouteAttributeType, inherit: true)
                   .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
 
@@ -280,16 +281,11 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
-      public abstract RouteFactory RouteFactory { get; }
-      public abstract bool CanDisambiguateActionOverloads { get; }
-      public abstract Type FromRouteAttributeType { get; }
-      public abstract Type CustomRouteAttributeType { get; }
-
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      static void CheckOverloads(IEnumerable<ActionInfo> actions) {
+      void CheckOverloads(IEnumerable<ActionInfo> actions) {
 
          var overloadedActions =
             (from a in actions
@@ -302,7 +298,7 @@ namespace MvcCodeRouting.Controllers {
             (from g in overloadedActions
              let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
              where distinctParamCount.Count() > 1
-             let bad = g.Where(a => !a.HasRequireRouteParametersAttribute)
+             let bad = g.Where(a => !a.HasActionOverloadDisambiguationAttribute)
              where bad.Count() > 0
              select bad).ToList();
 
@@ -312,7 +308,7 @@ namespace MvcCodeRouting.Controllers {
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
                   "The following action methods must be decorated with {0} for disambiguation: {1}.",
-                  typeof(RequireRouteParametersAttribute).FullName,
+                  Provider.ActionOverloadDisambiguationAttributeType.FullName,
                   String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
@@ -356,17 +352,18 @@ namespace MvcCodeRouting.Controllers {
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
                   "Action methods decorated with {0} must have the same name: {1}.",
-                  CustomRouteAttributeType.FullName,
+                  Provider.CustomRouteAttributeType.FullName,
                   String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
                )
             );
          }
       }
 
-      protected ControllerInfo(Type type, RegisterSettings registerSettings) {
+      protected ControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) {
          
          this.Type = type;
          this.Register = registerSettings;
+         this.Provider = provider;
       }
 
       protected internal abstract ActionInfo[] GetActions();
@@ -379,7 +376,7 @@ namespace MvcCodeRouting.Controllers {
 
          Type propertyType = property.PropertyType;
 
-         var routeAttr = property.GetCustomAttributes(FromRouteAttributeType, inherit: true)
+         var routeAttr = property.GetCustomAttributes(Provider.FromRouteAttributeType, inherit: true)
             .Cast<IFromRouteAttribute>()
             .Single();
 

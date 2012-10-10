@@ -15,15 +15,21 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Routing;
+using MvcCodeRouting.Web;
+using MvcCodeRouting.Web.Http;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting {
    
    public static class CodeRoutingHttpExtensions {
+
+      static CodeRoutingHttpExtensions() {
+         CodeRoutingProvider.RegisterProvider(new HttpCodeRoutingProvider());
+      }
+
+      internal static void DoNothing() { }
 
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
          return MapCodeRoutes(routes, rootController, null);
@@ -41,23 +47,12 @@ namespace MvcCodeRouting.Web.Http {
 
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerSelfHost) {
+         var registerSettings = new RegisterSettings(null, rootController) {
             BaseRoute = baseRoute,
             Settings = settings
          };
 
-         if (registerSettings.HttpConfiguration == null) {
-            throw new ArgumentException(
-               "You must first specify an {0} instance using the HttpConfiguration property of {1}.".FormatInvariant(
-                  typeof(HttpConfiguration).FullName,
-                  typeof(CodeRoutingSettings).FullName
-               )
-            );
-         }
-
-         List<IHttpRoute> newRoutes = RouteFactory.CreateRoutes(registerSettings)
-            .Cast<IHttpRoute>()
-            .ToList();
+         IHttpRoute[] newRoutes = RouteFactory.CreateRoutes<IHttpRoute>(registerSettings);
 
          foreach (IHttpRoute route in newRoutes) {
             // TODO: in Web API v1 name cannot be null
@@ -69,8 +64,11 @@ namespace MvcCodeRouting.Web.Http {
          return newRoutes;
       }
 
-      static bool IsSupportedControllerSelfHost(Type type) {
-         return typeof(ApiController).IsAssignableFrom(type);
+      public static void SetHttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration httpConfiguration) {
+
+         if (settings == null) throw new ArgumentNullException("settings");
+
+         settings.Properties["HttpConfiguration"] = httpConfiguration;
       }
 
       internal static void EnableCodeRouting(HttpConfiguration configuration) {

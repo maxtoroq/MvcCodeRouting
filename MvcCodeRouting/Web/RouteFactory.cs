@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web {
@@ -24,7 +25,7 @@ namespace MvcCodeRouting.Web {
 
       public abstract object OptionalParameterValue { get; }
 
-      public static object[] CreateRoutes(RegisterSettings registerSettings) {
+      public static TRoute[] CreateRoutes<TRoute>(RegisterSettings registerSettings) where TRoute : class {
 
          ActionInfo[] actions = registerSettings.GetControllers()
             .SelectMany(c => c.Actions)
@@ -35,19 +36,30 @@ namespace MvcCodeRouting.Web {
          var groupedActions = GroupActions(actions);
          object config = registerSettings.Settings.Configuration;
 
-         List<object> routes = new List<object>();
+         var routes = new List<TRoute>();
 
          foreach (var group in groupedActions) {
 
             ControllerInfo controller = group.First().Controller;
-            RouteFactory routeFactory = controller.RouteFactory;
+            RouteFactory routeFactory = controller.Provider.RouteFactory;
 
             RouteSettings routeSettings = routeFactory.CreateRouteSettings(group);
 
             if (config != null) 
                routeSettings.DataTokens[DataTokenKeys.Configuration] = config;
 
-            routes.Add(routeFactory.CreateRoute(routeSettings, registerSettings));
+            object route = routeFactory.CreateRoute(routeSettings, registerSettings);
+
+            if (route is TRoute) {
+               routes.Add((TRoute)route);
+            } else {
+
+               TRoute convertedRoute = routeFactory.ConvertRoute(route, typeof(TRoute), registerSettings) as TRoute;
+
+               if (convertedRoute != null)
+                  routes.Add(convertedRoute);
+               // TODO: else, throw exception?
+            }
          }
 
          return routes.ToArray();
@@ -321,5 +333,9 @@ namespace MvcCodeRouting.Web {
       }
 
       public abstract object CreateRoute(RouteSettings routeSettings, RegisterSettings registerSettings);
+
+      public virtual object ConvertRoute(object route, Type conversionType, RegisterSettings registerSettings) {
+         return null;
+      }
    }
 }

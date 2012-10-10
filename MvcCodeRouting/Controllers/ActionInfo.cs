@@ -110,7 +110,7 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               Type attrType = Controller.CustomRouteAttributeType;
+               Type attrType = Controller.Provider.CustomRouteAttributeType;
 
                ICustomRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
                   .Cast<ICustomRouteAttribute>()
@@ -161,8 +161,8 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
-      public bool HasRequireRouteParametersAttribute {
-         get { return IsDefined(typeof(RequireRouteParametersAttribute), inherit: true); }
+      public bool HasActionOverloadDisambiguationAttribute {
+         get { return IsDefined(Controller.Provider.ActionOverloadDisambiguationAttributeType, inherit: true); }
       }
 
       public static bool NameEquals(string name1, string name2) {

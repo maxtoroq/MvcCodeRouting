@@ -18,8 +18,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
-using System.Web.Http;
-using System.Web.Http.Routing;
 using System.Web.Mvc;
 using System.Web.Routing;
 using MvcCodeRouting.Web;
@@ -33,6 +31,10 @@ namespace MvcCodeRouting {
    public static class CodeRoutingExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
+
+      static CodeRoutingExtensions() {
+         CodeRoutingProvider.RegisterProvider(new Web.Mvc.MvcCodeRoutingProvider());
+      }
 
       /// <summary>
       /// Creates routes for the specified root controller and all other controllers
@@ -85,109 +87,25 @@ namespace MvcCodeRouting {
          if (routes == null) throw new ArgumentNullException("routes");
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         var registerSettings = new RegisterSettings(null, rootController, IsSupportedControllerWebHost) { 
+         var registerSettings = new RegisterSettings(null, rootController) { 
             BaseRoute = baseRoute, 
             Settings = settings,
-            UseHttpGlobalConfiguration = true
+            UseGlobalHttpConfiguration = true,
+            RouteCollection = routes
          };
 
-         object[] newRoutes = RouteFactory.CreateRoutes(registerSettings);
-         List<Route> webRoutes = new List<Route>();
+         Route[] newRoutes = RouteFactory.CreateRoutes<Route>(registerSettings);
 
-         foreach (var route in newRoutes) {
+         foreach (Route route in newRoutes) 
+            routes.Add(route);
 
-            Route mvcRoute = route as Route;
-
-            if (mvcRoute != null) {
-               webRoutes.Add(mvcRoute);
-               routes.Add(mvcRoute);
-            } else { 
-               webRoutes.Add(RegisterHttpRoute(routes, route, registerSettings));
-            }
-         }
-         
          if (newRoutes.Length > 0 
             && registerSettings.Settings.EnableEmbeddedViews) {
             
             EmbeddedViewsVirtualPathProvider.RegisterAssembly(registerSettings);
          }
 
-         return webRoutes;
-      }
-
-      static bool IsSupportedControllerWebHost(Type type) { 
-         
-         if (Web.Mvc.MvcControllerInfo.IsMvcController(type))
-            return true;
-
-         Type t = type;
-
-         do {
-            if (t.FullName == "System.Web.Http.ApiController")
-               return true;
-
-            t = t.BaseType;
-
-         } while (t != null);
-
-         return false;
-      }
-
-      static Route RegisterHttpRoute(RouteCollection routes, object route, RegisterSettings registerSettings) {
-         
-         HttpConfiguration httpConfig = (HttpConfiguration)registerSettings.HttpConfiguration;
-
-         HttpConfiguration globalHttpConfig = GlobalConfiguration.Configuration;
-         RouteCollection globalRoutes = RouteTable.Routes;
-
-         bool httpConfigIsGlobal = Object.ReferenceEquals(httpConfig, globalHttpConfig);
-         bool routesIsGlobal = Object.ReferenceEquals(routes, globalRoutes);
-
-         string name = (httpConfigIsGlobal) ?
-            null
-            : Guid.NewGuid().ToString();
-
-         httpConfig.Routes.Add(name, (IHttpRoute)route);
-
-         var httpRoute = (Web.Http.CodeHttpRoute)route;
-
-         // System.Web.Http.WebHost.Routing.HttpWebRoute
-         Route webRoute; 
-         
-         if (routesIsGlobal) {
-
-            if (httpConfigIsGlobal) {
-               webRoute = (Route)routes.Last();
-
-            } else {
-               globalHttpConfig.Routes.Add(name, httpRoute);
-               webRoute = (Route)routes.Last();
-               globalHttpConfig.Routes.Remove(name);
-            }
-
-         } else {
-
-            if (httpConfigIsGlobal) {
-               webRoute = (Route)globalRoutes.Last();
-
-            } else {
-               globalHttpConfig.Routes.Add(name, httpRoute);
-               webRoute = (Route)globalRoutes.Last();
-               globalHttpConfig.Routes.Remove(name);
-            }
-
-            globalRoutes.RemoveAt(globalRoutes.Count - 1);
-         }
-
-         routes.RemoveAt(routes.Count - 1);
-
-         var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
-
-         routes.Add(codeRoute);
-
-         Web.Http.CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
-
-         return codeRoute;
+         return newRoutes;
       }
 
       /// <summary>

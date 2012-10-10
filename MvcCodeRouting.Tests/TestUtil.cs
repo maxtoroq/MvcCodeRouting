@@ -25,6 +25,9 @@ namespace MvcCodeRouting.Tests {
       }
 
       public static RouteCollection GetRouteCollection() {
+
+         Web.Http.WebHost.PreApplicationStartCode.Start();
+
          return RouteTable.Routes;
       }
 

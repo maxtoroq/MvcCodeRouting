@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Web.Http;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
@@ -33,8 +32,8 @@ namespace MvcCodeRouting {
 
       readonly IDictionary<Type, string> _DefaultConstraints = new Dictionary<Type, string>();
       readonly Collection<Type> _IgnoredControllers = new Collection<Type>();
+      readonly IDictionary<string, object> _Properties = new Dictionary<string, object>();
       Func<RouteFormatterArgs, string> _RouteFormatter;
-      object _HttpConfiguration;
 
       /// <summary>
       /// The settings that all new <see cref="CodeRoutingSettings"/> instances inherit.
@@ -99,14 +98,8 @@ namespace MvcCodeRouting {
       /// </summary>
       public object Configuration { get; set; }
 
-      public object HttpConfiguration {
-         get { return _HttpConfiguration; }
-         set {
-            if (value != null && !typeof(HttpConfiguration).IsAssignableFrom(value.GetType()))
-               throw new ArgumentException("value must be an instance of {0}.".FormatInvariant(typeof(HttpConfiguration).FullName), "value");
-
-            _HttpConfiguration = value;
-         }
+      public IDictionary<string, object> Properties {
+         get { return _Properties; }
       }
 
       /// <summary>
@@ -138,6 +131,7 @@ namespace MvcCodeRouting {
          this.RootOnly = settings.RootOnly;
          this.RouteFormatter = settings.RouteFormatter;
          this.UseImplicitIdToken = settings.UseImplicitIdToken;
+         this.Configuration = settings.Configuration;
 
          this.IgnoredControllers.Clear();
 
@@ -149,8 +143,10 @@ namespace MvcCodeRouting {
          foreach (var item in settings.DefaultConstraints)
             this.DefaultConstraints.Add(item.Key, item.Value);
 
-         this.Configuration = settings.Configuration;
-         this.HttpConfiguration = settings.HttpConfiguration;
+         this.Properties.Clear();
+
+         foreach (var item in settings.Properties) 
+            this.Properties.Add(item.Key, item.Value);
       }
 
       /// <summary>
@@ -165,7 +161,8 @@ namespace MvcCodeRouting {
          this.RouteFormatter = null;
          this.UseImplicitIdToken = false;
          this.Configuration = null;
-         this.HttpConfiguration = null;
+
+         this.Properties.Clear();
 
          this.IgnoredControllers.Clear();
 
