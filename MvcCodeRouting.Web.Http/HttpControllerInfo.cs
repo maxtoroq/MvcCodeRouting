@@ -24,29 +24,15 @@ namespace MvcCodeRouting.Web.Http {
 
       public static ControllerInfo Create(Type controllerType, RegisterSettings registerSettings, CodeRoutingProvider provider) {
 
-         HttpConfiguration configuration = registerSettings.HttpConfiguration as HttpConfiguration;
+         HttpConfiguration configuration = registerSettings.Settings.HttpConfiguration();
 
          if (configuration == null) {
-            
-            if (registerSettings.UseGlobalHttpConfiguration) {
-               configuration = GlobalConfiguration.Configuration;
-            } else {
-               object httpConfig;
-
-               if (registerSettings.Settings.Properties.TryGetValue("HttpConfiguration", out httpConfig))
-                  configuration = httpConfig as HttpConfiguration;
-            }
-
-            if (configuration == null) {
-               throw new ArgumentException(
-                  "You must first specify an {0} instance using the HttpConfiguration key on {1}.Properties.".FormatInvariant(
-                     typeof(HttpConfiguration).FullName,
-                     typeof(CodeRoutingSettings).FullName
-                  )
-               );
-            }
-
-            registerSettings.HttpConfiguration = configuration;
+            throw new ArgumentException(
+               "You must first specify an {0} instance using the HttpConfiguration key on {1}.Properties.".FormatInvariant(
+                  typeof(HttpConfiguration).FullName,
+                  typeof(CodeRoutingSettings).FullName
+               )
+            );
          }
          
          return new DescribedHttpControllerInfo(

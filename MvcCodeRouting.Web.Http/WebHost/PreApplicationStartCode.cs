@@ -16,22 +16,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Http;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
    public class PreApplicationStartCode {
 
-      static bool startWasCalled;
-
       public static void Start() {
 
-         if (!startWasCalled) {
-            
-            startWasCalled = true;
+         CodeRoutingExtensions.Initialize();
+         CodeRoutingHttpExtensions.Initialize();
 
-            // Provoke type initialization
-            CodeRoutingHttpExtensions.DoNothing();
-         }
+         CodeRoutingSettings.Defaults.HttpConfiguration(GlobalConfiguration.Configuration);
       }
    }
 }

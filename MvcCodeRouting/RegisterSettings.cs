@@ -93,11 +93,6 @@ namespace MvcCodeRouting {
          }
       }
 
-      // These are used by Web.Http
-      internal bool UseGlobalHttpConfiguration { get; set; }
-      internal object HttpConfiguration { get; set; }
-      internal RouteCollection RouteCollection { get; set; }
-
       public RegisterSettings(Assembly assembly, Type rootController) {
 
          if (rootController != null) {

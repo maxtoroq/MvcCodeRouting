@@ -50,14 +50,12 @@ namespace MvcCodeRouting.Web.Http {
          if (conversionType != typeof(Route))
             return base.ConvertRoute(route, conversionType, registerSettings);
 
-         HttpConfiguration httpConfig = (HttpConfiguration)registerSettings.HttpConfiguration;
-         RouteCollection routes = registerSettings.RouteCollection;
+         HttpConfiguration httpConfig = registerSettings.Settings.HttpConfiguration();
 
          HttpConfiguration globalHttpConfig = GlobalConfiguration.Configuration;
          RouteCollection globalRoutes = RouteTable.Routes;
 
          bool httpConfigIsGlobal = Object.ReferenceEquals(httpConfig, globalHttpConfig);
-         bool routesIsGlobal = Object.ReferenceEquals(routes, globalRoutes);
 
          string name = (httpConfigIsGlobal) ?
             null
@@ -67,35 +65,13 @@ namespace MvcCodeRouting.Web.Http {
 
          var httpRoute = (Web.Http.CodeHttpRoute)route;
 
+         if (!httpConfigIsGlobal) 
+            globalHttpConfig.Routes.Add(name, httpRoute);
+
          // System.Web.Http.WebHost.Routing.HttpWebRoute
-         Route webRoute;
+         Route webRoute = (Route)globalRoutes.Last();
 
-         if (routesIsGlobal) {
-
-            if (httpConfigIsGlobal) {
-               webRoute = (Route)routes.Last();
-
-            } else {
-               globalHttpConfig.Routes.Add(name, httpRoute);
-               webRoute = (Route)routes.Last();
-               globalHttpConfig.Routes.Remove(name);
-            }
-
-         } else {
-
-            if (httpConfigIsGlobal) {
-               webRoute = (Route)globalRoutes.Last();
-
-            } else {
-               globalHttpConfig.Routes.Add(name, httpRoute);
-               webRoute = (Route)globalRoutes.Last();
-               globalHttpConfig.Routes.Remove(name);
-            }
-
-            globalRoutes.RemoveAt(globalRoutes.Count - 1);
-         }
-
-         routes.RemoveAt(routes.Count - 1);
+         globalRoutes.RemoveAt(globalRoutes.Count - 1);
 
          var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
 

@@ -14,7 +14,7 @@ namespace Samples.SelfHost {
          CodeRoutingSettings.Defaults.RouteFormatter = args =>
             Regex.Replace(args.OriginalSegment, @"([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
 
-         CodeRoutingSettings.Defaults.SetHttpConfiguration(config);
+         CodeRoutingSettings.Defaults.HttpConfiguration(config);
 
          config.Routes.MapCodeRoutes(typeof(Samples.Controllers.Api.ApiController));
 

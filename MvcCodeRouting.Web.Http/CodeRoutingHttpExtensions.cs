@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
          CodeRoutingProvider.RegisterProvider(new HttpCodeRoutingProvider());
       }
 
-      internal static void DoNothing() { }
+      internal static void Initialize() { }
 
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
          return MapCodeRoutes(routes, rootController, null);
@@ -59,12 +59,24 @@ namespace MvcCodeRouting {
             routes.Add((routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
          }
 
-         EnableCodeRouting((HttpConfiguration)registerSettings.HttpConfiguration);
+         EnableCodeRouting(registerSettings.Settings.HttpConfiguration());
 
          return newRoutes;
       }
 
-      public static void SetHttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration httpConfiguration) {
+      public static HttpConfiguration HttpConfiguration(this CodeRoutingSettings settings) {
+
+         if (settings == null) throw new ArgumentNullException("settings");
+
+         object httpConfiguration;
+
+         if (settings.Properties.TryGetValue("HttpConfiguration", out httpConfiguration))
+            return httpConfiguration as HttpConfiguration;
+
+         return null;
+      }
+
+      public static void HttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration httpConfiguration) {
 
          if (settings == null) throw new ArgumentNullException("settings");
 

@@ -36,6 +36,8 @@ namespace MvcCodeRouting {
          CodeRoutingProvider.RegisterProvider(new Web.Mvc.MvcCodeRoutingProvider());
       }
 
+      internal static void Initialize() { }
+
       /// <summary>
       /// Creates routes for the specified root controller and all other controllers
       /// in the same namespace or any sub-namespace, in the same assembly.
@@ -89,9 +91,7 @@ namespace MvcCodeRouting {
 
          var registerSettings = new RegisterSettings(null, rootController) { 
             BaseRoute = baseRoute, 
-            Settings = settings,
-            UseGlobalHttpConfiguration = true,
-            RouteCollection = routes
+            Settings = settings
          };
 
          Route[] newRoutes = RouteFactory.CreateRoutes<Route>(registerSettings);
