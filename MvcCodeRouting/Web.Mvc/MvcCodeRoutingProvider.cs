@@ -22,13 +22,13 @@ namespace MvcCodeRouting.Web.Mvc {
    
    class MvcCodeRoutingProvider : CodeRoutingProvider {
 
-      readonly Lazy<RouteFactory> _RouteFactory = new Lazy<RouteFactory>(() => new MvcRouteFactory());
+      readonly RouteFactory _RouteFactory = new MvcRouteFactory();
       readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
       readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
       readonly Type _ActionOverloadDisambiguationAttributeType = typeof(RequireRouteParametersAttribute);
 
       public override RouteFactory RouteFactory {
-         get { return _RouteFactory.Value; }
+         get { return _RouteFactory; }
       }
 
       public override bool CanDisambiguateActionOverloads {
