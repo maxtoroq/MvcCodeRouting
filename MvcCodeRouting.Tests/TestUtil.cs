@@ -28,7 +28,7 @@ namespace MvcCodeRouting.Tests {
 
          Web.Http.WebHost.PreApplicationStartCode.Start();
 
-         return RouteTable.Routes;
+         return new RouteCollection();
       }
 
       public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentRouteContext = "") {

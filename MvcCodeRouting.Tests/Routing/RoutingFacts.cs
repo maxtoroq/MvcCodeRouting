@@ -17,8 +17,7 @@ namespace MvcCodeRouting.Tests.Routing {
       RouteCollection routes;
       UrlHelper Url;
 
-      [TestInitialize]
-      public void Init() {
+      public RoutingFacts() {
          
          this.routes = new RouteCollection();
 
