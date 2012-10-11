@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeRoutingExtensions.cs" />
+    <Compile Include="CodeRoutingProvider.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="Controllers\ActionInfo.cs" />
     <Compile Include="Controllers\ActionParameterInfo.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="RouteSegmentType.cs" />
+    <Compile Include="Utilities\FormatInvariantExtensions.cs" />
+    <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
     <Compile Include="Web.Hosting\AssemblyResourcesCollection.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="Web.Mvc\DescribedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\MvcActionInfo.cs" />
+    <Compile Include="Web.Mvc\MvcCodeRoutingProvider.cs" />
     <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcActionInfo.cs" />
@@ -90,8 +94,8 @@
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
     <Compile Include="Web\CodeRoute.cs" />
-    <Compile Include="Web\CodeRoutingConstraint.cs" />
     <Compile Include="Web\DataTokenKeys.cs" />
+    <Compile Include="Web\ICodeRoute.cs" />
     <Compile Include="Web\RouteFactory.cs" />
     <Compile Include="Web\RouteSettings.cs" />
   </ItemGroup>
