@@ -98,7 +98,7 @@ namespace MvcCodeRouting {
       /// </summary>
       public object Configuration { get; set; }
 
-      public IDictionary<string, object> Properties {
+      internal IDictionary<string, object> Properties {
          get { return _Properties; }
       }
 
