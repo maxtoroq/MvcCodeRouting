@@ -11,14 +11,13 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class CustomRouteGroupingBehavior {
 
-      RouteCollection routes;
-      UrlHelper Url;
+      static RouteCollection routes;
+      static UrlHelper Url;
 
-      [TestInitialize]
-      public void Init() {
+      public CustomRouteGroupingBehavior() {
 
-         this.routes = new RouteCollection();
-         this.Url = TestUtil.CreateUrlHelper(routes);
+         routes = TestUtil.GetRouteCollection();
+         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]
@@ -27,7 +26,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #744
          // Create only one route for multiple actions with equal custom routes
 
-         var controller = typeof(CustomRouteGrouping.CustomRouteGroupingBehavior1Controller);
+         var controller = typeof(CustomRouteGrouping.CustomRouteGrouping1Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -39,7 +38,7 @@ namespace MvcCodeRouting.Tests.Routing {
       [ExpectedException(typeof(InvalidOperationException))]
       public void DisallowMultipleActionsWithSameCustomRoute() {
 
-         var controller = typeof(CustomRouteGrouping.CustomRouteGroupingBehavior2Controller);
+         var controller = typeof(CustomRouteGrouping.CustomRouteGrouping2Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -51,7 +50,7 @@ namespace MvcCodeRouting.Tests.Routing {
          // #779
          // Allow multiple actions with same custom route if {action} token is present
 
-         var controller = typeof(CustomRouteGrouping.CustomRouteGroupingBehavior3Controller);
+         var controller = typeof(CustomRouteGrouping.CustomRouteGrouping3Controller);
 
          routes.Clear();
          routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
@@ -63,7 +62,7 @@ namespace MvcCodeRouting.Tests.Routing {
 
 namespace MvcCodeRouting.Tests.Routing.CustomRouteGrouping {
 
-   public class CustomRouteGroupingBehavior1Controller : Controller {
+   public class CustomRouteGrouping1Controller : Controller {
 
       [HttpGet]
       [CustomRoute("{id}")]
@@ -74,7 +73,7 @@ namespace MvcCodeRouting.Tests.Routing.CustomRouteGrouping {
       public void Foo([FromRoute]string id, string bar) { }
    }
 
-   public class CustomRouteGroupingBehavior2Controller : Controller {
+   public class CustomRouteGrouping2Controller : Controller {
 
       [CustomRoute("{id}")]
       public void Foo([FromRoute]string id) { }
@@ -83,7 +82,7 @@ namespace MvcCodeRouting.Tests.Routing.CustomRouteGrouping {
       public void Bar([FromRoute]string id) { }
    }
 
-   public class CustomRouteGroupingBehavior3Controller : Controller {
+   public class CustomRouteGrouping3Controller : Controller {
 
       [CustomRoute("{id}/{action}")]
       public void Foo([FromRoute]string id) { }

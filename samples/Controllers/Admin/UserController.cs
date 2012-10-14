@@ -2,24 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
-using MvcCodeRouting;
+using Samples.Models;
 
 namespace Samples.Controllers.Admin {
    
-   [Authorize]
-   public class UserController : Controller {
+   public class UserController : CrudController<User, int> {
 
-      public ActionResult Index() {
-         return View();
+      protected override IQueryable<User> GetAll() {
+         return Samples.Models.User.All().AsQueryable();
       }
 
-      [CustomRoute("{id}")]
-      public ActionResult Edit([FromRoute]int id) {
-
-         this.ViewBag.UserId = id;
-
-         return View();
+      protected override User GetById(int id) {
+         return GetAll().SingleOrDefault(u => u.Id == id);
       }
    }
 }

@@ -24,6 +24,13 @@ namespace MvcCodeRouting.Tests {
          httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
       }
 
+      public static RouteCollection GetRouteCollection() {
+
+         Web.Http.WebHost.PreApplicationStartCode.Start();
+
+         return new RouteCollection();
+      }
+
       public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentRouteContext = "") {
 
          var httpContextMock = new Mock<HttpContextBase>();
@@ -56,6 +63,33 @@ namespace MvcCodeRouting.Tests {
 
       public string Action(string action, Type controller, object routeValues) {
          return base.Action(action, TestUtil.GetControllerName(controller), routeValues);
+      }
+
+      public string HttpRouteUrl(string routeName, Type controller, object routeValues = null) {
+
+         var values = new RouteValueDictionary(routeValues);
+         values["controller"] = TestUtil.GetControllerName(controller);
+
+         return HttpRouteUrl(routeName, values);
+      }
+
+      public string HttpRouteUrl(string routeName, object routeValues) {
+         return HttpRouteUrl(routeName, new RouteValueDictionary(routeValues));
+      }
+
+      public string HttpRouteUrl(string routeName, RouteValueDictionary routeValues) {
+         
+         if (routeValues == null) {
+            routeValues = new RouteValueDictionary();
+            routeValues.Add("httproute", true);
+         } else {
+            routeValues = new RouteValueDictionary(routeValues);
+            if (!routeValues.ContainsKey("httproute")) {
+               routeValues.Add("httproute", true);
+            }
+         }
+
+         return base.RouteUrl(routeName, routeValues);
       }
    }
 }

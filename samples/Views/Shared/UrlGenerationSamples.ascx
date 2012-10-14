@@ -18,10 +18,10 @@
    </tr>
    <tr>
       <td>
-         <code>Url.Action("", "Api.Role")</code>
+         <code>Url.Action("", "Admin.Role")</code>
       </td>
-      <td><%: Url.Action("", "~Api.Role")%></td>
-      <td><%: Url.Action("", "Api.Role")%></td>
+      <td><%: Url.Action("", "~Admin.Role")%></td>
+      <td><%: Url.Action("", "Admin.Role")%></td>
       <td>Child or child of sibling reference.</td>
    </tr>
    <tr>

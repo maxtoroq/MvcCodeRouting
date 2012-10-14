@@ -11,14 +11,13 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class ControllerReflectionBehavior {
 
-      RouteCollection routes;
-      UrlHelper Url;
+      static RouteCollection routes;
+      static UrlHelper Url;
 
-      [TestInitialize]
-      public void Init() {
+      public ControllerReflectionBehavior() {
 
-         this.routes = new RouteCollection();
-         this.Url = TestUtil.CreateUrlHelper(routes);
+         routes = TestUtil.GetRouteCollection();
+         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]
@@ -27,7 +26,14 @@ namespace MvcCodeRouting.Tests.Routing {
          var controller = typeof(ControllerReflection.ControllerReflection1Controller);
 
          routes.Clear();
-         routes.MapCodeRoutes(controller);
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         Assert.AreEqual(0, routes.Count);
+
+         controller = typeof(ControllerReflection.ControllerReflection2Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(0, routes.Count);
       }
@@ -49,6 +55,22 @@ namespace MvcCodeRouting.Tests.Routing.ControllerReflection {
       public void RefParameter(ref string s) { }
 
       [NonAction]
+      public void NonAction() { }
+   }
+
+   public class ControllerReflection2Controller : System.Web.Http.ApiController {
+
+      public static void StaticMethod() { }
+
+      public void TypeParameter<T>() { }
+
+      public void OutParameter(out string s) {
+         throw new InvalidOperationException();
+      }
+
+      public void RefParameter(ref string s) { }
+
+      [System.Web.Http.NonAction]
       public void NonAction() { }
    }
 }

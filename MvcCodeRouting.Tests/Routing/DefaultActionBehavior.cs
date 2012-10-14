@@ -13,14 +13,13 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class DefaultActionBehavior {
 
-      RouteCollection routes;
-      UrlHelper Url;
+      static RouteCollection routes;
+      static UrlHelper Url;
 
-      [TestInitialize]
-      public void Init() {
+      public DefaultActionBehavior() {
 
-         this.routes = new RouteCollection();
-         this.Url = TestUtil.CreateUrlHelper(routes);
+         routes = TestUtil.GetRouteCollection();
+         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]

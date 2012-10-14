@@ -10,12 +10,15 @@ namespace Samples.Controllers {
    public class UserController : Controller {
 
       public ActionResult Index() {
+
+         this.ViewData.Model = Samples.Models.User.All();
+
          return View();
       }
 
-      public ActionResult Profile([FromRoute]string username) {
+      public new ActionResult Profile([FromRoute]string username) {
 
-         this.ViewBag.Username = username;
+         this.ViewData.Model = Samples.Models.User.All().SingleOrDefault(u => u.Name == username);
 
          return View();
       }
