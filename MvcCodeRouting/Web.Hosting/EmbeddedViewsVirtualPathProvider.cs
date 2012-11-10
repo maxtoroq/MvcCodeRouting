@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
@@ -58,7 +59,7 @@ namespace MvcCodeRouting.Web.Hosting {
          if (prevExists)
             return prevExists;
 
-         return GetAssemblyData(virtualDir).ResourceExists(virtualDir, isFile: false);
+         return GetAssemblyResources(virtualDir).ResourceExists(virtualDir, isFile: false);
       }
 
       public override bool FileExists(string virtualPath) {
@@ -68,7 +69,7 @@ namespace MvcCodeRouting.Web.Hosting {
          if (prevExists)
             return prevExists;
 
-         return GetAssemblyData(virtualPath).ResourceExists(virtualPath, isFile: true);
+         return GetAssemblyResources(virtualPath).ResourceExists(virtualPath, isFile: true);
       }
 
       public override VirtualDirectory GetDirectory(string virtualDir) {
@@ -77,8 +78,9 @@ namespace MvcCodeRouting.Web.Hosting {
 
          string resourceName;
          AssemblyResources assemblyData;
+         Assembly satelliteAssembly;
 
-         if (GetAssemblyData(virtualDir).ResourceExists(virtualDir, false, out resourceName, out assemblyData))
+         if (GetAssemblyResources(virtualDir).ResourceExists(virtualDir, false, out resourceName, out assemblyData, out satelliteAssembly))
             return assemblyData.CreateVirtualDirectory(virtualDir, prev);
 
          return prev;
@@ -93,9 +95,10 @@ namespace MvcCodeRouting.Web.Hosting {
 
          string resourceName;
          AssemblyResources assemblyData;
+         Assembly satelliteAssembly;
 
-         if (GetAssemblyData(virtualPath).ResourceExists(virtualPath, true, out resourceName, out assemblyData))
-            return assemblyData.CreateVirtualFile(virtualPath, resourceName);
+         if (GetAssemblyResources(virtualPath).ResourceExists(virtualPath, true, out resourceName, out assemblyData, out satelliteAssembly))
+            return assemblyData.CreateVirtualFile(virtualPath, resourceName, satelliteAssembly);
 
          return null;
       }
@@ -110,7 +113,7 @@ namespace MvcCodeRouting.Web.Hosting {
          return null;
       }
 
-      AssemblyResourcesCollection GetAssemblyData(string virtualPath) {
+      AssemblyResourcesCollection GetAssemblyResources(string virtualPath) {
 
          string appRelativePath = VirtualPathUtility.ToAppRelative(virtualPath);
          

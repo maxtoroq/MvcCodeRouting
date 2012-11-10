@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace MvcCodeRouting.Web.Hosting {
@@ -37,22 +38,24 @@ namespace MvcCodeRouting.Web.Hosting {
 
          string resourceName;
          AssemblyResources data;
+         Assembly satelliteAssembly;
 
-         return ResourceExists(virtualPath, isFile, out resourceName, out data);
+         return ResourceExists(virtualPath, isFile, out resourceName, out data, out satelliteAssembly);
       }
 
-      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out AssemblyResources data) {
+      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out AssemblyResources data, out Assembly satelliteAssembly) {
 
          for (int i = 0; i < this.Count; i++) {
 
             data = this[i];
 
-            if (data.ResourceExists(virtualPath, isFile, out resourceName))
+            if (data.ResourceExists(virtualPath, isFile, out resourceName, out satelliteAssembly))
                return true;
          }
 
          resourceName = null;
          data = null;
+         satelliteAssembly = null;
 
          return false;
       }

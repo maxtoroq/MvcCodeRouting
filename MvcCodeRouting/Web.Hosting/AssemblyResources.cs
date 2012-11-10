@@ -14,6 +14,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -50,12 +52,33 @@ namespace MvcCodeRouting.Web.Hosting {
              select n).ToArray();
       }
 
-      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName) {
+      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out Assembly satelliteAssembly) {
 
          if (this.HasResources) {
 
             string relativeVirtualPath = VirtualPathUtility.ToAppRelative(virtualPath).Remove(0, 2);
-            string[] relativeVirtualPathParts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> relativeVirtualPathParts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
+               .ToList();
+
+            const int minLocalizedFileParts = 3; // {name}.{culture}.{extension}
+            List<string> fileParts;
+            string cultureName;
+            CultureInfo culture = null;
+
+            if (isFile
+               && (fileParts = relativeVirtualPathParts.Last().Split('.').ToList()).Count >= minLocalizedFileParts
+               && (cultureName = Enumerable.Reverse(fileParts).Skip(1).First()).Length > 0) {
+
+               try {
+                  culture = new CultureInfo(cultureName);
+               } catch (CultureNotFoundException) { }
+
+               if (culture != null) {
+                  
+                  fileParts.RemoveAt(fileParts.Count - 2);
+                  relativeVirtualPathParts[relativeVirtualPathParts.Count - 1] = String.Join(".", fileParts);
+               }
+            }
 
             for (int i = 0; i < resourceNames.Length; i++) {
 
@@ -64,8 +87,8 @@ namespace MvcCodeRouting.Web.Hosting {
                string[] resourcePathParts = resourcePath.Split('/');
 
                bool resourcePathLengthOK = (isFile) ?
-                  resourcePathParts.Length == relativeVirtualPathParts.Length
-                  : resourcePathParts.Length > relativeVirtualPathParts.Length;
+                  resourcePathParts.Length == relativeVirtualPathParts.Count
+                  : resourcePathParts.Length > relativeVirtualPathParts.Count;
 
                if (resourcePathLengthOK) {
 
@@ -73,12 +96,30 @@ namespace MvcCodeRouting.Web.Hosting {
                      resourcePath
                      : String.Join("/", resourcePathParts.Take(resourcePathParts.Length - 1));
 
-                  if (String.Equals(String.Join("/", relativeVirtualPathParts), resourcePath2, VirtualPathComparison.Comparison))
-                     return true;
+                  if (String.Equals(String.Join("/", relativeVirtualPathParts), resourcePath2, VirtualPathComparison.Comparison)) {
+
+                     if (isFile
+                        && culture != null) {
+
+                        try {
+                           satelliteAssembly = this.assembly.GetSatelliteAssembly(culture);
+
+                           if (satelliteAssembly.GetManifestResourceNames().Contains(resourceName))
+                              return true;
+
+                        } catch (FileNotFoundException) {
+                        } catch (FileLoadException) { }
+
+                     } else {
+                        satelliteAssembly = null;
+                        return true;
+                     }
+                  }
                }
             }
          }
 
+         satelliteAssembly = null;
          resourceName = null;
          return false;
       }
@@ -130,8 +171,8 @@ namespace MvcCodeRouting.Web.Hosting {
              select resourceName).ToArray();
       }
 
-      public VirtualFile CreateVirtualFile(string virtualPath, string resourceName) {
-         return new AssemblyResourceVirtualFile(virtualPath, resourceName, this.assembly);
+      public VirtualFile CreateVirtualFile(string virtualPath, string resourceName, Assembly satelliteAssembly = null) {
+         return new AssemblyResourceVirtualFile(virtualPath, resourceName, satelliteAssembly ?? this.assembly);
       }
 
       public VirtualDirectory CreateVirtualDirectory(string virtualPath, VirtualDirectory prev) {
