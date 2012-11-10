@@ -52,7 +52,27 @@ namespace MvcCodeRouting.Web.Hosting {
              select n).ToArray();
       }
 
-      public bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out Assembly satelliteAssembly) {
+      public bool FileResourceExists(string virtualPath) {
+
+         string resourceName;
+         Assembly satelliteAssembly;
+
+         return FileResourceExists(virtualPath, out resourceName, out satelliteAssembly);
+      }
+
+      public bool FileResourceExists(string virtualPath, out string resourceName, out Assembly satelliteAssembly) {
+         return ResourceExists(virtualPath, true, out resourceName, out satelliteAssembly);
+      }
+
+      public bool DirectoryResourceExists(string virtualPath) {
+
+         string resourceName;
+         Assembly satelliteAssembly;
+
+         return ResourceExists(virtualPath, false, out resourceName, out satelliteAssembly);
+      }
+
+      bool ResourceExists(string virtualPath, bool isFile, out string resourceName, out Assembly satelliteAssembly) {
 
          if (this.HasResources) {
 
@@ -124,7 +144,7 @@ namespace MvcCodeRouting.Web.Hosting {
          return false;
       }
 
-      public string ResourceNameToRelativeVirtualPath(string resourceName) {
+      internal string ResourceNameToRelativeVirtualPath(string resourceName) {
 
          int dotFirstIndex = resourceName.IndexOf('.');
          int dotLastIndex = resourceName.LastIndexOf('.');
@@ -147,7 +167,7 @@ namespace MvcCodeRouting.Web.Hosting {
          return String.Join("/", parts);
       }
 
-      public string RelativeVirtualPathToResourceName(string relativeVirtualPath) {
+      string RelativeVirtualPathToResourceName(string relativeVirtualPath) {
 
          List<string> parts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
