@@ -91,7 +91,7 @@ namespace MvcCodeRouting.Web.Hosting {
 
                try {
                   culture = new CultureInfo(cultureName);
-               } catch (CultureNotFoundException) { }
+               } catch (ArgumentException) { }
 
                if (culture != null) {
                   
