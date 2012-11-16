@@ -6,7 +6,7 @@
 
    <ul>
       <li>
-         <%: Html.ActionLink("Log Off", "LogOff") %>
+         <a href="<%: Url.Action("LogOff") %>">Log Off</a>
       </li>
    </ul>
 

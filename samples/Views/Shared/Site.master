@@ -7,12 +7,12 @@
 </head>
 <body>
    <div id="header">
-      <%: Html.ActionLink("Home", "", "~~Home")%> - 
-      <%: Html.ActionLink("Users", "", "~~User")%> -
-      <%: Html.ActionLink("Account", "", "~~Account")%> - 
-      <%: Html.ActionLink("Admin", "", "~~Admin")%> - 
+      <a href="<%: Url.Action("", "~~Home") %>">Home</a> - 
+      <a href="<%: Url.Action("", "~~User") %>">Users</a> -
+      <a href="<%: Url.Action("", "~~Account") %>">Account</a> - 
+      <a href="<%: Url.Action("", "~~Admin") %>">Admin</a> - 
       <a href="<%: Url.HttpRouteUrl(null, new { controller = "~~Api" })%>">API</a> -
-      <a href="<%= ResolveUrl("~/routes.axd")%>">Routes</a>
+      <a href="<%: Url.Content("~/routes.axd")%>">Routes</a>
 
       <%: Html.Action("LogOnStatus", "~~Account")%>
    </div>

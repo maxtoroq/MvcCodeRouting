@@ -7,7 +7,7 @@
    <ul>
    <% foreach (var user in Model) {%>
       <li>
-         <%: Html.ActionLink(user.Name, "Profile", new { username = user.Name }) %>
+         <a href="<%: Url.Action("Profile", new { username = user.Name }) %>"><%: user.Name %></a>
       </li>      
    <% } %>
    </ul>
