@@ -139,7 +139,8 @@ namespace MvcCodeRouting {
 
          int i = 0;
 
-         if (route.Defaults != null && route.Defaults.Count > 0) {
+         if (route.Defaults != null 
+            && route.Defaults.Count > 0) {
 
             writer.Write(", ");
             writer.WriteLine();
@@ -187,7 +188,8 @@ namespace MvcCodeRouting {
 
             string[] namespaces;
 
-            if (route.DataTokens != null && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
+            if (route.DataTokens != null 
+               && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
 
                writer.Write(", ");
                writer.WriteLine();
@@ -209,9 +211,11 @@ namespace MvcCodeRouting {
          writer.Write(");");
 
 #if DEBUG
-         string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
+         string crContext;
 
-         if (crContext != null) {
+         if (route.DataTokens != null
+            && (crContext = route.DataTokens[DataTokenKeys.RouteContext] as string) != null) {
+
             writer.WriteLine();
             writer.Write("    <span class='comment'>// {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
          }
@@ -301,7 +305,8 @@ namespace MvcCodeRouting {
 
          int i = 0;
 
-         if (route.Defaults != null && route.Defaults.Count > 0) {
+         if (route.Defaults != null 
+            && route.Defaults.Count > 0) {
 
             writer.Write(", _");
             writer.WriteLine();
@@ -349,7 +354,8 @@ namespace MvcCodeRouting {
 
             string[] namespaces;
 
-            if (route.DataTokens != null && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
+            if (route.DataTokens != null 
+               && (namespaces = route.DataTokens[DataTokenKeys.Namespaces] as string[]) != null) {
 
                writer.Write(", _");
                writer.WriteLine();
@@ -370,10 +376,12 @@ namespace MvcCodeRouting {
 
          writer.Write(")");
 
-         string crContext = route.DataTokens[DataTokenKeys.RouteContext] as string;
-
 #if DEBUG
-         if (crContext != null) {
+         string crContext;
+
+         if (route.DataTokens != null
+            && (crContext = route.DataTokens[DataTokenKeys.RouteContext] as string) != null) {
+
             writer.WriteLine();
             writer.Write("    <span class='comment'>' {0}: \"{1}\"</span>", DataTokenKeys.RouteContext, crContext);
          }
