@@ -5,6 +5,6 @@
    <strong>
       <%: Page.User.Identity.Name %>
    </strong> - 
-   <%: Html.ActionLink("Log Off", "LogOff", "~Account") %>
+   <a href="<%: Url.Action("LogOff", "~Account") %>">Log Off</a>
 </div>
 <% } %>

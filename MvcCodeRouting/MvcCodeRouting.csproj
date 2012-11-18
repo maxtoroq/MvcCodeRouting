@@ -20,6 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\net40\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\net40\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,6 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net40\</OutputPath>
+    <IntermediateOutputPath>obj\Release\net40\</IntermediateOutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -72,7 +74,6 @@
     <Compile Include="Utilities\FormatInvariantExtensions.cs" />
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
-    <Compile Include="Web.Hosting\AssemblyResourcesCollection.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />

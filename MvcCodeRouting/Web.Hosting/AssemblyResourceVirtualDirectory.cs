@@ -25,7 +25,7 @@ namespace MvcCodeRouting.Web.Hosting {
    class AssemblyResourceVirtualDirectory : VirtualDirectory {
 
       readonly VirtualDirectory prevDirectory;
-      readonly AssemblyResources assemblyData;
+      readonly AssemblyResources assemblyResources;
 
       List<VirtualFile> _Files;
       List<VirtualDirectory> _Directories;
@@ -52,17 +52,17 @@ namespace MvcCodeRouting.Web.Hosting {
             if (_Files == null) {
                List<VirtualFile> prevFiles = this.prevDirectory.Files.Cast<VirtualFile>().ToList();
 
-               string[] fileResources = this.assemblyData.GetFileResources();
+               string[] fileResources = this.assemblyResources.GetFileResources();
 
                for (int i = 0; i < fileResources.Length; i++) {
 
                   string resourceName = fileResources[i];
-                  string virtualPath = VirtualPathUtility.ToAbsolute("~/" + this.assemblyData.ResourceNameToRelativeVirtualPath(resourceName));
+                  string virtualPath = VirtualPathUtility.ToAbsolute("~/" + this.assemblyResources.ResourceNameToRelativeVirtualPath(resourceName));
 
                   if (prevFiles.Exists(v => v.VirtualPath == virtualPath))
                      continue;
 
-                  prevFiles.Add(this.assemblyData.CreateVirtualFile(virtualPath, resourceName));
+                  prevFiles.Add(this.assemblyResources.CreateVirtualFile(virtualPath, resourceName));
                }
 
                _Files = prevFiles;
@@ -75,7 +75,7 @@ namespace MvcCodeRouting.Web.Hosting {
          : base(virtualPath) {
 
          this.prevDirectory = prevDirectory;
-         this.assemblyData = assemblyData;
+         this.assemblyResources = assemblyData;
       }
    }
 }

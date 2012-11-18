@@ -21,6 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\net35\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\net35\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,6 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net35\</OutputPath>
+    <IntermediateOutputPath>obj\Release\net35\</IntermediateOutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -75,7 +77,6 @@
     <Compile Include="Utilities\FormatInvariantExtensions.cs" />
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
-    <Compile Include="Web.Hosting\AssemblyResourcesCollection.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />

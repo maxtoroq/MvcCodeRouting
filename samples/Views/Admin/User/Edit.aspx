@@ -4,6 +4,6 @@
 
    <h1>Edit User <%: Model.Id %></h1>
 
-   <%: Html.ActionLink("« Back to list", "")%>
+   <a href="<%: Url.Action("") %>">« Back to list</a>
 
 </asp:Content>
