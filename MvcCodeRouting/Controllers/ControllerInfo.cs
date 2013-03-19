@@ -207,45 +207,16 @@ namespace MvcCodeRouting.Controllers {
 
       public string UrlTemplate {
          get {
-            if (_UrlTemplate == null) {
-
-               List<string> segments = new List<string>();
-               segments.AddRange(BaseRouteAndNamespaceSegments);
-
-               if (CustomRoute != null) {
-                  segments.AddRange(CustomRoute.Split('/'));
-               } else {
-
-                  if (!IsRootController)
-                     segments.Add("{controller}");
-
-                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
-               }
-
-               _UrlTemplate = String.Join("/", segments); 
-            }
+            if (_UrlTemplate == null) 
+               _UrlTemplate = BuildUrl(template: true);
             return _UrlTemplate;
          }
       }
 
       public string ControllerUrl {
          get {
-            if (_ControllerUrl == null) {
-               List<string> segments = new List<string>();
-               segments.AddRange(BaseRouteAndNamespaceSegments);
-
-               if (CustomRoute != null) {
-                  segments.AddRange(CustomRoute.Split('/'));
-               } else {
-
-                  if (!IsRootController)
-                     segments.Add(ControllerSegment);
-
-                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
-               }
-
-               _ControllerUrl = String.Join("/", segments);
-            }
+            if (_ControllerUrl == null)
+               _ControllerUrl = BuildUrl(template: false);
             return _ControllerUrl;
          }
       }
@@ -281,8 +252,51 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
+      public bool CustomRouteIsAbsolute {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
+         }
+      }
+
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
+      }
+
+      string BuildUrl(bool template) {
+
+         string custRoute = this.CustomRoute;
+
+         var segments = new List<string>();
+         segments.AddRange(this.BaseRouteAndNamespaceSegments);
+
+         if (custRoute != null) {
+
+            if (this.CustomRouteIsAbsolute) {
+
+               segments.Clear();
+
+               if (this.Register.BaseRoute != null)
+                  segments.AddRange(this.Register.BaseRoute.Split('/'));
+
+               custRoute = custRoute.Substring(2);
+            }
+
+            segments.AddRange(custRoute.Split('/'));
+
+         } else {
+
+            if (!this.IsRootController)
+               segments.Add(template ? "{controller}" : this.ControllerSegment);
+
+            segments.AddRange(this.RouteProperties.Select(p => p.RouteSegment));
+         }
+
+         string url = String.Join("/", segments);
+
+         return url;
       }
 
       void CheckOverloads(IEnumerable<ActionInfo> actions) {

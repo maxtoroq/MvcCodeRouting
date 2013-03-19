@@ -243,7 +243,7 @@ namespace MvcCodeRouting.Web {
          
          if (actionCustomRoute != null) {
 
-            if (actionCustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase)) {
+            if (first.CustomRouteIsAbsolute) {
                actionCustomRoute = actionCustomRoute.Substring(2);
 
                segments.Clear();

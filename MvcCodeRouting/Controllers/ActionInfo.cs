@@ -161,6 +161,15 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
+      public bool CustomRouteIsAbsolute {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
+         }
+      }
+
       public bool HasActionOverloadDisambiguationAttribute {
          get { return IsDefined(Controller.Provider.ActionOverloadDisambiguationAttributeType, inherit: true); }
       }
