@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Routing\ActionNameBehavior.cs" />
     <Compile Include="Routing\ControllerReflectionBehavior.cs" />
+    <Compile Include="Routing\CustomRouteBehavior.cs" />
     <Compile Include="Routing\OverloadedActionBehavior.cs" />
     <Compile Include="SettingsBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="Routing\DefaultControllerBehavior.cs" />
     <Compile Include="Routing\RootControllerBehavior.cs" />
     <Compile Include="Routing\RouteFormattingBehavior.cs" />
-    <Compile Include="Routing\CustomRouteGroupingBehavior.cs" />
     <Compile Include="Routing\RoutingFacts.cs" />
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
