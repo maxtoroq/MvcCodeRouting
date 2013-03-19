@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
@@ -180,21 +179,9 @@ namespace MvcCodeRouting {
             this.DefaultConstraints.Add(type, @"0|[1-9]\d*");
       }
 
-      internal string FormatRouteSegment(RouteFormatterArgs args, bool caseOnly) {
+      internal string FormatRouteSegment(RouteFormatterArgs args) {
 
          string formattedSegment = this.RouteFormatter(args);
-
-         if (caseOnly && !String.Equals(args.OriginalSegment, formattedSegment, StringComparison.OrdinalIgnoreCase)) { 
-            
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture, 
-                  "Only case formatting is currently supported for {0} route segments (Original segment: '{1}', formatted segment: '{2}').",
-                  args.SegmentType,
-                  args.OriginalSegment,
-                  formattedSegment
-               )
-            );
-         }
 
          return formattedSegment;
       }

@@ -81,7 +81,7 @@ namespace MvcCodeRouting.Controllers {
       public string ControllerSegment {
          get {
             if (_ControllerSegment == null) 
-               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: false);
+               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type));
             return _ControllerSegment;
          }
       }
@@ -129,7 +129,7 @@ namespace MvcCodeRouting.Controllers {
                var namespaceSegments = new List<string>();
 
                namespaceSegments.AddRange(
-                  CodeRoutingNamespace.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type), caseOnly: false))
+                  CodeRoutingNamespace.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type)))
                );
 
                _NamespaceSegments = new ReadOnlyCollection<string>(namespaceSegments);

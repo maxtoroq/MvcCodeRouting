@@ -49,7 +49,7 @@ namespace MvcCodeRouting.Controllers {
       public string ActionSegment {
          get {
             if (_ActionSegment == null) 
-               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: false);
+               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type));
             return _ActionSegment;
          }
       }
