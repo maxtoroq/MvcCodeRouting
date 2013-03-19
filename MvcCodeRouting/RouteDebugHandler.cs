@@ -421,11 +421,18 @@ namespace MvcCodeRouting {
       void RenderTopComments(string lineCommentChars) { 
 
          Assembly thisAssembly = Assembly.GetExecutingAssembly();
-         AssemblyName name = thisAssembly.GetName();
+         AssemblyName assemName = thisAssembly.GetName();
+
+         string name = assemName.Name;
+         string version = thisAssembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true)
+            .Cast<AssemblyFileVersionAttribute>()
+            .Select(attr => attr.Version)
+            .FirstOrDefault() 
+            ?? assemName.Version.ToString();
 
          writer.Write("<span class='comment'>");
          writer.Write(lineCommentChars);
-         writer.Write(" {0} v{1}", name.Name, name.Version);
+         writer.Write(" {0} v{1}", name, version);
          writer.WriteLine();
          writer.Write(lineCommentChars);
          writer.Write(" <a href='http://mvccoderouting.codeplex.com/'>http://mvccoderouting.codeplex.com/</a>");
