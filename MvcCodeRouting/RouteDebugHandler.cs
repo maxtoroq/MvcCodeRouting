@@ -128,14 +128,14 @@ namespace MvcCodeRouting {
       }
 
       void RenderIgnoreRouteCSharp(Route route) {
-         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>);", route.Url);
+         writer.Write("routes.IgnoreRoute(<span class='string url'>\"{0}\"</span>);", route.Url);
       }
 
       void RenderMapRouteCSharp(Route route, bool httpRoute = false) {
 
          writer.Write("routes.");
          writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
-         writer.Write("(<span class='keyword'>null</span>, <span class='string'>\"{0}\"</span>", route.Url);
+         writer.Write("(<span class='keyword'>null</span>, <span class='string url'>\"{0}\"</span>", route.Url);
 
          int i = 0;
 
@@ -294,14 +294,14 @@ namespace MvcCodeRouting {
       }
 
       void RenderIgnoreRouteVB(Route route) {
-         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>)", route.Url);
+         writer.Write("routes.IgnoreRoute(<span class='string url'>\"{0}\"</span>)", route.Url);
       }
 
       void RenderMapRouteVB(Route route, bool httpRoute = false) {
 
          writer.Write("routes.");
          writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
-         writer.Write("(<span class='keyword'>Nothing</span>, <span class='string'>\"{0}\"</span>", route.Url);
+         writer.Write("(<span class='keyword'>Nothing</span>, <span class='string url'>\"{0}\"</span>", route.Url);
 
          int i = 0;
 
@@ -456,6 +456,7 @@ namespace MvcCodeRouting {
          writer.WriteLine(".keyword { color: #0026fd; }");
          writer.WriteLine(".type { color: #2b91af; }");
          writer.WriteLine("a.self { font-weight: bold; }");
+         writer.WriteLine(".url { background-color: #ecf2f5; font-weight: bold; }");
          writer.Write("</style>");
          writer.Write("</head>");
       }
