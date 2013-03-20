@@ -8,7 +8,6 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dependencies;
 using System.Web.Http.Hosting;
-using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MvcCodeRouting.Web.Http.Tests.Routing {
@@ -16,16 +15,23 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
    [TestClass]
    public class FromRouteAttributeBehavior {
 
+      readonly HttpConfiguration config;
+      readonly HttpRouteCollection routes;
+      readonly CodeRoutingSettings settings;
+
+      public FromRouteAttributeBehavior() {
+
+         config = new HttpConfiguration();
+         routes = config.Routes;
+
+         settings = new CodeRoutingSettings();
+         settings.HttpConfiguration(config);
+      }
+
       [TestMethod]
       public void UseCustomName() {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
-
-         var config = new HttpConfiguration();
-         var routes = config.Routes;
-
-         var settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
 
          routes.MapCodeRoutes(controller, settings);
 
@@ -36,12 +42,6 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       public void BindCustomName() {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
-
-         var config = new HttpConfiguration();
-         var routes = config.Routes;
-         
-         var settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
 
          routes.MapCodeRoutes(controller, settings);
          

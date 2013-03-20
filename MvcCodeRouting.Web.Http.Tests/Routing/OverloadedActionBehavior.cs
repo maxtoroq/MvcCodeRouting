@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web.Mvc;
-using System.Web.Routing;
+using System.Web.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MvcCodeRouting.Web.Http.Tests.Routing {
@@ -11,13 +10,17 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
    [TestClass]
    public class OverloadedActionBehavior {
 
-      readonly RouteCollection routes;
-      readonly UrlHelper Url;
+      readonly HttpConfiguration config;
+      readonly HttpRouteCollection routes;
+      readonly CodeRoutingSettings settings;
 
       public OverloadedActionBehavior() {
 
-         routes = TestUtil.GetRouteCollection();
-         Url = TestUtil.CreateUrlHelper(routes);
+         config = new HttpConfiguration();
+         routes = config.Routes;
+
+         settings = new CodeRoutingSettings();
+         settings.HttpConfiguration(config);
       }
 
       [TestMethod]
@@ -35,7 +38,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.OverloadedAction {
 
    public class OverloadedActionController : System.Web.Http.ApiController {
 
-      public void Foo([Web.Http.FromRoute]int a) { }
-      public void Foo([Web.Http.FromRoute]int a, [Web.Http.FromRoute]int b) { }
+      public void Foo([FromRoute]int a) { }
+      public void Foo([FromRoute]int a, [FromRoute]int b) { }
    }
 }
