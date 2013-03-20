@@ -60,6 +60,11 @@ namespace MvcCodeRouting {
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
       public bool CatchAll { get; set; }
 
+      /// <summary>
+      /// Gets or sets the type of the binder.
+      /// </summary>
+      public Type BinderType { get; set; }
+
       string IFromRouteAttribute.Name {
          get { return TokenName; }
       }
@@ -116,9 +121,24 @@ namespace MvcCodeRouting {
             bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
          }
 
-         IModelBinder binder = ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
+         IModelBinder binder = GetRealBinder(bindingContext);
 
          return binder.BindModel(controllerContext, bindingContext);
+      }
+
+      IModelBinder GetRealBinder(ModelBindingContext bindingContext) {
+
+         if (this.BinderType != null) {
+
+            try {
+               return (IModelBinder)Activator.CreateInstance(this.BinderType);
+
+            } catch (Exception ex) {
+               throw new InvalidOperationException("An error occurred when trying to create the IModelBinder '{0}'. Make sure that the binder has a public parameterless constructor.".FormatInvariant(this.BinderType.FullName), ex);
+            }
+         }
+
+         return ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
       }
    }
 }
