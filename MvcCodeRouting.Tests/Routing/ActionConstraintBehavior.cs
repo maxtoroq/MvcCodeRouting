@@ -13,8 +13,8 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class ActionConstraintBehavior {
 
-      static RouteCollection routes;
-      static UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public ActionConstraintBehavior() {
 

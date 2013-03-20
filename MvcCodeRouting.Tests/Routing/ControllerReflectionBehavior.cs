@@ -11,8 +11,8 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class ControllerReflectionBehavior {
 
-      static RouteCollection routes;
-      static UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public ControllerReflectionBehavior() {
 

@@ -11,8 +11,8 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
    [TestClass]
    public class OverloadedActionBehavior {
 
-      static RouteCollection routes;
-      static UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public OverloadedActionBehavior() {
 
