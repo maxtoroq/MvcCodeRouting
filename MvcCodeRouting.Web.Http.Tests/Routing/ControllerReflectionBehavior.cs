@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
    [TestClass]
    public class ControllerReflectionBehavior {
@@ -33,21 +33,21 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.ControllerReflection {
+namespace MvcCodeRouting.Web.Http.Tests.Routing.ControllerReflection {
 
-   public class ControllerReflection1Controller : Controller {
+   public class ControllerReflection1Controller : System.Web.Http.ApiController {
 
       public static void StaticMethod() { }
-      
+
       public void TypeParameter<T>() { }
-      
+
       public void OutParameter(out string s) {
          throw new InvalidOperationException();
       }
 
       public void RefParameter(ref string s) { }
 
-      [NonAction]
+      [System.Web.Http.NonAction]
       public void NonAction() { }
    }
 }

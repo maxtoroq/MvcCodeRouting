@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Http.Tests.Routing {
    
    [TestClass]
    public class OverloadedActionBehavior {
@@ -21,8 +21,7 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
-      [ExpectedException(typeof(InvalidOperationException))]
-      public void RequireActionDisambiguatorInMvc() {
+      public void DontRequireActionDisambiguator() {
 
          var controller = typeof(OverloadedAction.OverloadedActionController);
 
@@ -32,11 +31,11 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
+namespace MvcCodeRouting.Web.Http.Tests.Routing.OverloadedAction {
 
-   public class OverloadedActionController : Controller {
+   public class OverloadedActionController : System.Web.Http.ApiController {
 
-      public void Foo([FromRoute]int a) { }
-      public void Foo([FromRoute]int a, [FromRoute]int b) { }
+      public void Foo([Web.Http.FromRoute]int a) { }
+      public void Foo([Web.Http.FromRoute]int a, [Web.Http.FromRoute]int b) { }
    }
 }

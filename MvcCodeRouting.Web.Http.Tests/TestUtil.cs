@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 
-namespace MvcCodeRouting.Tests {
+namespace MvcCodeRouting.Web.Http.Tests {
    
    static class TestUtil {
 
@@ -25,6 +25,9 @@ namespace MvcCodeRouting.Tests {
       }
 
       public static RouteCollection GetRouteCollection() {
+
+         Web.Http.WebHost.PreApplicationStartCode.Start();
+
          return new RouteCollection();
       }
 
@@ -60,6 +63,33 @@ namespace MvcCodeRouting.Tests {
 
       public string Action(string action, Type controller, object routeValues) {
          return base.Action(action, TestUtil.GetControllerName(controller), routeValues);
+      }
+
+      public string HttpRouteUrl(string routeName, Type controller, object routeValues = null) {
+
+         var values = new RouteValueDictionary(routeValues);
+         values["controller"] = TestUtil.GetControllerName(controller);
+
+         return HttpRouteUrl(routeName, values);
+      }
+
+      public string HttpRouteUrl(string routeName, object routeValues) {
+         return HttpRouteUrl(routeName, new RouteValueDictionary(routeValues));
+      }
+
+      public string HttpRouteUrl(string routeName, RouteValueDictionary routeValues) {
+         
+         if (routeValues == null) {
+            routeValues = new RouteValueDictionary();
+            routeValues.Add("httproute", true);
+         } else {
+            routeValues = new RouteValueDictionary(routeValues);
+            if (!routeValues.ContainsKey("httproute")) {
+               routeValues.Add("httproute", true);
+            }
+         }
+
+         return base.RouteUrl(routeName, routeValues);
       }
    }
 }
