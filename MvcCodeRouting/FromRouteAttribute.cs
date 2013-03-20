@@ -31,6 +31,8 @@ namespace MvcCodeRouting {
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 
+      // TODO: Rename TokenName to Name, to align with Web Api (Breaking Change)
+
       string _TokenName;
 
       /// <summary>
@@ -57,6 +59,10 @@ namespace MvcCodeRouting {
       /// </summary>
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
       public bool CatchAll { get; set; }
+
+      string IFromRouteAttribute.Name {
+         get { return TokenName; }
+      }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.

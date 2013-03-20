@@ -35,21 +35,6 @@ namespace MvcCodeRouting.Web.Http {
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : ModelBinderAttribute, IFromRouteAttribute {
 
-      string _TokenName;
-
-      /// <summary>
-      /// The token name. The default name used is the parameter or property name.
-      /// </summary>
-      public string TokenName {
-         get { return _TokenName; }
-         private set {
-            if (value != null && value.Length == 0)
-               throw new ArgumentException("value cannot be empty.", "value");
-
-            _TokenName = value;
-         }
-      }
-
       /// <summary>
       /// A regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
@@ -69,11 +54,11 @@ namespace MvcCodeRouting.Web.Http {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
-      /// using the specified token name.
+      /// using the specified parameter name.
       /// </summary>
-      /// <param name="tokenName">The token name.</param>
-      public FromRouteAttribute(string tokenName) {
-         this.TokenName = tokenName;
+      /// <param name="name">The parameter name.</param>
+      public FromRouteAttribute(string name) {
+         this.Name = name;
       }
 
       public override IEnumerable<ValueProviderFactory> GetValueProviderFactories(HttpConfiguration configuration) {

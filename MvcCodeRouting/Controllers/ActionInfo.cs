@@ -198,8 +198,8 @@ namespace MvcCodeRouting.Controllers {
 
             isCatchAll = routeAttr.CatchAll;
 
-            if (routeAttr.TokenName != null)
-               tokenName = routeAttr.TokenName;
+            if (routeAttr.Name != null)
+               tokenName = routeAttr.Name;
          }
 
          return new RouteParameter(tokenName, constraint, isOptional, isCatchAll);

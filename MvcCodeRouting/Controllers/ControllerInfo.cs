@@ -394,7 +394,7 @@ namespace MvcCodeRouting.Controllers {
             .Cast<IFromRouteAttribute>()
             .Single();
 
-         string name = routeAttr.TokenName ?? property.Name;
+         string name = routeAttr.Name ?? property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
          return new RouteParameter(name, constraint);
