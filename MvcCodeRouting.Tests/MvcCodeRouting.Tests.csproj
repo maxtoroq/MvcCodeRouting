@@ -57,6 +57,7 @@
     <Compile Include="Routing\ControllerReflectionBehavior.cs" />
     <Compile Include="Routing\CustomRouteBehavior.cs" />
     <Compile Include="Routing\OverloadedActionBehavior.cs" />
+    <Compile Include="Routing\FromRouteAttributeBehavior.cs" />
     <Compile Include="SettingsBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routing\ActionConstraintBehavior.cs" />
