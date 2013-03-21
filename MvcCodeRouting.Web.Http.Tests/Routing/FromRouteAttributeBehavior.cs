@@ -33,7 +33,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
 
-         routes.MapCodeRoutes(controller, settings);
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
 
          Assert.IsNotNull(routes.First().RouteTemplate.Contains("{b}"));
       }
@@ -43,7 +43,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
 
-         routes.MapCodeRoutes(controller, settings);
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
          
          var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/hello");
          var routeData = routes.GetRouteData(request);
@@ -60,6 +60,14 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          Assert.IsTrue(result.TryGetContentValue(out value) && value == "hello");
       }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void FailIfUsingWrongAttribute() {
+
+         var controller = typeof(FromRouteAttr.FromRouteAttribute2Controller);
+
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+      }
    }
 }
 
@@ -70,5 +78,10 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
       public string Get([FromRoute("b")]string a) {
          return a;
       }
+   }
+
+   public class FromRouteAttribute2Controller : ApiController {
+
+      public void Get([MvcCodeRouting.FromRoute]string foo) { }
    }
 }
