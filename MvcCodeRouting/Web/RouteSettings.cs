@@ -19,7 +19,7 @@ using System.Text;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web {
+namespace MvcCodeRouting {
    
    class RouteSettings {
 
