@@ -34,7 +34,7 @@ namespace MvcCodeRouting.Tests.Routing {
          httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
          Assert.AreEqual("Index", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
-         Assert.AreEqual("/", Url.Action("", controller));
+         Assert.AreEqual("/", Url.Action("Index", controller));
 
          controller = typeof(DefaultAction.DefaultAction5Controller);
 
@@ -96,6 +96,69 @@ namespace MvcCodeRouting.Tests.Routing {
 
          Assert.AreEqual("/", Url.Action("", controller));
       }
+
+      [TestMethod]
+      public void CanUseCustomDefault() {
+
+         var controller = typeof(DefaultAction.DefaultAction6Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.AreEqual("Foo", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
+         Assert.AreEqual("/", Url.Action("Foo", controller));
+      }
+
+      [TestMethod]
+      public void CanInheritCustomDefault() {
+
+         var controller = typeof(DefaultAction.DefaultAction7Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.AreEqual("Foo", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
+         Assert.AreEqual("/", Url.Action("Foo", controller));
+      }
+
+      [TestMethod]
+      public void CanOverrideInheritedDefault() {
+
+         var controller = typeof(DefaultAction.DefaultAction8Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.AreEqual("Bar", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
+         Assert.AreEqual("/", Url.Action("Bar", controller));
+      }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void CustomDefaultCannotHaveRequiredRouteParameters() {
+
+         var controller = typeof(DefaultAction.DefaultAction9Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+      }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void CustomMustBeSpecifiedOncePerDeclaringType() {
+
+         var controller = typeof(DefaultAction.DefaultAction10Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+      }
    }
 }
 
@@ -126,5 +189,55 @@ namespace MvcCodeRouting.Tests.Routing.DefaultAction {
 
       [CustomRoute("{action}")]
       public void Foo() { }
+   }
+
+   public class DefaultAction6Controller : Controller {
+
+      public void Index() { }
+
+      [DefaultAction]
+      public void Foo() { }
+   }
+
+   public abstract class DefaultAction7BaseController : Controller {
+
+      public void Index() { }
+
+      [DefaultAction]
+      public void Foo() { }
+   }
+
+   public class DefaultAction7Controller : DefaultAction7BaseController {
+
+      public void Bar() { }
+   }
+
+   public abstract class DefaultAction8BaseController : Controller {
+
+      public void Index() { }
+
+      [DefaultAction]
+      public void Foo() { }
+   }
+
+   public class DefaultAction8Controller : DefaultAction8BaseController {
+
+      [DefaultAction]
+      public void Bar() { }
+   }
+
+   public class DefaultAction9Controller : Controller {
+
+      [DefaultAction]
+      public void Bar([FromRoute]string a) { }
+   }
+
+   public class DefaultAction10Controller : Controller {
+
+      [DefaultAction]
+      public void Foo() { }
+
+      [DefaultAction]
+      public void Bar() { }
    }
 }

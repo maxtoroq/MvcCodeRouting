@@ -65,6 +65,7 @@
     <Compile Include="Controllers\RouteParameterCollection.cs" />
     <Compile Include="CustomRouteAttribute.cs" />
     <Compile Include="DataTokenKeys.cs" />
+    <Compile Include="DefaultActionAttribute.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="ICodeRoute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

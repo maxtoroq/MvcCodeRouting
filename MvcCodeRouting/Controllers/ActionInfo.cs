@@ -90,12 +90,7 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
-      public bool IsDefaultAction {
-         get {
-            return NameEquals(Name, "Index")
-               && (RouteParameters.Count == 0 || RouteParameters.All(p => p.IsOptional));
-         }
-      }
+      public bool IsDefaultAction { get; internal set; }
 
       public string ActionUrl {
          get {

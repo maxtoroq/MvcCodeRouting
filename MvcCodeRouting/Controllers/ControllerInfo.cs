@@ -189,16 +189,20 @@ namespace MvcCodeRouting.Controllers {
       public Collection<ActionInfo> Actions {
          get {
             if (_Actions == null) {
-               _Actions = new Collection<ActionInfo>(
+
+               var actions =
                   (from a in GetActions()
                    where !IsNonAction(a)
-                   select a).ToArray()
-               );
+                   select a).ToArray();
+
+               CheckDefaultActions(actions);
 
                if (!Provider.CanDisambiguateActionOverloads)
-                  CheckOverloads(_Actions);
+                  CheckOverloads(actions);
 
-               CheckCustomRoutes(_Actions);
+               CheckCustomRoutes(actions);
+
+               _Actions = new Collection<ActionInfo>(actions);
             }
             return _Actions;
          }
@@ -370,6 +374,64 @@ namespace MvcCodeRouting.Controllers {
                )
             );
          }
+      }
+
+      void CheckDefaultActions(IEnumerable<ActionInfo> actions) { 
+         
+         // - Index is the default action by convention
+         // - You can use [DefaultAction] to override the convention
+         //   - Can only be applied to one action per controller type
+         //   - Can be inherited from base controller
+         //   - Derived controllers can override the inherited [DefaultAction] by applying it to a different action
+         // - Default action cannot have required route parameters (either no parameters or all optional)
+
+         Type attrType = typeof(DefaultActionAttribute);
+
+         Func<ActionInfo, bool> correctRouteParameterSetup = a =>
+            a.RouteParameters.Count == 0 || a.RouteParameters.All(p => p.IsOptional);
+
+         var defaultActions =
+            (from a in actions
+             where a.GetCustomAttributes(attrType, inherit: false).Any()
+             select a).ToArray();
+
+         ActionInfo defaultAction = null;
+
+         if (defaultActions.Any()) {
+
+            var byDeclaringType =
+               from a in defaultActions
+               group a by a.DeclaringType;
+
+            if (defaultActions.Length > byDeclaringType.Count())
+               throw new InvalidOperationException(
+                  "{0} can only be used once per declaring type: {1}.".FormatInvariant(attrType.FullName, byDeclaringType.First(g => g.Count() > 1).Key.FullName)
+               );
+
+            for (Type t = this.Type; t != null; t = t.BaseType) {
+
+               defaultAction = defaultActions.SingleOrDefault(a => a.DeclaringType == t);
+
+               if (defaultAction != null) {
+
+                  if (!correctRouteParameterSetup(defaultAction)) {
+                     throw new InvalidOperationException(
+                        "Default actions cannot have required route parameters: {0}.".FormatInvariant(
+                           String.Concat(defaultAction.DeclaringType.FullName, ".", defaultAction.MethodName, "(", String.Join(", ", defaultAction.Parameters.Select(p => p.Type.Name)), ")")
+                        )
+                     );
+                  }
+
+                  break;
+               }
+            }
+         }
+
+         if (defaultAction == null) 
+            defaultAction = actions.FirstOrDefault(a => ActionInfo.NameEquals(a.Name, "Index") && correctRouteParameterSetup(a));
+
+         if (defaultAction != null) 
+            defaultAction.IsDefaultAction = true;
       }
 
       protected ControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) {
