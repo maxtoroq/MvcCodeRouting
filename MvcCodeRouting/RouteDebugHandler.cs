@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,7 @@ namespace MvcCodeRouting {
    /// Serves representations of the routes in <see cref="RouteTable.Routes"/> 
    /// for visualization and debugging purposes.
    /// </summary>
+   [EditorBrowsable(EditorBrowsableState.Never)]
    public class RouteDebugHandler : IHttpHandler {
 
       string format;
@@ -115,10 +117,10 @@ namespace MvcCodeRouting {
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
             RenderIgnoreRouteCSharp(route);
 
-         } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+         } else if (IsMvcHandler(handlerType)) {
             RenderMapRouteCSharp(route);
          
-         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+         } else if (IsWebApiHandler(handlerType)) {
             RenderMapHttpRouteCSharp(route);
          
          } else {
@@ -236,10 +238,10 @@ namespace MvcCodeRouting {
          else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>@\"", val, "\"</span>");
 
-         else if (type == typeof(UrlParameter))
+         else if (IsMvcParameter(type))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
-         else if (type.FullName == "System.Web.Http.RouteParameter")
+         else if (IsWebApiParameter(type))
             stringVal = "<span class='type'>RouteParameter</span>.Optional";
 
          else if (constraint)
@@ -281,10 +283,10 @@ namespace MvcCodeRouting {
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
             RenderIgnoreRouteVB(route);
 
-         } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+         } else if (IsMvcHandler(handlerType)) {
             RenderMapRouteVB(route);
          
-         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+         } else if (IsWebApiHandler(handlerType)) {
             RenderMapHttpRouteVB(route);
 
          } else {
@@ -402,10 +404,10 @@ namespace MvcCodeRouting {
          else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>\"", val, "\"</span>");
 
-         else if (type == typeof(UrlParameter))
+         else if (IsMvcParameter(type))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
          
-         else if (type.FullName == "System.Web.Http.RouteParameter")
+         else if (IsWebApiParameter(type))
             stringVal = "<span class='type'>RouteParameter</span>.Optional";
 
          else if (constraint)
@@ -458,6 +460,31 @@ namespace MvcCodeRouting {
          writer.WriteLine(".url { background-color: #ecf2f5; font-weight: bold; }");
          writer.Write("</style>");
          writer.Write("</head>");
+      }
+
+      static bool IsMvcHandler(Type handlerType) {
+         return typeof(MvcRouteHandler).IsAssignableFrom(handlerType);
+      }
+
+      static bool IsMvcParameter(Type parameterType) {
+         return parameterType == typeof(UrlParameter);
+      }
+
+      static bool IsWebApiHandler(Type handlerType) {
+         
+         while (handlerType != null) {
+
+            if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") 
+               return true;
+            
+            handlerType = handlerType.BaseType;
+         }
+
+         return false;
+      }
+
+      static bool IsWebApiParameter(Type parameterType) {
+         return (parameterType.FullName == "System.Web.Http.RouteParameter");
       }
    }
 }
