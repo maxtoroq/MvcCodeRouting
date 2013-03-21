@@ -64,13 +64,17 @@
     <Compile Include="Controllers\RouteParameter.cs" />
     <Compile Include="Controllers\RouteParameterCollection.cs" />
     <Compile Include="CustomRouteAttribute.cs" />
+    <Compile Include="DataTokenKeys.cs" />
     <Compile Include="FromRouteAttribute.cs" />
+    <Compile Include="ICodeRoute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterSettings.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
     <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="RouteFactory.cs" />
     <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="RouteSegmentType.cs" />
+    <Compile Include="RouteSettings.cs" />
     <Compile Include="Utilities\FormatInvariantExtensions.cs" />
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
@@ -92,10 +96,6 @@
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
     <Compile Include="Web\CodeRoute.cs" />
-    <Compile Include="Web\DataTokenKeys.cs" />
-    <Compile Include="Web\ICodeRoute.cs" />
-    <Compile Include="Web\RouteFactory.cs" />
-    <Compile Include="Web\RouteSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
