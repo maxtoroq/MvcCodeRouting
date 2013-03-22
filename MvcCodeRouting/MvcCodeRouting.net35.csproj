@@ -67,7 +67,6 @@
     <Compile Include="Controllers\RouteParameterCollection.cs" />
     <Compile Include="CustomRouteAttribute.cs" />
     <Compile Include="DataTokenKeys.cs" />
-    <Compile Include="DefaultActionAttribute.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="ICodeRoute.cs" />
     <Compile Include="NET40.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
     <Compile Include="Web.Mvc\CodeRoutingExtensions.cs" />
     <Compile Include="Web.Mvc\CustomRouteAttribute.cs" />
+    <Compile Include="Web.Mvc\DefaultActionAttribute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcAsyncActionInfo.cs" />
