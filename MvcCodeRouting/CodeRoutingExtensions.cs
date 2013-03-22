@@ -129,7 +129,7 @@ namespace MvcCodeRouting {
       /// <param name="controller">The controller to bind.</param>
       /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
       public static void BindRouteProperties(this ControllerBase controller) {
-         Web.Mvc.CodeRoutingExtensions.BindRouteProperties(controller);
+         Web.Mvc.CodeRoutingMvcExtensions.BindRouteProperties(controller);
       }
    }
 }

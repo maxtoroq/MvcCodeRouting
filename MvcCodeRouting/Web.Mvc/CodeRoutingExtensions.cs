@@ -28,7 +28,7 @@ namespace MvcCodeRouting.Web.Mvc {
    /// <summary>
    /// Extension methods for reflection-based route creation and related functionality.
    /// </summary>
-   public static class CodeRoutingExtensions {
+   public static class CodeRoutingMvcExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
 
@@ -116,7 +116,7 @@ namespace MvcCodeRouting.Web.Mvc {
 
             var properties =
                (from p in type.GetProperties()
-                let attr = p.GetCustomAttributes(typeof(IFromRouteAttribute), inherit: true)
+                let attr = p.GetCustomAttributes(typeof(MvcCodeRouting.FromRouteAttribute), inherit: true)
                   .Cast<IFromRouteAttribute>()
                   .SingleOrDefault()
                 where attr != null
