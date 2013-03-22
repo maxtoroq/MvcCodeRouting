@@ -86,10 +86,13 @@
     <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
+    <Compile Include="Web.Mvc\CodeRoutingExtensions.cs" />
+    <Compile Include="Web.Mvc\CustomRouteAttribute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\FromRouteAttribute.cs" />
     <Compile Include="Web.Mvc\MvcActionInfo.cs" />
     <Compile Include="Web.Mvc\MvcCodeRoutingProvider.cs" />
     <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Web.Mvc\ReflectedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\RequireRouteParametersAttribute.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
     <Compile Include="Web\CodeRoute.cs" />
   </ItemGroup>

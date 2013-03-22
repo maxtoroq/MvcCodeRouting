@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2013 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,24 +13,15 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web.Mvc {
    
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-   public class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
-
-      /// <summary>
-      /// The URL pattern.
-      /// </summary>
-      public string Url { get; private set; }
+   public sealed class CustomRouteAttribute : MvcCodeRouting.CustomRouteAttribute {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
@@ -40,13 +31,7 @@ namespace MvcCodeRouting {
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
       /// on the action method parameters.
       /// </param>
-      public CustomRouteAttribute(string url) {
-
-         if (!String.IsNullOrEmpty(url)
-            && url[0] == '/')
-            throw new ArgumentException("Custom route cannot start with '/'.", "url");
-
-         this.Url = url;
-      }
+      public CustomRouteAttribute(string url) 
+         : base(url) { }
    }
 }

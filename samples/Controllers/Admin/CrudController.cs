@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using MvcCodeRouting;
+using MvcCodeRouting.Web.Mvc;
 
 namespace Samples.Controllers.Admin {
 

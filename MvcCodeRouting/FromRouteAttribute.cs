@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
    /// after the {controller} token.
    /// </summary>
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
-   public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
+   public class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 
       // TODO: Rename TokenName to Name, to align with Web Api (Breaking Change)
 

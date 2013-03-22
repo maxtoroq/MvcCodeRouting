@@ -29,7 +29,7 @@ namespace MvcCodeRouting {
    /// to help the ASP.NET MVC runtime disambiguate and choose the appropriate overload.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method)]
-   public sealed class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
+   public class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
 
       static readonly ConcurrentDictionary<MethodInfo, string[]> actionDataCache = new ConcurrentDictionary<MethodInfo, string[]>();
 
