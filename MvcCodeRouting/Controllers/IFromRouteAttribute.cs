@@ -24,5 +24,6 @@ namespace MvcCodeRouting.Controllers {
       string Name { get; }
       string Constraint { get; set; }
       bool CatchAll { get; set; }
+      Type BinderType { get; set; }
    }
 }

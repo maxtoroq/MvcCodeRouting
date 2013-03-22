@@ -228,7 +228,7 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(Provider.CustomRouteAttributeType, inherit: true)
+               ICustomRouteAttribute attr = GetCustomAttributes(Provider.CustomRouteAttributeType, inherit: true)
                   .Cast<ICustomRouteAttribute>()
                   .SingleOrDefault();
 
@@ -451,7 +451,7 @@ namespace MvcCodeRouting.Controllers {
 
          Type propertyType = property.PropertyType;
 
-         var routeAttr = property.GetCustomAttributes(Provider.FromRouteAttributeType, inherit: true)
+         IFromRouteAttribute routeAttr = property.GetCustomAttributes(this.Provider.FromRouteAttributeType, inherit: true)
             .Cast<IFromRouteAttribute>()
             .Single();
 

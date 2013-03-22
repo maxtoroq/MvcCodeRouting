@@ -31,7 +31,8 @@ namespace MvcCodeRouting.Controllers {
 
       public bool IsNullableValueType { 
          get {
-            return Type.IsGenericType && Type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return Type.IsGenericType 
+               && Type.GetGenericTypeDefinition() == typeof(Nullable<>);
          }
       }
 
@@ -40,21 +41,21 @@ namespace MvcCodeRouting.Controllers {
             if (!_FromRouteAttributeInit) {
 
                Type attrType = Action.Controller.Provider.FromRouteAttributeType;
-
-               _FromRouteAttribute = GetCustomAttributes(attrType, inherit: true)
+               
+               IFromRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
                   .Cast<IFromRouteAttribute>()
                   .SingleOrDefault();
 
                Type mistakenAttr;
 
-               if (_FromRouteAttribute == null
+               if (attr == null
                   && attrType != (mistakenAttr = typeof(FromRouteAttribute))) {
 
-                  _FromRouteAttribute = GetCustomAttributes(mistakenAttr, inherit: true)
+                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
                      .Cast<IFromRouteAttribute>()
                      .SingleOrDefault();
 
-                  if (_FromRouteAttribute != null) {
+                  if (attr != null) {
                      throw new InvalidOperationException(
                         String.Format(CultureInfo.InvariantCulture,
                            "Must use {0} instead of {1} (parameter {2} on {3}).",
@@ -67,6 +68,7 @@ namespace MvcCodeRouting.Controllers {
                   }
                }
 
+               _FromRouteAttribute = attr;
                _FromRouteAttributeInit = true;
             }
             return _FromRouteAttribute;
