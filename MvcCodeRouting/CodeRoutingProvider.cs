@@ -26,10 +26,13 @@ namespace MvcCodeRouting {
       static readonly object staticLock = new object();
 
       public abstract RouteFactory RouteFactory { get; }
-      public abstract bool CanDisambiguateActionOverloads { get; }
+      
       public abstract Type FromRouteAttributeType { get; }
       public abstract Type CustomRouteAttributeType { get; }
-      
+      public abstract Type DefaultActionAttributeType { get; }
+
+      public abstract bool CanDisambiguateActionOverloads { get; }
+
       public virtual Type ActionOverloadDisambiguationAttributeType {
          get { return null; }
       }

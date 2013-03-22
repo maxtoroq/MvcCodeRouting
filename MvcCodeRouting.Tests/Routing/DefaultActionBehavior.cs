@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using MvcCodeRouting.Web.Mvc;
 
 namespace MvcCodeRouting.Tests.Routing {
 

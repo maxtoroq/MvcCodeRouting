@@ -385,46 +385,50 @@ namespace MvcCodeRouting.Controllers {
          //   - Derived controllers can override the inherited [DefaultAction] by applying it to a different action
          // - Default action cannot have required route parameters (either no parameters or all optional)
 
-         Type attrType = typeof(DefaultActionAttribute);
-
          Func<ActionInfo, bool> correctRouteParameterSetup = a =>
             a.RouteParameters.Count == 0 || a.RouteParameters.All(p => p.IsOptional);
 
-         var defaultActions =
-            (from a in actions
-             where a.GetCustomAttributes(attrType, inherit: false).Any()
-             select a).ToArray();
-
          ActionInfo defaultAction = null;
 
-         if (defaultActions.Any()) {
+         Type attrType = this.Provider.DefaultActionAttributeType;
 
-            var byDeclaringType =
-               from a in defaultActions
-               group a by a.DeclaringType;
+         if (attrType != null) {
 
-            if (defaultActions.Length > byDeclaringType.Count())
-               throw new InvalidOperationException(
-                  "{0} can only be used once per declaring type: {1}.".FormatInvariant(attrType.FullName, byDeclaringType.First(g => g.Count() > 1).Key.FullName)
-               );
+            var defaultActions =
+               (from a in actions
+                where a.GetCustomAttributes(attrType, inherit: false).Any()
+                select a).ToArray();
 
-            for (Type t = this.Type; t != null; t = t.BaseType) {
+            if (defaultActions.Any()) {
 
-               defaultAction = defaultActions.SingleOrDefault(a => a.DeclaringType == t);
+               var byDeclaringType =
+                  from a in defaultActions
+                  group a by a.DeclaringType;
 
-               if (defaultAction != null) {
-
-                  if (!correctRouteParameterSetup(defaultAction)) {
-                     throw new InvalidOperationException(
-                        "Default actions cannot have required route parameters: {0}.".FormatInvariant(
-                           String.Concat(defaultAction.DeclaringType.FullName, ".", defaultAction.MethodName, "(", String.Join(", ", defaultAction.Parameters.Select(p => p.Type.Name)), ")")
-                        )
-                     );
-                  }
-
-                  break;
+               if (defaultActions.Length > byDeclaringType.Count()) {
+                  throw new InvalidOperationException(
+                     "{0} can only be used once per declaring type: {1}.".FormatInvariant(attrType.FullName, byDeclaringType.First(g => g.Count() > 1).Key.FullName)
+                  );
                }
-            }
+
+               for (Type t = this.Type; t != null; t = t.BaseType) {
+
+                  defaultAction = defaultActions.SingleOrDefault(a => a.DeclaringType == t);
+
+                  if (defaultAction != null) {
+
+                     if (!correctRouteParameterSetup(defaultAction)) {
+                        throw new InvalidOperationException(
+                           "Default actions cannot have required route parameters: {0}.".FormatInvariant(
+                              String.Concat(defaultAction.DeclaringType.FullName, ".", defaultAction.MethodName, "(", String.Join(", ", defaultAction.Parameters.Select(p => p.Type.Name)), ")")
+                           )
+                        );
+                     }
+
+                     break;
+                  }
+               }
+            } 
          }
 
          if (defaultAction == null) 
