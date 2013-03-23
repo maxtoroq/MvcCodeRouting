@@ -164,6 +164,8 @@ namespace MvcCodeRouting.Tests.Routing {
 }
 
 namespace MvcCodeRouting.Tests.Routing.DefaultAction {
+   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
+   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
 
    public class DefaultAction1Controller : Controller {
       public void Index() { }

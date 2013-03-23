@@ -16,11 +16,16 @@ using System;
 using System.Web.Mvc;
 
 namespace MvcCodeRouting.Web.Mvc {
-   
+
+#pragma warning disable 0618
+
    /// <summary>
    /// An <see cref="ActionMethodSelectorAttribute"/> for overloaded action methods, used 
    /// to help the ASP.NET MVC runtime disambiguate and choose the appropriate overload.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method)]
    public sealed class RequireRouteParametersAttribute : MvcCodeRouting.RequireRouteParametersAttribute { }
+
+#pragma warning restore 0618
+
 }

@@ -47,6 +47,7 @@ namespace MvcCodeRouting.Tests.Routing {
 }
 
 namespace MvcCodeRouting.Tests.Routing.CatchAll {
+   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
 
    public class CatchAllParameter1Controller : Controller {
       public void Foo([FromRoute(CatchAll = true)]string a) { }

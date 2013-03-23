@@ -114,6 +114,8 @@ namespace MvcCodeRouting.Web.Mvc {
             
             this.Metadata = metadataProvider.GetMetadataForType(null, type);
 
+#pragma warning disable 0618
+
             var properties =
                (from p in type.GetProperties()
                 let attr = p.GetCustomAttributes(typeof(MvcCodeRouting.FromRouteAttribute), inherit: true)
@@ -127,6 +129,8 @@ namespace MvcCodeRouting.Web.Mvc {
                          attr.Name
                          : null
                 }).ToArray();
+
+#pragma warning restore 0618
 
             this.Properties = properties.Select(p => p.PropertyName).ToArray();
             this.CustomTokens = properties.Select(p => p.CustomTokenName).ToArray();

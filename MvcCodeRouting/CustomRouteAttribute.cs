@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using MvcCodeRouting.Controllers;
@@ -24,6 +25,8 @@ namespace MvcCodeRouting {
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method.
    /// </summary>
+   [Obsolete("Please use MvcCodeRouting.Web.Mvc.CustomRouteAttribute instead.")]
+   [EditorBrowsable(EditorBrowsableState.Never)]
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
 

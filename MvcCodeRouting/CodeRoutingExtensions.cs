@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Web.Mvc;
 using System.Web.Routing;
 using MvcCodeRouting.Web.Hosting;
@@ -128,6 +129,8 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="controller">The controller to bind.</param>
       /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
+      [Obsolete("Please use MvcCodeRouting.Web.Mvc.CodeRoutingMvcExtensions.BindRouteProperties(ControllerBase) instead.")]
+      [EditorBrowsable(EditorBrowsableState.Never)]
       public static void BindRouteProperties(this ControllerBase controller) {
          Web.Mvc.CodeRoutingMvcExtensions.BindRouteProperties(controller);
       }

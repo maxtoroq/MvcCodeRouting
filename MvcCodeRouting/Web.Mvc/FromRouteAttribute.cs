@@ -16,7 +16,9 @@ using System;
 using System.Web.Mvc;
 
 namespace MvcCodeRouting.Web.Mvc {
-   
+
+#pragma warning disable 0618
+
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
@@ -27,6 +29,8 @@ namespace MvcCodeRouting.Web.Mvc {
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : MvcCodeRouting.FromRouteAttribute {
 
+#pragma warning restore 0618
+
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
       /// </summary>
@@ -35,10 +39,10 @@ namespace MvcCodeRouting.Web.Mvc {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
-      /// using the specified token name.
+      /// using the specified name.
       /// </summary>
-      /// <param name="tokenName">The token name.</param>
-      public FromRouteAttribute(string tokenName) 
-         : base(tokenName) { }
+      /// <param name="name">The name of the route parameter.</param>
+      public FromRouteAttribute(string name) 
+         : base(name) { }
    }
 }

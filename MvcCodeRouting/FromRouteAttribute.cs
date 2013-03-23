@@ -13,10 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Globalization;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting {
@@ -28,6 +29,8 @@ namespace MvcCodeRouting {
    /// action method parameter after the {action} token, and for each controller property
    /// after the {controller} token.
    /// </summary>
+   [Obsolete("Please use MvcCodeRouting.Web.Mvc.FromRouteAttribute instead.")]
+   [EditorBrowsable(EditorBrowsableState.Never)]
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 

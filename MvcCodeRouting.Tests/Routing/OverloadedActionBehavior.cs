@@ -33,6 +33,7 @@ namespace MvcCodeRouting.Tests.Routing {
 }
 
 namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
+   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
 
    public class OverloadedActionController : Controller {
 

@@ -15,13 +15,17 @@
 using System;
 
 namespace MvcCodeRouting.Web.Mvc {
-   
+
+#pragma warning disable 0618
+
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public sealed class CustomRouteAttribute : MvcCodeRouting.CustomRouteAttribute {
+
+#pragma warning restore 0618
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 

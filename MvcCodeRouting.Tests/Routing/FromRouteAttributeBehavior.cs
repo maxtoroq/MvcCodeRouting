@@ -94,6 +94,7 @@ namespace MvcCodeRouting.Tests.Routing {
 }
 
 namespace MvcCodeRouting.Tests.Routing.FromRouteAttr {
+   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
 
    public class FromRouteAttributeController : Controller {
 

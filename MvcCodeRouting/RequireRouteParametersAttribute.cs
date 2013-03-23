@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Web.Routing;
 using System.Collections.Concurrent;
 using MvcCodeRouting.Web;
+using System.ComponentModel;
 
 namespace MvcCodeRouting {
    
@@ -28,6 +29,8 @@ namespace MvcCodeRouting {
    /// An <see cref="ActionMethodSelectorAttribute"/> for overloaded action methods, used 
    /// to help the ASP.NET MVC runtime disambiguate and choose the appropriate overload.
    /// </summary>
+   [Obsolete("Please use MvcCodeRouting.Web.Mvc.RequireRouteParametersAttribute instead.")]
+   [EditorBrowsable(EditorBrowsableState.Never)]
    [AttributeUsage(AttributeTargets.Method)]
    public class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
 
@@ -57,12 +60,16 @@ namespace MvcCodeRouting {
             for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) 
                routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
          }
-         
+
+#pragma warning disable 0618
+
          string[] parameters = actionDataCache.GetOrAdd(methodInfo, (m) =>
             (from p in m.GetParameters()
              where p.IsDefined(typeof(MvcCodeRouting.FromRouteAttribute), inherit: true)
              select p.Name).ToArray()
          );
+
+#pragma warning restore 0618
 
          return parameters.All(p => routeValues.Keys.Contains(p, StringComparer.OrdinalIgnoreCase))
             && routeValues.Keys.All(k => parameters.Contains(k, StringComparer.OrdinalIgnoreCase));

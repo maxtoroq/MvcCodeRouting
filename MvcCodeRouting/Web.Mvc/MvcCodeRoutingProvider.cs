@@ -23,10 +23,15 @@ namespace MvcCodeRouting.Web.Mvc {
    class MvcCodeRoutingProvider : CodeRoutingProvider {
 
       readonly RouteFactory _RouteFactory = new MvcRouteFactory();
+
+#pragma warning disable 0618
+
       readonly Type _FromRouteAttributeType = typeof(MvcCodeRouting.FromRouteAttribute);
       readonly Type _CustomRouteAttributeType = typeof(MvcCodeRouting.CustomRouteAttribute);
       readonly Type _DefaultActionAttributeType = typeof(DefaultActionAttribute);
       readonly Type _ActionOverloadDisambiguationAttributeType = typeof(MvcCodeRouting.RequireRouteParametersAttribute);
+
+#pragma warning restore 0618
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }
