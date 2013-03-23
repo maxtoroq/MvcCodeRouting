@@ -68,6 +68,30 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
       }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void FailIfUsingWrongAttribute2() {
+
+         var controller = typeof(FromRouteAttr.FromRouteAttribute3Controller);
+
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+      }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void FailIfUsingWrongAttribute3() {
+
+         var controller = typeof(FromRouteAttr.FromRouteAttribute4Controller);
+
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+      }
+
+      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+      public void FailIfUsingWrongAttribute4() {
+
+         var controller = typeof(FromRouteAttr.FromRouteAttribute5Controller);
+
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+      }
    }
 }
 
@@ -80,8 +104,33 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
       }
    }
 
+#pragma warning disable 0618
+
    public class FromRouteAttribute2Controller : ApiController {
 
       public void Get([MvcCodeRouting.FromRoute]string foo) { }
    }
+
+   public class FromRouteAttribute3Controller : ApiController {
+
+      public void Get([MvcCodeRouting.Web.Mvc.FromRoute]string foo) { }
+   }
+
+   public class FromRouteAttribute4Controller : ApiController {
+
+      [MvcCodeRouting.FromRoute]
+      public string Bar { get; set; }
+
+      public void Get() { }
+   }
+
+   public class FromRouteAttribute5Controller : ApiController {
+
+      [MvcCodeRouting.Web.Mvc.FromRoute]
+      public string Bar { get; set; }
+
+      public void Get() { }
+   }
+
+#pragma warning restore 0618
 }

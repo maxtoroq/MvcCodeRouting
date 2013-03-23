@@ -40,33 +40,20 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_FromRouteAttributeInit) {
 
-               Type attrType = Action.Controller.Provider.FromRouteAttributeType;
-               
-               IFromRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
-                  .Cast<IFromRouteAttribute>()
-                  .SingleOrDefault();
-
-               Type mistakenAttr;
-
-               if (attr == null
-                  && attrType != (mistakenAttr = typeof(FromRouteAttribute))) {
-
-                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
-                     .Cast<IFromRouteAttribute>()
-                     .SingleOrDefault();
-
-                  if (attr != null) {
-                     throw new InvalidOperationException(
+               IFromRouteAttribute attr = Action.Controller.Provider
+                  .GetCorrectAttribute<IFromRouteAttribute>(
+                     this, 
+                     p => p.FromRouteAttributeType, 
+                     inherit: true,
+                     errorMessage: (attrType, mistakenAttrType) =>
                         String.Format(CultureInfo.InvariantCulture,
                            "Must use {0} instead of {1} (parameter {2} on {3}).",
                            attrType.FullName,
-                           mistakenAttr.FullName,
+                           mistakenAttrType.FullName,
                            Name,
                            String.Concat(Action.DeclaringType.FullName, ".", Action.MethodName, "(", String.Join(", ", Action.Parameters.Select(p => p.Type.Name)), ")")
                         )
                      );
-                  }
-               }
 
                _FromRouteAttribute = attr;
                _FromRouteAttributeInit = true;

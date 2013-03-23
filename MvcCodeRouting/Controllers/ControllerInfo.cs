@@ -168,11 +168,27 @@ namespace MvcCodeRouting.Controllers {
 
                var list = new List<RouteParameter>();
 
-               foreach (var type in types) {
+               foreach (Type t in types) {
+
                   list.AddRange(
-                     from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(Provider.FromRouteAttributeType, inherit: false /* [1] */)
-                     let rp = CreateRouteParameter(p)
+                     from p in t.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
+                     
+                     let attr = Provider.GetCorrectAttribute<IFromRouteAttribute>(
+                        p, 
+                        prov => prov.FromRouteAttributeType, 
+                        inherit: false /* [1] */,
+                        errorMessage: (attrType, mistakenAttrType) =>
+                           String.Format(CultureInfo.InvariantCulture,
+                              "Must use {0} instead of {1} (property {2} on {3}).",
+                              attrType.FullName,
+                              mistakenAttrType.FullName,
+                              p.Name,
+                              t.FullName
+                           )
+                        )
+
+                     where attr != null
+                     let rp = CreateRouteParameter(p, attr)
                      where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
                   );
@@ -228,9 +244,19 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               ICustomRouteAttribute attr = GetCustomAttributes(Provider.CustomRouteAttributeType, inherit: true)
-                  .Cast<ICustomRouteAttribute>()
-                  .SingleOrDefault();
+               ICustomRouteAttribute attr = Provider
+                  .GetCorrectAttribute<ICustomRouteAttribute>(
+                     this,
+                     prov => prov.CustomRouteAttributeType,
+                     inherit: true,
+                     errorMessage: (attrType, mistakenAttrType) =>
+                        String.Format(CultureInfo.InvariantCulture,
+                           "Must use {0} instead of {1} on {2}.",
+                           attrType.FullName,
+                           mistakenAttrType.FullName,
+                           Type.FullName
+                        )
+                  );
 
                if (attr != null)
                   _CustomRoute = attr.Url;
@@ -451,13 +477,9 @@ namespace MvcCodeRouting.Controllers {
       public abstract bool IsDefined(Type attributeType, bool inherit);
       protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
-      RouteParameter CreateRouteParameter(PropertyInfo property) {
+      RouteParameter CreateRouteParameter(PropertyInfo property, IFromRouteAttribute routeAttr) {
 
          Type propertyType = property.PropertyType;
-
-         IFromRouteAttribute routeAttr = property.GetCustomAttributes(this.Provider.FromRouteAttributeType, inherit: true)
-            .Cast<IFromRouteAttribute>()
-            .Single();
 
          string name = routeAttr.Name ?? property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);

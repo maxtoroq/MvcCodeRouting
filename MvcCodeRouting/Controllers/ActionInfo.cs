@@ -105,33 +105,20 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               Type attrType = Controller.Provider.CustomRouteAttributeType;
-
-               ICustomRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
-                  .Cast<ICustomRouteAttribute>()
-                  .SingleOrDefault();
-
-               Type mistakenAttr;
-
-               if (attr == null
-                  && attrType != (mistakenAttr = typeof(CustomRouteAttribute))) {
-
-                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
-                     .Cast<ICustomRouteAttribute>()
-                     .SingleOrDefault();
-
-                  if (attr != null) {
-                     throw new InvalidOperationException(
+               ICustomRouteAttribute attr = Controller.Provider
+                  .GetCorrectAttribute<ICustomRouteAttribute>(
+                     this,
+                     prov => prov.CustomRouteAttributeType,
+                     inherit: true,
+                     errorMessage: (attrType, mistakenAttrType) =>
                         String.Format(CultureInfo.InvariantCulture,
                            "Must use {0} instead of {1} on {3}.",
                            attrType.FullName,
-                           mistakenAttr.FullName,
+                           mistakenAttrType.FullName,
                            Name,
                            String.Concat(DeclaringType.FullName, ".", MethodName, "(", String.Join(", ", Parameters.Select(p => p.Type.Name)), ")")
                         )
-                     );
-                  }
-               }
+                  );
 
                if (attr != null) 
                   _CustomRoute = attr.Url;
