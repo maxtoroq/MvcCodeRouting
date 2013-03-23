@@ -180,7 +180,7 @@ namespace MvcCodeRouting.Controllers {
 
             isCatchAll = routeAttr.CatchAll;
 
-            if (routeAttr.Name != null)
+            if (routeAttr.Name.HasValue())
                tokenName = routeAttr.Name;
          }
 

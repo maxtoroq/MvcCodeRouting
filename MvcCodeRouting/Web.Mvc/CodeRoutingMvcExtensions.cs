@@ -124,7 +124,7 @@ namespace MvcCodeRouting.Web.Mvc {
                 where attr != null
                 select new {
                    PropertyName = p.Name,
-                   CustomTokenName = (attr.Name != null
+                   CustomTokenName = (attr.Name.HasValue()
                       && !String.Equals(p.Name, attr.Name, StringComparison.OrdinalIgnoreCase)) ?
                          attr.Name
                          : null

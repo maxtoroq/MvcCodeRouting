@@ -34,22 +34,16 @@ namespace MvcCodeRouting {
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 
-      // TODO: Rename TokenName to Name, to align with Web Api (Breaking Change)
-
-      string _TokenName;
+      /// <summary>
+      /// The token name. The default name used is the parameter or property name.
+      /// </summary>
+      public string Name { get; set; }
 
       /// <summary>
       /// The token name. The default name used is the parameter or property name.
       /// </summary>
-      public string TokenName {
-         get { return _TokenName; }
-         private set {
-            if (value != null && value.Length == 0)
-               throw new ArgumentException("value cannot be empty.", "value");
-
-            _TokenName = value;
-         }
-      }
+      [Obsolete("Please use Name instead.")]
+      public string TokenName { get { return Name; } }
 
       /// <summary>
       /// A regular expression that specify valid values for the decorated parameter or property.
@@ -68,10 +62,6 @@ namespace MvcCodeRouting {
       /// </summary>
       public Type BinderType { get; set; }
 
-      string IFromRouteAttribute.Name {
-         get { return TokenName; }
-      }
-
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
       /// </summary>
@@ -83,7 +73,7 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="tokenName">The token name.</param>
       public FromRouteAttribute(string tokenName) {
-         this.TokenName = tokenName;
+         this.Name = tokenName;
       }
 
       /// <summary>
@@ -105,8 +95,8 @@ namespace MvcCodeRouting {
 
          RouteValueDictionary values = controllerContext.RouteData.Values;
 
-         string paramName = (this.TokenName != null
-            && !String.Equals(bindingContext.ModelName, this.TokenName, StringComparison.OrdinalIgnoreCase)
+         string paramName = (this.Name != null
+            && !String.Equals(bindingContext.ModelName, this.Name, StringComparison.OrdinalIgnoreCase)
             && !values.ContainsKey(bindingContext.ModelName)) ?
             bindingContext.ModelName
             : null;
@@ -114,7 +104,7 @@ namespace MvcCodeRouting {
          if (paramName != null) {
 
             values = new RouteValueDictionary(values) { 
-               { paramName, values[this.TokenName] }
+               { paramName, values[this.Name] }
             };
 
             bindingContext.ValueProvider = new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture);

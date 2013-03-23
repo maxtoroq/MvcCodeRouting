@@ -481,7 +481,7 @@ namespace MvcCodeRouting.Controllers {
 
          Type propertyType = property.PropertyType;
 
-         string name = routeAttr.Name ?? property.Name;
+         string name = routeAttr.Name.HasValue() ? routeAttr.Name : property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
          return new RouteParameter(name, constraint);
