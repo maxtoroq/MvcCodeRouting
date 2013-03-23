@@ -17,10 +17,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Http;
+using System.ComponentModel;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
-   public class PreApplicationStartCode {
+   [EditorBrowsable(EditorBrowsableState.Never)]
+   public static class PreApplicationStartCode {
 
       public static void Start() {
 

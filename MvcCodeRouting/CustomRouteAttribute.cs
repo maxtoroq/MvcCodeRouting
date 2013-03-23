@@ -46,8 +46,9 @@ namespace MvcCodeRouting {
       public CustomRouteAttribute(string url) {
 
          if (!String.IsNullOrEmpty(url)
-            && url[0] == '/')
+            && url[0] == '/') {
             throw new ArgumentException("Custom route cannot start with '/'.", "url");
+         }
 
          this.Url = url;
       }
