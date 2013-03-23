@@ -75,11 +75,11 @@ namespace MvcCodeRouting {
          return null;
       }
 
-      public static void HttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration httpConfiguration) {
+      public static void HttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration configuration) {
 
          if (settings == null) throw new ArgumentNullException("settings");
 
-         settings.Properties["HttpConfiguration"] = httpConfiguration;
+         settings.Properties["HttpConfiguration"] = configuration;
       }
 
       internal static void EnableCodeRouting(HttpConfiguration configuration) {
