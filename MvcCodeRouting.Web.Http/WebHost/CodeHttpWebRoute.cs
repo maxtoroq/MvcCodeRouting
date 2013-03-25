@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Routing;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
@@ -23,6 +24,7 @@ namespace MvcCodeRouting.Web.Http.WebHost {
    class CodeHttpWebRoute : CodeRoute {
 
       // originalRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
+      // with HttpRoute property set to CodeHttpRoute
       // Web API requires RouteData.Route and VirtualPathData.Route to be an instance of that type
       // The problem with HttpWebRoute is that it's not extensible
       // that's why we replace it with CodeHttpWebRoute in MapCodeRoutes
@@ -38,7 +40,7 @@ namespace MvcCodeRouting.Web.Http.WebHost {
          this.ControllerMapping = httpRoute.ControllerMapping;
       }
       
-      public override RouteData GetRouteData(System.Web.HttpContextBase httpContext) {
+      public override RouteData GetRouteData(HttpContextBase httpContext) {
          
          RouteData data = base.GetRouteData(httpContext);
 
@@ -49,7 +51,7 @@ namespace MvcCodeRouting.Web.Http.WebHost {
       }
 
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
-
+         
          if (values == null || !values.ContainsKey("httproute")) 
             return null;
 
