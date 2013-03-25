@@ -13,13 +13,10 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Http;
 using System.Web.Http.Routing;
 using System.Web.Routing;
-using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Http {
    
@@ -52,32 +49,12 @@ namespace MvcCodeRouting.Web.Http {
 
          HttpConfiguration httpConfig = registerSettings.Settings.HttpConfiguration();
 
-         HttpConfiguration globalHttpConfig = GlobalConfiguration.Configuration;
-         RouteCollection globalRoutes = RouteTable.Routes;
-
-         bool httpConfigIsGlobal = Object.ReferenceEquals(httpConfig, globalHttpConfig);
-
-         string name = (httpConfigIsGlobal) ?
-            null
-            : Guid.NewGuid().ToString();
-
-         httpConfig.Routes.Add(name, (IHttpRoute)route);
-
-         var httpRoute = (Web.Http.CodeHttpRoute)route;
-
-         if (!httpConfigIsGlobal) 
-            globalHttpConfig.Routes.Add(name, httpRoute);
-
-         // System.Web.Http.WebHost.Routing.HttpWebRoute
-         Route webRoute = (Route)globalRoutes.Last();
-
-         globalRoutes.RemoveAt(globalRoutes.Count - 1);
-
-         var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
+         var httpRoute = (CodeHttpRoute)route;
+         var webRoute = new WebHost.CodeHttpWebRoute(httpRoute);
 
          CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
 
-         return codeRoute;
+         return webRoute;
       }
    }
 }

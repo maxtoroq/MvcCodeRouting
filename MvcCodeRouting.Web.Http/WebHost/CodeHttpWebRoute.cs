@@ -16,38 +16,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Http.WebHost;
 using System.Web.Routing;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
    class CodeHttpWebRoute : CodeRoute {
 
-      // originalRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
-      // Web API requires RouteData.Route and VirtualPathData.Route to be an instance of that type
-      // The problem with HttpWebRoute is that it's not extensible
-      // that's why we replace it with CodeHttpWebRoute in MapCodeRoutes
-
-      readonly Route originalRoute;
-
-      public CodeHttpWebRoute(Route originalRoute, CodeHttpRoute httpRoute) 
-         : base(originalRoute.Url, originalRoute.Defaults, originalRoute.Constraints, originalRoute.DataTokens, originalRoute.RouteHandler) {
-
-         this.originalRoute = originalRoute;
+      public CodeHttpWebRoute(CodeHttpRoute httpRoute)
+         : base(httpRoute.RouteTemplate, new RouteValueDictionary(httpRoute.Defaults), new RouteValueDictionary(httpRoute.Constraints), new RouteValueDictionary(httpRoute.DataTokens), HttpControllerRouteHandler.Instance) {
 
          this.ActionMapping = httpRoute.ActionMapping;
          this.ControllerMapping = httpRoute.ControllerMapping;
       }
       
-      public override RouteData GetRouteData(System.Web.HttpContextBase httpContext) {
-         
-         RouteData data = base.GetRouteData(httpContext);
-
-         if (data != null) 
-            data.Route = this.originalRoute;
-
-         return data;
-      }
-
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
 
          if (values == null || !values.ContainsKey("httproute")) 
@@ -57,9 +39,6 @@ namespace MvcCodeRouting.Web.Http.WebHost {
          values.Remove("httproute");
 
          VirtualPathData data = base.GetVirtualPath(requestContext, values);
-
-         if (data != null) 
-            data.Route = this.originalRoute;
 
          return data;
       }
