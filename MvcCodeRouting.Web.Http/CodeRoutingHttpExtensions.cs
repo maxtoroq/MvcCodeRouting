@@ -30,40 +30,46 @@ namespace MvcCodeRouting {
 
       internal static void Initialize() { }
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController) {
-         return MapCodeRoutes(routes, rootController, null);
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController) {
+         return MapCodeRoutes(configuration, rootController, null);
       }
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, Type rootController, CodeRoutingSettings settings) {
-         return MapCodeRoutes(routes, null, rootController, settings);
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController, CodeRoutingSettings settings) {
+         return MapCodeRoutes(configuration, null, rootController, settings);
       }
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController) {
-         return MapCodeRoutes(routes, baseRoute, rootController, null);
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController) {
+         return MapCodeRoutes(configuration, baseRoute, rootController, null);
       }
 
-      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpRouteCollection routes, string baseRoute, Type rootController, CodeRoutingSettings settings) {
+      public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController, CodeRoutingSettings settings) {
 
+         if (configuration == null) throw new ArgumentNullException("configuration");
          if (rootController == null) throw new ArgumentNullException("rootController");
+
+         if (settings != null)
+            settings = new CodeRoutingSettings(settings);
 
          var registerSettings = new RegisterSettings(null, rootController) {
             BaseRoute = baseRoute,
             Settings = settings
          };
 
+         registerSettings.Settings.HttpConfiguration(configuration);
+
          IHttpRoute[] newRoutes = RouteFactory.CreateRoutes<IHttpRoute>(registerSettings);
 
          foreach (IHttpRoute route in newRoutes) {
             // TODO: in Web API v1 name cannot be null
-            routes.Add((routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
+            configuration.Routes.Add((configuration.Routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
          }
 
-         EnableCodeRouting(registerSettings.Settings.HttpConfiguration());
+         EnableCodeRouting(configuration);
 
          return newRoutes;
       }
 
-      public static HttpConfiguration HttpConfiguration(this CodeRoutingSettings settings) {
+      internal static HttpConfiguration HttpConfiguration(this CodeRoutingSettings settings) {
 
          if (settings == null) throw new ArgumentNullException("settings");
 
@@ -75,7 +81,7 @@ namespace MvcCodeRouting {
          return null;
       }
 
-      public static void HttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration configuration) {
+      internal static void HttpConfiguration(this CodeRoutingSettings settings, HttpConfiguration configuration) {
 
          if (settings == null) throw new ArgumentNullException("settings");
 

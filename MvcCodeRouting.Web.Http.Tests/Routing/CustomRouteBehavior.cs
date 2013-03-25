@@ -12,15 +12,11 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
       readonly HttpConfiguration config;
       readonly HttpRouteCollection routes;
-      readonly CodeRoutingSettings settings;
 
       public CustomRouteBehavior() {
 
          config = new HttpConfiguration();
          routes = config.Routes;
-
-         settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -28,7 +24,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(CustomRoute.CustomRoute1Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(this.settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -36,7 +32,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(CustomRoute.CustomRoute2Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(this.settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -44,7 +40,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(CustomRoute.CustomRoute3Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(this.settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -52,7 +48,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(CustomRoute.CustomRoute4Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(this.settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
    }
 }

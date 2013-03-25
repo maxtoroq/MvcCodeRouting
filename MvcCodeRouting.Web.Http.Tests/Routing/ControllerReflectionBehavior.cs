@@ -12,15 +12,11 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
       readonly HttpConfiguration config;
       readonly HttpRouteCollection routes;
-      readonly CodeRoutingSettings settings;
 
       public ControllerReflectionBehavior() {
 
          config = new HttpConfiguration();
          routes = config.Routes;
-
-         settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
       }
 
       [TestMethod]
@@ -28,8 +24,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(ControllerReflection.ControllerReflection1Controller);
 
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.AreEqual(0, routes.Count);
       }

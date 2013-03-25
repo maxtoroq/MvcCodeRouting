@@ -15,10 +15,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
          var config = new HttpConfiguration();
          var routes = config.Routes;
 
-         var settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
-
-         routes.MapCodeRoutes(typeof(ControllerSelection.EntryController), settings);
+         config.MapCodeRoutes(typeof(ControllerSelection.EntryController));
 
          var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/Foo");
          var routeData = routes.GetRouteData(request);

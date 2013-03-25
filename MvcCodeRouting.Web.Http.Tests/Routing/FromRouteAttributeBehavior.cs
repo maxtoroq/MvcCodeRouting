@@ -17,15 +17,11 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
       readonly HttpConfiguration config;
       readonly HttpRouteCollection routes;
-      readonly CodeRoutingSettings settings;
 
       public FromRouteAttributeBehavior() {
 
          config = new HttpConfiguration();
          routes = config.Routes;
-
-         settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
       }
 
       [TestMethod]
@@ -33,7 +29,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsNotNull(routes.First().RouteTemplate.Contains("{b}"));
       }
@@ -43,7 +39,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttributeController);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
          
          var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/hello");
          var routeData = routes.GetRouteData(request);
@@ -66,7 +62,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttribute2Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -74,7 +70,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttribute3Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -82,7 +78,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttribute4Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -90,7 +86,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
          var controller = typeof(FromRouteAttr.FromRouteAttribute5Controller);
 
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings(settings) { RootOnly = true });
+         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
    }
 }

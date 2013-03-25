@@ -10,26 +10,12 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
    [TestClass]
    public class OverloadedActionBehavior {
 
-      readonly HttpConfiguration config;
-      readonly HttpRouteCollection routes;
-      readonly CodeRoutingSettings settings;
-
-      public OverloadedActionBehavior() {
-
-         config = new HttpConfiguration();
-         routes = config.Routes;
-
-         settings = new CodeRoutingSettings();
-         settings.HttpConfiguration(config);
-      }
-
       [TestMethod]
       public void DontRequireActionDisambiguator() {
 
-         var controller = typeof(OverloadedAction.OverloadedActionController);
+         var config = new HttpConfiguration();
 
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+         config.MapCodeRoutes(typeof(OverloadedAction.OverloadedActionController), new CodeRoutingSettings { RootOnly = true });
       }
    }
 }
