@@ -22,12 +22,20 @@ namespace MvcCodeRouting.Tests.Routing {
 
       [TestMethod]
       [ExpectedException(typeof(InvalidOperationException))]
+      public void MustHaveRouteParametersThatAreEqualInNameAndPosition() {
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction1Controller), new CodeRoutingSettings { RootOnly = true });
+      }
+
+      [TestMethod]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void MustHaveRouteParametersThatAreEqualInConstraint() {
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction2Controller), new CodeRoutingSettings { RootOnly = true });
+      }
+
+      [TestMethod]
+      [ExpectedException(typeof(InvalidOperationException))]
       public void RequireActionDisambiguatorInMvc() {
-
-         var controller = typeof(OverloadedAction.OverloadedActionController);
-
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction3Controller), new CodeRoutingSettings { RootOnly = true });
       }
    }
 }
@@ -35,7 +43,19 @@ namespace MvcCodeRouting.Tests.Routing {
 namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
    using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
 
-   public class OverloadedActionController : Controller {
+   public class OverloadedAction1Controller : Controller {
+
+      public void Foo([FromRoute]string a) { }
+      public void Foo([FromRoute]string b, [FromRoute]string a) { }
+   }
+
+   public class OverloadedAction2Controller : Controller {
+
+      public void Foo([FromRoute(Constraint = "a")]string a) { }
+      public void Foo([FromRoute(Constraint = "x")]string a, [FromRoute]string b) { }
+   }
+
+   public class OverloadedAction3Controller : Controller {
 
       public void Foo([FromRoute]int a) { }
       public void Foo([FromRoute]int a, [FromRoute]int b) { }

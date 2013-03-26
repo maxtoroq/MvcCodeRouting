@@ -10,19 +10,42 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
    [TestClass]
    public class OverloadedActionBehavior {
 
+      readonly HttpConfiguration config = new HttpConfiguration();
+
+      [TestMethod]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void MustHaveRouteParametersThatAreEqualInNameAndPosition() {
+         config.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction1Controller), new CodeRoutingSettings { RootOnly = true });
+      }
+
+      [TestMethod]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void MustHaveRouteParametersThatAreEqualInConstraint() {
+         config.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction2Controller), new CodeRoutingSettings { RootOnly = true });
+      }
+
       [TestMethod]
       public void DontRequireActionDisambiguator() {
-
-         var config = new HttpConfiguration();
-
-         config.MapCodeRoutes(typeof(OverloadedAction.OverloadedActionController), new CodeRoutingSettings { RootOnly = true });
+         config.MapCodeRoutes(typeof(OverloadedAction.Overloaded3ActionController), new CodeRoutingSettings { RootOnly = true });
       }
    }
 }
 
 namespace MvcCodeRouting.Web.Http.Tests.Routing.OverloadedAction {
 
-   public class OverloadedActionController : System.Web.Http.ApiController {
+   public class OverloadedAction1Controller : ApiController {
+
+      public void Foo([FromRoute]string a) { }
+      public void Foo([FromRoute]string b, [FromRoute]string a) { }
+   }
+
+   public class OverloadedAction2Controller : ApiController {
+
+      public void Foo([FromRoute(Constraint = "a")]string a) { }
+      public void Foo([FromRoute(Constraint = "x")]string a, [FromRoute]string b) { }
+   }
+
+   public class Overloaded3ActionController : ApiController {
 
       public void Foo([FromRoute]int a) { }
       public void Foo([FromRoute]int a, [FromRoute]int b) { }

@@ -212,10 +212,7 @@ namespace MvcCodeRouting.Controllers {
                    select a).ToArray();
 
                CheckDefaultActions(actions);
-
-               if (!Provider.CanDisambiguateActionOverloads)
-                  CheckOverloads(actions);
-
+               CheckOverloads(actions);
                CheckCustomRoutes(actions);
 
                _Actions = new Collection<ActionInfo>(actions);
@@ -337,24 +334,27 @@ namespace MvcCodeRouting.Controllers {
              where g.Count() > 1
              select g).ToList();
 
-         var withoutRequiredAttr =
-            (from g in overloadedActions
-             let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
-             where distinctParamCount.Count() > 1
-             let bad = g.Where(a => !a.HasActionOverloadDisambiguationAttribute)
-             where bad.Count() > 0
-             select bad).ToList();
+         if (!Provider.CanDisambiguateActionOverloads) {
 
-         if (withoutRequiredAttr.Count > 0) {
-            var first = withoutRequiredAttr.First();
+            var withoutRequiredAttr =
+               (from g in overloadedActions
+                let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
+                where distinctParamCount.Count() > 1
+                let bad = g.Where(a => !a.HasActionOverloadDisambiguationAttribute)
+                where bad.Count() > 0
+                select bad).ToList();
 
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "The following action methods must be decorated with {0} for disambiguation: {1}.",
-                  Provider.ActionOverloadDisambiguationAttributeType.FullName,
-                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
-               )
-            );
+            if (withoutRequiredAttr.Count > 0) {
+               var first = withoutRequiredAttr.First();
+
+               throw new InvalidOperationException(
+                  String.Format(CultureInfo.InvariantCulture,
+                     "The following action methods must be decorated with {0} for disambiguation: {1}.",
+                     Provider.ActionOverloadDisambiguationAttributeType.FullName,
+                     String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
+                  )
+               );
+            }
          }
 
          var overloadsComparer = new ActionSignatureComparer();
@@ -371,7 +371,7 @@ namespace MvcCodeRouting.Controllers {
 
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
-                  "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
+                  "Overloaded action methods must have route parameters that are equal in name, position and constraint ({0}).",
                   String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
                )
             );
