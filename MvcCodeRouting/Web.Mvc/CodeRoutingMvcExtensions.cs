@@ -14,13 +14,11 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using MvcCodeRouting.Web.Hosting;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Mvc {
@@ -28,7 +26,7 @@ namespace MvcCodeRouting.Web.Mvc {
    /// <summary>
    /// Extension methods for reflection-based route creation and related functionality.
    /// </summary>
-   public static class CodeRoutingMvcExtensions {
+   public static class MvcExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
 

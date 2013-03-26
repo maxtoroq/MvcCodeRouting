@@ -129,10 +129,10 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="controller">The controller to bind.</param>
       /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
-      [Obsolete("Please use MvcCodeRouting.Web.Mvc.CodeRoutingMvcExtensions.BindRouteProperties(ControllerBase) instead.")]
+      [Obsolete("Please use MvcCodeRouting.Web.Mvc.MvcExtensions.BindRouteProperties(ControllerBase) instead.")]
       [EditorBrowsable(EditorBrowsableState.Never)]
       public static void BindRouteProperties(this ControllerBase controller) {
-         Web.Mvc.CodeRoutingMvcExtensions.BindRouteProperties(controller);
+         Web.Mvc.MvcExtensions.BindRouteProperties(controller);
       }
    }
 }
