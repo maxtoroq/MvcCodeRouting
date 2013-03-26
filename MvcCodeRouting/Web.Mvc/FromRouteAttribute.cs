@@ -31,6 +31,26 @@ namespace MvcCodeRouting.Web.Mvc {
 
 #pragma warning restore 0618
 
+      public override sealed string Name {
+         get { return base.Name; }
+         set { base.Name = value; }
+      }
+
+      public override sealed string Constraint {
+         get { return base.Constraint; }
+         set { base.Constraint = value; }
+      }
+
+      public override sealed bool CatchAll {
+         get { return base.CatchAll; }
+         set { base.CatchAll = value; }
+      }
+
+      public override sealed Type BinderType {
+         get { return base.BinderType; }
+         set { base.BinderType = value; }
+      }
+
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
       /// </summary>

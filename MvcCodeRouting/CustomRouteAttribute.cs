@@ -30,10 +30,12 @@ namespace MvcCodeRouting {
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
 
+      readonly string _Url;
+
       /// <summary>
       /// The URL pattern.
       /// </summary>
-      public string Url { get; private set; }
+      public virtual string Url { get { return _Url; } }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
@@ -50,7 +52,7 @@ namespace MvcCodeRouting {
             throw new ArgumentException("Custom route cannot start with '/'.", "url");
          }
 
-         this.Url = url;
+         this._Url = url;
       }
    }
 }

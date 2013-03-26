@@ -27,6 +27,10 @@ namespace MvcCodeRouting.Web.Mvc {
 
 #pragma warning restore 0618
 
+      public override sealed string Url {
+         get { return base.Url; }
+      }
+
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
       /// using the provided URL pattern.

@@ -37,7 +37,7 @@ namespace MvcCodeRouting {
       /// <summary>
       /// The token name. The default name used is the parameter or property name.
       /// </summary>
-      public string Name { get; set; }
+      public virtual string Name { get; set; }
 
       /// <summary>
       /// The token name. The default name used is the parameter or property name.
@@ -48,19 +48,19 @@ namespace MvcCodeRouting {
       /// <summary>
       /// A regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
-      public string Constraint { get; set; }
+      public virtual string Constraint { get; set; }
 
       /// <summary>
       /// true if the parameter represents a catch-all token; otherwise, false.
       /// This setting is ignored when used on controller properties.
       /// </summary>
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
-      public bool CatchAll { get; set; }
+      public virtual bool CatchAll { get; set; }
 
       /// <summary>
       /// Gets or sets the type of the binder.
       /// </summary>
-      public Type BinderType { get; set; }
+      public virtual Type BinderType { get; set; }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
