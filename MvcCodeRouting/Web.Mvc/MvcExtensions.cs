@@ -23,9 +23,6 @@ using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Mvc {
 
-   /// <summary>
-   /// Extension methods for reflection-based route creation and related functionality.
-   /// </summary>
    public static class MvcExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();
