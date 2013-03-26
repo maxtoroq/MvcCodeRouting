@@ -97,6 +97,7 @@
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="HttpCodeRoutingProvider.cs" />
     <Compile Include="HttpControllerInfo.cs" />
+    <Compile Include="HttpExtensions.cs" />
     <Compile Include="HttpRouteFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebHost\CodeHttpWebRoute.cs" />
