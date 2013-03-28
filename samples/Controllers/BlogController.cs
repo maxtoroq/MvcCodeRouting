@@ -5,8 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using MvcCodeRouting.Web.Mvc;
 
-namespace Samples.Controllers {
-   
+namespace Samples.Controllers.Custom {
+
+   [CustomRoute("~/blog")]
    public class BlogController : Controller {
       
       [HttpGet]
