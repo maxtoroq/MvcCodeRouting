@@ -171,7 +171,7 @@
     <Compile Include="Controllers\Api\ApiController.cs" />
     <Compile Include="Controllers\Api\UserController.cs" />
     <Compile Include="Controllers\AsyncController.cs" />
-    <Compile Include="Controllers\BlogController.cs" />
+    <Compile Include="Controllers\Custom\BlogController.cs" />
     <Compile Include="Controllers\Book\BookController.cs" />
     <Compile Include="Controllers\Book\ChapterController.cs" />
     <Compile Include="Controllers\Custom\CustomRouteController.cs" />
