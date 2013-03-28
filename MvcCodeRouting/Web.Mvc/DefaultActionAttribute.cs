@@ -19,6 +19,10 @@ using System.Text;
 
 namespace MvcCodeRouting.Web.Mvc {
 
+   /// <summary>
+   /// Represents an attribute that is used to specify which action method should be treated as default action,
+   /// which means making the action segment of the URL optional.
+   /// </summary>
    [AttributeUsage(AttributeTargets.Method)]
    public sealed class DefaultActionAttribute : Attribute { }
 }

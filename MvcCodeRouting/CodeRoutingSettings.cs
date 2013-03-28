@@ -44,7 +44,7 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
-      /// Gets default constraints used for tokens that represents action parameters
+      /// Gets default constraints used for route parameters that represents action parameters
       /// and controller properties.
       /// </summary>
       /// <remarks>
@@ -82,7 +82,7 @@ namespace MvcCodeRouting {
       public bool EnableEmbeddedViews { get; set; }
 
       /// <summary>
-      /// true to include an {id} token for actions with a parameter named id.
+      /// true to include an {id} route parameter for actions with a parameter named id.
       /// </summary>
       public bool UseImplicitIdToken { get; set; }
 

@@ -77,7 +77,7 @@ namespace MvcCodeRouting {
          string unmappedController = null;
          string unmappedAction = null;
 
-         bool controllerWasMapped = MapValue("controller", values, route.ControllerMapping, out unmappedController);
+         MapValue("controller", values, route.ControllerMapping, out unmappedController);
          bool actionWasMapped = MapValue("action", values, route.ActionMapping, out unmappedAction);
 
          TVirtualPathData virtualPath = getVirtualPath();

@@ -46,7 +46,7 @@ namespace MvcCodeRouting {
       /// true if the <see cref="ControllerContext.RouteData"/> has values for
       /// all parameters decorated with <see cref="FromRouteAttribute"/>, and if all keys
       /// in <see cref="ControllerContext.RouteData"/> match any of the decorated parameters,
-      /// excluding controller, action and other non-parameter tokens.
+      /// excluding controller, action and other route parameters that do not map to action method parameters.
       /// </returns>
       public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo) {
          

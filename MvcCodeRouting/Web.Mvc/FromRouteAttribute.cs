@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 
 namespace MvcCodeRouting.Web.Mvc {
@@ -22,30 +23,44 @@ namespace MvcCodeRouting.Web.Mvc {
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
-   /// It also instructs the route creation process to add token segments for each
-   /// action method parameter after the {action} token, and for each controller property
-   /// after the {controller} token.
+   /// It also instructs the route creation process to add route parameters after the {action} token 
+   /// for each decorated action method parameter, and after the {controller} token for each 
+   /// decorated controller property.
    /// </summary>
+   [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification = "Want constructor argument shortcut.")]
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : MvcCodeRouting.FromRouteAttribute {
 
 #pragma warning restore 0618
 
+      /// <summary>
+      /// Gets or sets the route parameter name. The default name used is the parameter or property name.
+      /// </summary>
       public override sealed string Name {
          get { return base.Name; }
          set { base.Name = value; }
       }
 
+      /// <summary>
+      /// Gets or sets a regular expression that specify valid values for the decorated parameter or property.
+      /// </summary>
       public override sealed string Constraint {
          get { return base.Constraint; }
          set { base.Constraint = value; }
       }
 
+      /// <summary>
+      /// true if the parameter represents a catch-all token; otherwise, false.
+      /// This setting is ignored when used on controller properties.
+      /// </summary>
       public override sealed bool CatchAll {
          get { return base.CatchAll; }
          set { base.CatchAll = value; }
       }
 
+      /// <summary>
+      /// Gets or sets the type of the binder.
+      /// </summary>
       public override sealed Type BinderType {
          get { return base.BinderType; }
          set { base.BinderType = value; }

@@ -20,13 +20,16 @@ namespace MvcCodeRouting.Web.Mvc {
 
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
-   /// action method.
+   /// action method or controller class.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public sealed class CustomRouteAttribute : MvcCodeRouting.CustomRouteAttribute {
 
 #pragma warning restore 0618
 
+      /// <summary>
+      /// The URL pattern.
+      /// </summary>
       public override sealed string Url {
          get { return base.Url; }
       }
@@ -37,7 +40,7 @@ namespace MvcCodeRouting.Web.Mvc {
       /// </summary>
       /// <param name="url">
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
-      /// on the action method parameters.
+      /// on the action method parameters or controller class properties.
       /// </param>
       public CustomRouteAttribute(string url) 
          : base(url) { }

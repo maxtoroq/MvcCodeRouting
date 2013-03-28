@@ -23,7 +23,7 @@ namespace MvcCodeRouting {
    
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
-   /// action method.
+   /// action method or controller class.
    /// </summary>
    [Obsolete("Please use MvcCodeRouting.Web.Mvc.CustomRouteAttribute instead.")]
    [EditorBrowsable(EditorBrowsableState.Never)]
@@ -43,7 +43,7 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="url">
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
-      /// on the action method parameters.
+      /// on the action method parameters or controller class properties.
       /// </param>
       public CustomRouteAttribute(string url) {
 

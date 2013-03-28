@@ -28,15 +28,15 @@ namespace MvcCodeRouting.Web.Http {
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
-   /// It also instructs the route creation process to add token segments for each
-   /// action method parameter after the {action} token, and for each controller property
-   /// after the {controller} token.
+   /// It also instructs the route creation process to add route parameters after the {action} token 
+   /// for each decorated action method parameter, and after the {controller} token for each 
+   /// decorated controller property.
    /// </summary>
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : ModelBinderAttribute, IFromRouteAttribute {
 
       /// <summary>
-      /// A regular expression that specify valid values for the decorated parameter or property.
+      /// Gets or sets a regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
       public string Constraint { get; set; }
 
@@ -54,9 +54,9 @@ namespace MvcCodeRouting.Web.Http {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
-      /// using the specified parameter name.
+      /// using the specified name.
       /// </summary>
-      /// <param name="name">The parameter name.</param>
+      /// <param name="name">The name of the route parameter.</param>
       public FromRouteAttribute(string name) {
          this.Name = name;
       }

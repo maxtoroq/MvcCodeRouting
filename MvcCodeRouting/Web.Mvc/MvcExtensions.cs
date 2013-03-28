@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -23,6 +24,10 @@ using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Mvc {
 
+   /// <summary>
+   /// Extensions methods that provide utility functions for various ASP.NET MVC classes.
+   /// </summary>
+   [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mvc")]
    public static class MvcExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();

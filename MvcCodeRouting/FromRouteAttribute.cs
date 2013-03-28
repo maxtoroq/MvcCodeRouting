@@ -25,9 +25,9 @@ namespace MvcCodeRouting {
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
-   /// It also instructs the route creation process to add token segments for each
-   /// action method parameter after the {action} token, and for each controller property
-   /// after the {controller} token.
+   /// It also instructs the route creation process to add route parameters after the {action} token 
+   /// for each decorated action method parameter, and after the {controller} token for each 
+   /// decorated controller property.
    /// </summary>
    [Obsolete("Please use MvcCodeRouting.Web.Mvc.FromRouteAttribute instead.")]
    [EditorBrowsable(EditorBrowsableState.Never)]
@@ -35,18 +35,18 @@ namespace MvcCodeRouting {
    public class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 
       /// <summary>
-      /// The token name. The default name used is the parameter or property name.
+      /// Gets or sets the route parameter name. The default name used is the parameter or property name.
       /// </summary>
       public virtual string Name { get; set; }
 
       /// <summary>
-      /// The token name. The default name used is the parameter or property name.
+      /// Gets or sets the route parameter name. The default name used is the parameter or property name.
       /// </summary>
       [Obsolete("Please use Name instead.")]
       public string TokenName { get { return Name; } }
 
       /// <summary>
-      /// A regular expression that specify valid values for the decorated parameter or property.
+      /// Gets or sets a regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
       public virtual string Constraint { get; set; }
 
@@ -69,15 +69,15 @@ namespace MvcCodeRouting {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
-      /// using the specified token name.
+      /// using the specified name.
       /// </summary>
-      /// <param name="tokenName">The token name.</param>
+      /// <param name="tokenName">The name of the route parameter.</param>
       public FromRouteAttribute(string tokenName) {
          this.Name = tokenName;
       }
 
       /// <summary>
-      /// Gets the model binder used to bind the decorated parameter.
+      /// Gets the model binder used to bind the decorated parameter or property.
       /// </summary>
       /// <returns>The model binder.</returns>
       public override IModelBinder GetBinder() {
@@ -85,7 +85,7 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
-      /// Binds the decorated parameter to a value by using the specified controller context and
+      /// Binds the decorated parameter or property to a value by using the specified controller context and
       /// binding context.
       /// </summary>
       /// <param name="controllerContext">The controller context.</param>

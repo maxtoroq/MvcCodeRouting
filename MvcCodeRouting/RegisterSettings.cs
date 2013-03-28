@@ -133,7 +133,7 @@ namespace MvcCodeRouting {
          return types.Where(t => IsValidControllerType(t));
       }
 
-      bool IsValidControllerType(Type type) {
+      static bool IsValidControllerType(Type type) {
 
          return type.IsPublic
             && !type.IsAbstract

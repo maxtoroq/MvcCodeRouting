@@ -11,5 +11,7 @@ using MvcCodeRouting.Web.Http.WebHost;
 [assembly: CLSCompliantAttribute(true)]
 [assembly: PreApplicationStartMethod(typeof(PreApplicationStartCode), "Start")]
 
-[module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "MvcCodeRouting", MessageId = "Mvc", Justification = "Term is recognized.")]
 [module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mvc", Justification = "Term is recognized.")]
+[module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "MvcCodeRouting", MessageId = "Mvc", Justification = "Term is recognized.")]
+[module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "MvcCodeRouting.Web.Http", MessageId = "Mvc", Justification = "Term is recognized.")]
+[module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "MvcCodeRouting.Web.Http.WebHost", MessageId = "Mvc", Justification = "Term is recognized.")]
