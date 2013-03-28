@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using MvcCodeRouting;
+using MvcCodeRouting.Web.Mvc;
 
 namespace Samples.Controllers.Book {
    

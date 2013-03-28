@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Web.Routing;
 using System.Collections.Concurrent;
 using MvcCodeRouting.Web;
+using System.ComponentModel;
 
 namespace MvcCodeRouting {
    
@@ -28,8 +29,10 @@ namespace MvcCodeRouting {
    /// An <see cref="ActionMethodSelectorAttribute"/> for overloaded action methods, used 
    /// to help the ASP.NET MVC runtime disambiguate and choose the appropriate overload.
    /// </summary>
+   [Obsolete("Please use MvcCodeRouting.Web.Mvc.RequireRouteParametersAttribute instead.")]
+   [EditorBrowsable(EditorBrowsableState.Never)]
    [AttributeUsage(AttributeTargets.Method)]
-   public sealed class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
+   public class RequireRouteParametersAttribute : ActionMethodSelectorAttribute {
 
       static readonly ConcurrentDictionary<MethodInfo, string[]> actionDataCache = new ConcurrentDictionary<MethodInfo, string[]>();
 
@@ -43,7 +46,7 @@ namespace MvcCodeRouting {
       /// true if the <see cref="ControllerContext.RouteData"/> has values for
       /// all parameters decorated with <see cref="FromRouteAttribute"/>, and if all keys
       /// in <see cref="ControllerContext.RouteData"/> match any of the decorated parameters,
-      /// excluding controller, action and other non-parameter tokens.
+      /// excluding controller, action and other route parameters that do not map to action method parameters.
       /// </returns>
       public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo) {
          
@@ -57,12 +60,16 @@ namespace MvcCodeRouting {
             for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) 
                routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
          }
-         
+
+#pragma warning disable 0618
+
          string[] parameters = actionDataCache.GetOrAdd(methodInfo, (m) =>
             (from p in m.GetParameters()
-             where p.IsDefined(typeof(FromRouteAttribute), inherit: true)
+             where p.IsDefined(typeof(MvcCodeRouting.FromRouteAttribute), inherit: true)
              select p.Name).ToArray()
          );
+
+#pragma warning restore 0618
 
          return parameters.All(p => routeValues.Keys.Contains(p, StringComparer.OrdinalIgnoreCase))
             && routeValues.Keys.All(k => parameters.Contains(k, StringComparer.OrdinalIgnoreCase));

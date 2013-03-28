@@ -21,8 +21,9 @@ namespace MvcCodeRouting.Controllers {
    
    interface IFromRouteAttribute {
 
-      string TokenName { get; }
+      string Name { get; set; }
       string Constraint { get; set; }
       bool CatchAll { get; set; }
+      Type BinderType { get; set; }
    }
 }

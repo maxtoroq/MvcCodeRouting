@@ -23,9 +23,15 @@ namespace MvcCodeRouting.Web.Mvc {
    class MvcCodeRoutingProvider : CodeRoutingProvider {
 
       readonly RouteFactory _RouteFactory = new MvcRouteFactory();
-      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
-      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
-      readonly Type _ActionOverloadDisambiguationAttributeType = typeof(RequireRouteParametersAttribute);
+
+#pragma warning disable 0618
+
+      readonly Type _FromRouteAttributeType = typeof(MvcCodeRouting.FromRouteAttribute);
+      readonly Type _CustomRouteAttributeType = typeof(MvcCodeRouting.CustomRouteAttribute);
+      readonly Type _DefaultActionAttributeType = typeof(DefaultActionAttribute);
+      readonly Type _ActionOverloadDisambiguationAttributeType = typeof(MvcCodeRouting.RequireRouteParametersAttribute);
+
+#pragma warning restore 0618
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }
@@ -41,6 +47,10 @@ namespace MvcCodeRouting.Web.Mvc {
 
       public override Type CustomRouteAttributeType {
          get { return _CustomRouteAttributeType; }
+      }
+
+      public override Type DefaultActionAttributeType {
+         get { return _DefaultActionAttributeType; }
       }
 
       public override Type ActionOverloadDisambiguationAttributeType {

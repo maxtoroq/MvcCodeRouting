@@ -28,30 +28,15 @@ namespace MvcCodeRouting.Web.Http {
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
-   /// It also instructs the route creation process to add token segments for each
-   /// action method parameter after the {action} token, and for each controller property
-   /// after the {controller} token.
+   /// It also instructs the route creation process to add route parameters after the {action} token 
+   /// for each decorated action method parameter, and after the {controller} token for each 
+   /// decorated controller property.
    /// </summary>
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
    public sealed class FromRouteAttribute : ModelBinderAttribute, IFromRouteAttribute {
 
-      string _TokenName;
-
       /// <summary>
-      /// The token name. The default name used is the parameter or property name.
-      /// </summary>
-      public string TokenName {
-         get { return _TokenName; }
-         private set {
-            if (value != null && value.Length == 0)
-               throw new ArgumentException("value cannot be empty.", "value");
-
-            _TokenName = value;
-         }
-      }
-
-      /// <summary>
-      /// A regular expression that specify valid values for the decorated parameter or property.
+      /// Gets or sets a regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
       public string Constraint { get; set; }
 
@@ -69,11 +54,11 @@ namespace MvcCodeRouting.Web.Http {
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
-      /// using the specified token name.
+      /// using the specified name.
       /// </summary>
-      /// <param name="tokenName">The token name.</param>
-      public FromRouteAttribute(string tokenName) {
-         this.TokenName = tokenName;
+      /// <param name="name">The name of the route parameter.</param>
+      public FromRouteAttribute(string name) {
+         this.Name = name;
       }
 
       public override IEnumerable<ValueProviderFactory> GetValueProviderFactories(HttpConfiguration configuration) {

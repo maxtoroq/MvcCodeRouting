@@ -29,3 +29,7 @@ namespace Samples.Controllers.Api {
       }
    }
 }
+
+namespace Samples.Controllers.Api.SubNamespace {
+   public class UserController : Api.UserController { }
+}

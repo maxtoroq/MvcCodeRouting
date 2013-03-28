@@ -49,7 +49,7 @@ namespace MvcCodeRouting.Controllers {
       public string ActionSegment {
          get {
             if (_ActionSegment == null) 
-               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type), caseOnly: false);
+               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type));
             return _ActionSegment;
          }
       }
@@ -90,12 +90,7 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
-      public bool IsDefaultAction {
-         get {
-            return NameEquals(Name, "Index")
-               && (RouteParameters.Count == 0 || RouteParameters.All(p => p.IsOptional));
-         }
-      }
+      public bool IsDefaultAction { get; internal set; }
 
       public string ActionUrl {
          get {
@@ -110,33 +105,20 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               Type attrType = Controller.Provider.CustomRouteAttributeType;
-
-               ICustomRouteAttribute attr = GetCustomAttributes(attrType, inherit: true)
-                  .Cast<ICustomRouteAttribute>()
-                  .SingleOrDefault();
-
-               Type mistakenAttr;
-
-               if (attr == null
-                  && attrType != (mistakenAttr = typeof(CustomRouteAttribute))) {
-
-                  attr = GetCustomAttributes(mistakenAttr, inherit: true)
-                     .Cast<ICustomRouteAttribute>()
-                     .SingleOrDefault();
-
-                  if (attr != null) {
-                     throw new InvalidOperationException(
+               ICustomRouteAttribute attr = Controller.Provider
+                  .GetCorrectAttribute<ICustomRouteAttribute>(
+                     this,
+                     prov => prov.CustomRouteAttributeType,
+                     inherit: true,
+                     errorMessage: (attrType, mistakenAttrType) =>
                         String.Format(CultureInfo.InvariantCulture,
                            "Must use {0} instead of {1} on {3}.",
                            attrType.FullName,
-                           mistakenAttr.FullName,
+                           mistakenAttrType.FullName,
                            Name,
                            String.Concat(DeclaringType.FullName, ".", MethodName, "(", String.Join(", ", Parameters.Select(p => p.Type.Name)), ")")
                         )
-                     );
-                  }
-               }
+                  );
 
                if (attr != null) 
                   _CustomRoute = attr.Url;
@@ -158,6 +140,15 @@ namespace MvcCodeRouting.Controllers {
             }
 
             return _CustomRouteHasActionToken.Value;
+         }
+      }
+
+      public bool CustomRouteIsAbsolute {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
          }
       }
 
@@ -189,8 +180,8 @@ namespace MvcCodeRouting.Controllers {
 
             isCatchAll = routeAttr.CatchAll;
 
-            if (routeAttr.TokenName != null)
-               tokenName = routeAttr.TokenName;
+            if (routeAttr.Name.HasValue())
+               tokenName = routeAttr.Name;
          }
 
          return new RouteParameter(tokenName, constraint, isOptional, isCatchAll);

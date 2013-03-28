@@ -14,8 +14,8 @@ namespace MvcCodeRouting.Tests.Routing {
    //[TestClass]
    public class RoutingFacts {
 
-      RouteCollection routes;
-      UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public RoutingFacts() {
          

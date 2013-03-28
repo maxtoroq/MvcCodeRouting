@@ -13,13 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using MvcCodeRouting.Web;
 
 namespace MvcCodeRouting {
 
@@ -27,6 +27,7 @@ namespace MvcCodeRouting {
    /// Serves representations of the routes in <see cref="RouteTable.Routes"/> 
    /// for visualization and debugging purposes.
    /// </summary>
+   [EditorBrowsable(EditorBrowsableState.Never)]
    public class RouteDebugHandler : IHttpHandler {
 
       string format;
@@ -116,10 +117,10 @@ namespace MvcCodeRouting {
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
             RenderIgnoreRouteCSharp(route);
 
-         } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+         } else if (IsMvcHandler(handlerType)) {
             RenderMapRouteCSharp(route);
          
-         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+         } else if (IsWebApiHandler(handlerType)) {
             RenderMapHttpRouteCSharp(route);
          
          } else {
@@ -128,14 +129,14 @@ namespace MvcCodeRouting {
       }
 
       void RenderIgnoreRouteCSharp(Route route) {
-         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>);", route.Url);
+         writer.Write("routes.IgnoreRoute(<span class='string url'>\"{0}\"</span>);", route.Url);
       }
 
       void RenderMapRouteCSharp(Route route, bool httpRoute = false) {
 
          writer.Write("routes.");
          writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
-         writer.Write("(<span class='keyword'>null</span>, <span class='string'>\"{0}\"</span>", route.Url);
+         writer.Write("(<span class='keyword'>null</span>, <span class='string url'>\"{0}\"</span>", route.Url);
 
          int i = 0;
 
@@ -237,10 +238,10 @@ namespace MvcCodeRouting {
          else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>@\"", val, "\"</span>");
 
-         else if (type == typeof(UrlParameter))
+         else if (IsMvcParameter(type))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
 
-         else if (type.FullName == "System.Web.Http.RouteParameter")
+         else if (IsWebApiParameter(type))
             stringVal = "<span class='type'>RouteParameter</span>.Optional";
 
          else if (constraint)
@@ -282,10 +283,10 @@ namespace MvcCodeRouting {
          if (typeof(StopRoutingHandler).IsAssignableFrom(handlerType)) {
             RenderIgnoreRouteVB(route);
 
-         } else if (typeof(MvcRouteHandler).IsAssignableFrom(handlerType)) {
+         } else if (IsMvcHandler(handlerType)) {
             RenderMapRouteVB(route);
          
-         } else if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
+         } else if (IsWebApiHandler(handlerType)) {
             RenderMapHttpRouteVB(route);
 
          } else {
@@ -294,14 +295,14 @@ namespace MvcCodeRouting {
       }
 
       void RenderIgnoreRouteVB(Route route) {
-         writer.Write("routes.IgnoreRoute(<span class='string'>\"{0}\"</span>)", route.Url);
+         writer.Write("routes.IgnoreRoute(<span class='string url'>\"{0}\"</span>)", route.Url);
       }
 
       void RenderMapRouteVB(Route route, bool httpRoute = false) {
 
          writer.Write("routes.");
          writer.Write(httpRoute ? "MapHttpRoute" : "MapRoute");
-         writer.Write("(<span class='keyword'>Nothing</span>, <span class='string'>\"{0}\"</span>", route.Url);
+         writer.Write("(<span class='keyword'>Nothing</span>, <span class='string url'>\"{0}\"</span>", route.Url);
 
          int i = 0;
 
@@ -403,10 +404,10 @@ namespace MvcCodeRouting {
          else if (type == typeof(string))
             stringVal = String.Concat("<span class='string'>\"", val, "\"</span>");
 
-         else if (type == typeof(UrlParameter))
+         else if (IsMvcParameter(type))
             stringVal = "<span class='type'>UrlParameter</span>.Optional";
          
-         else if (type.FullName == "System.Web.Http.RouteParameter")
+         else if (IsWebApiParameter(type))
             stringVal = "<span class='type'>RouteParameter</span>.Optional";
 
          else if (constraint)
@@ -421,11 +422,18 @@ namespace MvcCodeRouting {
       void RenderTopComments(string lineCommentChars) { 
 
          Assembly thisAssembly = Assembly.GetExecutingAssembly();
-         AssemblyName name = thisAssembly.GetName();
+         AssemblyName assemName = thisAssembly.GetName();
+
+         string name = assemName.Name;
+         string version = thisAssembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true)
+            .Cast<AssemblyFileVersionAttribute>()
+            .Select(attr => attr.Version)
+            .FirstOrDefault() 
+            ?? assemName.Version.ToString();
 
          writer.Write("<span class='comment'>");
          writer.Write(lineCommentChars);
-         writer.Write(" {0} v{1}", name.Name, name.Version);
+         writer.Write(" {0} v{1}", name, version);
          writer.WriteLine();
          writer.Write(lineCommentChars);
          writer.Write(" <a href='http://mvccoderouting.codeplex.com/'>http://mvccoderouting.codeplex.com/</a>");
@@ -449,8 +457,34 @@ namespace MvcCodeRouting {
          writer.WriteLine(".keyword { color: #0026fd; }");
          writer.WriteLine(".type { color: #2b91af; }");
          writer.WriteLine("a.self { font-weight: bold; }");
+         writer.WriteLine(".url { background-color: #ecf2f5; font-weight: bold; }");
          writer.Write("</style>");
          writer.Write("</head>");
+      }
+
+      static bool IsMvcHandler(Type handlerType) {
+         return typeof(MvcRouteHandler).IsAssignableFrom(handlerType);
+      }
+
+      static bool IsMvcParameter(Type parameterType) {
+         return parameterType == typeof(UrlParameter);
+      }
+
+      static bool IsWebApiHandler(Type handlerType) {
+         
+         while (handlerType != null) {
+
+            if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") 
+               return true;
+            
+            handlerType = handlerType.BaseType;
+         }
+
+         return false;
+      }
+
+      static bool IsWebApiParameter(Type parameterType) {
+         return (parameterType.FullName == "System.Web.Http.RouteParameter");
       }
    }
 }

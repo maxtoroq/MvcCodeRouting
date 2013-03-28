@@ -11,8 +11,8 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class OverloadedActionBehavior {
 
-      static RouteCollection routes;
-      static UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public OverloadedActionBehavior() {
 
@@ -22,36 +22,42 @@ namespace MvcCodeRouting.Tests.Routing {
 
       [TestMethod]
       [ExpectedException(typeof(InvalidOperationException))]
-      public void RequireActionDisambiguatorInMvc() {
-
-         var controller = typeof(OverloadedAction.OverloadedAction1Controller);
-
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+      public void MustHaveRouteParametersThatAreEqualInNameAndPosition() {
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction1Controller), new CodeRoutingSettings { RootOnly = true });
       }
 
       [TestMethod]
-      public void DontRequireActionDisambiguatorInWebApi() {
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void MustHaveRouteParametersThatAreEqualInConstraint() {
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction2Controller), new CodeRoutingSettings { RootOnly = true });
+      }
 
-         var controller = typeof(OverloadedAction.OverloadedAction2Controller);
-
-         routes.Clear();
-         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+      [TestMethod]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void RequireActionDisambiguatorInMvc() {
+         routes.MapCodeRoutes(typeof(OverloadedAction.OverloadedAction3Controller), new CodeRoutingSettings { RootOnly = true });
       }
    }
 }
 
 namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
+   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
 
    public class OverloadedAction1Controller : Controller {
 
-      public void Foo([FromRoute]int a) { }
-      public void Foo([FromRoute]int a, [FromRoute]int b) { }
+      public void Foo([FromRoute]string a) { }
+      public void Foo([FromRoute]string b, [FromRoute]string a) { }
    }
 
-   public class OverloadedAction2Controller : System.Web.Http.ApiController {
+   public class OverloadedAction2Controller : Controller {
 
-      public void Foo([Web.Http.FromRoute]int a) { }
-      public void Foo([Web.Http.FromRoute]int a, [Web.Http.FromRoute]int b) { }
+      public void Foo([FromRoute(Constraint = "a")]string a) { }
+      public void Foo([FromRoute(Constraint = "x")]string a, [FromRoute]string b) { }
+   }
+
+   public class OverloadedAction3Controller : Controller {
+
+      public void Foo([FromRoute]int a) { }
+      public void Foo([FromRoute]int a, [FromRoute]int b) { }
    }
 }

@@ -22,7 +22,7 @@ namespace MvcCodeRouting.Web.Http {
 
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
-   /// action method.
+   /// action method or controller class.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
    public sealed class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
@@ -38,13 +38,14 @@ namespace MvcCodeRouting.Web.Http {
       /// </summary>
       /// <param name="url">
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
-      /// on the action method parameters.
+      /// on the action method parameters or controller class properties.
       /// </param>
       public CustomRouteAttribute(string url) {
 
          if (!String.IsNullOrEmpty(url)
-            && url[0] == '/')
+            && url[0] == '/') {
             throw new ArgumentException("Custom route cannot start with '/'.", "url");
+         }
 
          this.Url = url;
       }

@@ -13,8 +13,8 @@ namespace MvcCodeRouting.Tests.Routing {
    [TestClass]
    public class ActionConstraintBehavior {
 
-      static RouteCollection routes;
-      static UrlHelper Url;
+      readonly RouteCollection routes;
+      readonly UrlHelper Url;
 
       public ActionConstraintBehavior() {
 
@@ -90,6 +90,7 @@ namespace MvcCodeRouting.Tests.Routing {
 }
 
 namespace MvcCodeRouting.Tests.Routing.ActionConstraint {
+   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
 
    public class ActionConstraint1Controller : Controller {
       public void Foo() { }

@@ -41,16 +41,39 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Properties\MvcCodeRouting.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'aspnet-vnext|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\aspnet-vnext\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
-    </Reference>
   </ItemGroup>
+  <Choose>
+    <When Condition="'$(Configuration)'=='aspnet-vnext'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+          <Private>True</Private>
+          <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.Mvc\lib\net45\System.Web.Mvc.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+          <Private>True</Private>
+          <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
@@ -64,38 +87,44 @@
     <Compile Include="Controllers\RouteParameter.cs" />
     <Compile Include="Controllers\RouteParameterCollection.cs" />
     <Compile Include="CustomRouteAttribute.cs" />
+    <Compile Include="DataTokenKeys.cs" />
     <Compile Include="FromRouteAttribute.cs" />
+    <Compile Include="ICodeRoute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterSettings.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
     <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="RouteFactory.cs" />
     <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="RouteSegmentType.cs" />
+    <Compile Include="RouteSettings.cs" />
     <Compile Include="Utilities\FormatInvariantExtensions.cs" />
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Web.Hosting\AssemblyResources.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
     <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
     <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />
     <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
+    <Compile Include="Web.Mvc\CustomRouteAttribute.cs" />
+    <Compile Include="Web.Mvc\DefaultActionAttribute.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\DescribedMvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\FromRouteAttribute.cs" />
     <Compile Include="Web.Mvc\MvcActionInfo.cs" />
     <Compile Include="Web.Mvc\MvcCodeRoutingProvider.cs" />
     <Compile Include="Web.Mvc\MvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\MvcExtensions.cs" />
     <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcActionInfo.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\RequireRouteParametersAttribute.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
     <Compile Include="Web\CodeRoute.cs" />
-    <Compile Include="Web\DataTokenKeys.cs" />
-    <Compile Include="Web\ICodeRoute.cs" />
-    <Compile Include="Web\RouteFactory.cs" />
-    <Compile Include="Web\RouteSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

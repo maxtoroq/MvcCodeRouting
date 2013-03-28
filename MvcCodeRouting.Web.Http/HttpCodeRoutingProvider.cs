@@ -40,6 +40,12 @@ namespace MvcCodeRouting.Web.Http {
          get { return _CustomRouteAttributeType; }
       }
 
+      // TODO: Do we need custom default actions on Web Api ?
+
+      public override Type DefaultActionAttributeType {
+         get { return null; }
+      }
+
       protected override bool SupportsControllerType(Type controllerType) {
          return typeof(ApiController).IsAssignableFrom(controllerType);
       }

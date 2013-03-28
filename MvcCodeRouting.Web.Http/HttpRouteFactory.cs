@@ -52,32 +52,20 @@ namespace MvcCodeRouting.Web.Http {
 
          HttpConfiguration httpConfig = registerSettings.Settings.HttpConfiguration();
 
-         HttpConfiguration globalHttpConfig = GlobalConfiguration.Configuration;
-         RouteCollection globalRoutes = RouteTable.Routes;
+         CodeHttpRoute httpRoute = (CodeHttpRoute)route;
 
-         bool httpConfigIsGlobal = Object.ReferenceEquals(httpConfig, globalHttpConfig);
+         // httpWebRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
+         // with HttpRoute property set to httpRoute
 
-         string name = (httpConfigIsGlobal) ?
-            null
-            : Guid.NewGuid().ToString();
+         GlobalConfiguration.Configuration.Routes.Add(null, httpRoute);
+         Route httpWebRoute = (Route)RouteTable.Routes.Last();
+         RouteTable.Routes.RemoveAt(RouteTable.Routes.Count - 1);
 
-         httpConfig.Routes.Add(name, (IHttpRoute)route);
-
-         var httpRoute = (Web.Http.CodeHttpRoute)route;
-
-         if (!httpConfigIsGlobal) 
-            globalHttpConfig.Routes.Add(name, httpRoute);
-
-         // System.Web.Http.WebHost.Routing.HttpWebRoute
-         Route webRoute = (Route)globalRoutes.Last();
-
-         globalRoutes.RemoveAt(globalRoutes.Count - 1);
-
-         var codeRoute = new Web.Http.WebHost.CodeHttpWebRoute(webRoute, httpRoute);
+         var codeWebRoute = new WebHost.CodeHttpWebRoute(httpWebRoute, httpRoute);
 
          CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
 
-         return codeRoute;
+         return codeWebRoute;
       }
    }
 }

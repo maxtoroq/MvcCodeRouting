@@ -15,9 +15,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using MvcCodeRouting.Controllers;
-using MvcCodeRouting.Web;
 
 namespace MvcCodeRouting {
    
@@ -27,10 +27,13 @@ namespace MvcCodeRouting {
       static readonly object staticLock = new object();
 
       public abstract RouteFactory RouteFactory { get; }
-      public abstract bool CanDisambiguateActionOverloads { get; }
+      
       public abstract Type FromRouteAttributeType { get; }
       public abstract Type CustomRouteAttributeType { get; }
-      
+      public abstract Type DefaultActionAttributeType { get; }
+
+      public abstract bool CanDisambiguateActionOverloads { get; }
+
       public virtual Type ActionOverloadDisambiguationAttributeType {
          get { return null; }
       }
@@ -67,5 +70,31 @@ namespace MvcCodeRouting {
 
       protected abstract bool SupportsControllerType(Type controllerType);
       protected abstract ControllerInfo CreateControllerInfo(Type controllerType, RegisterSettings registerSettings);
+
+      public TAttr GetCorrectAttribute<TAttr>(ICustomAttributeProvider context, Func<CodeRoutingProvider, Type> attribute, bool inherit, Func<Type, Type, string> errorMessage) where TAttr : class {
+
+         Type attrType = attribute(this);
+
+         TAttr attr = context.GetCustomAttributes(attrType, inherit)
+            .Cast<TAttr>()
+            .SingleOrDefault();
+
+         if (attr != null) 
+            return attr;
+
+         foreach (CodeRoutingProvider otherProvider in providers.Where(p => !Object.ReferenceEquals(p, this))) {
+
+            Type mistakenAttrType = attribute(otherProvider);
+
+            attr = context.GetCustomAttributes(mistakenAttrType, inherit)
+               .Cast<TAttr>()
+               .SingleOrDefault();
+
+            if (attr != null)
+               throw new InvalidOperationException(errorMessage(attrType, attr.GetType()));
+         }
+
+         return null;
+      }
    }
 }

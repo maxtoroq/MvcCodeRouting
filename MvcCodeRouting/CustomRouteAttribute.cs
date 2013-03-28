@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using MvcCodeRouting.Controllers;
@@ -22,15 +23,19 @@ namespace MvcCodeRouting {
    
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
-   /// action method.
+   /// action method or controller class.
    /// </summary>
+   [Obsolete("Please use MvcCodeRouting.Web.Mvc.CustomRouteAttribute instead.")]
+   [EditorBrowsable(EditorBrowsableState.Never)]
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-   public sealed class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
+   public class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
+
+      readonly string _Url;
 
       /// <summary>
       /// The URL pattern.
       /// </summary>
-      public string Url { get; private set; }
+      public virtual string Url { get { return _Url; } }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
@@ -38,15 +43,16 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="url">
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
-      /// on the action method parameters.
+      /// on the action method parameters or controller class properties.
       /// </param>
       public CustomRouteAttribute(string url) {
 
          if (!String.IsNullOrEmpty(url)
-            && url[0] == '/')
+            && url[0] == '/') {
             throw new ArgumentException("Custom route cannot start with '/'.", "url");
+         }
 
-         this.Url = url;
+         this._Url = url;
       }
    }
 }

@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using MvcCodeRouting.Web;
 
 namespace MvcCodeRouting.Controllers {
    
@@ -81,7 +80,7 @@ namespace MvcCodeRouting.Controllers {
       public string ControllerSegment {
          get {
             if (_ControllerSegment == null) 
-               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type), caseOnly: false);
+               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type));
             return _ControllerSegment;
          }
       }
@@ -129,7 +128,7 @@ namespace MvcCodeRouting.Controllers {
                var namespaceSegments = new List<string>();
 
                namespaceSegments.AddRange(
-                  CodeRoutingNamespace.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type), caseOnly: false))
+                  CodeRoutingNamespace.Select(s => Register.Settings.FormatRouteSegment(new RouteFormatterArgs(s, RouteSegmentType.Namespace, Type)))
                );
 
                _NamespaceSegments = new ReadOnlyCollection<string>(namespaceSegments);
@@ -169,11 +168,27 @@ namespace MvcCodeRouting.Controllers {
 
                var list = new List<RouteParameter>();
 
-               foreach (var type in types) {
+               foreach (Type t in types) {
+
                   list.AddRange(
-                     from p in type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
-                     where p.IsDefined(Provider.FromRouteAttributeType, inherit: false /* [1] */)
-                     let rp = CreateRouteParameter(p)
+                     from p in t.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public)
+                     
+                     let attr = Provider.GetCorrectAttribute<IFromRouteAttribute>(
+                        p, 
+                        prov => prov.FromRouteAttributeType, 
+                        inherit: false /* [1] */,
+                        errorMessage: (attrType, mistakenAttrType) =>
+                           String.Format(CultureInfo.InvariantCulture,
+                              "Must use {0} instead of {1} (property {2} on {3}).",
+                              attrType.FullName,
+                              mistakenAttrType.FullName,
+                              p.Name,
+                              t.FullName
+                           )
+                        )
+
+                     where attr != null
+                     let rp = CreateRouteParameter(p, attr)
                      where !list.Any(item => RouteParameter.NameEquals(item.Name, rp.Name))
                      select rp
                   );
@@ -190,16 +205,17 @@ namespace MvcCodeRouting.Controllers {
       public Collection<ActionInfo> Actions {
          get {
             if (_Actions == null) {
-               _Actions = new Collection<ActionInfo>(
+
+               var actions =
                   (from a in GetActions()
                    where !IsNonAction(a)
-                   select a).ToArray()
-               );
+                   select a).ToArray();
 
-               if (!Provider.CanDisambiguateActionOverloads)
-                  CheckOverloads(_Actions);
+               CheckDefaultActions(actions);
+               CheckOverloads(actions);
+               CheckCustomRoutes(actions);
 
-               CheckCustomRoutes(_Actions);
+               _Actions = new Collection<ActionInfo>(actions);
             }
             return _Actions;
          }
@@ -207,45 +223,16 @@ namespace MvcCodeRouting.Controllers {
 
       public string UrlTemplate {
          get {
-            if (_UrlTemplate == null) {
-
-               List<string> segments = new List<string>();
-               segments.AddRange(BaseRouteAndNamespaceSegments);
-
-               if (CustomRoute != null) {
-                  segments.AddRange(CustomRoute.Split('/'));
-               } else {
-
-                  if (!IsRootController)
-                     segments.Add("{controller}");
-
-                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
-               }
-
-               _UrlTemplate = String.Join("/", segments); 
-            }
+            if (_UrlTemplate == null) 
+               _UrlTemplate = BuildUrl(template: true);
             return _UrlTemplate;
          }
       }
 
       public string ControllerUrl {
          get {
-            if (_ControllerUrl == null) {
-               List<string> segments = new List<string>();
-               segments.AddRange(BaseRouteAndNamespaceSegments);
-
-               if (CustomRoute != null) {
-                  segments.AddRange(CustomRoute.Split('/'));
-               } else {
-
-                  if (!IsRootController)
-                     segments.Add(ControllerSegment);
-
-                  segments.AddRange(RouteProperties.Select(p => p.RouteSegment));
-               }
-
-               _ControllerUrl = String.Join("/", segments);
-            }
+            if (_ControllerUrl == null)
+               _ControllerUrl = BuildUrl(template: false);
             return _ControllerUrl;
          }
       }
@@ -254,9 +241,19 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (!_CustomRouteInit) {
 
-               var attr = GetCustomAttributes(Provider.CustomRouteAttributeType, inherit: true)
-                  .Cast<ICustomRouteAttribute>()
-                  .SingleOrDefault();
+               ICustomRouteAttribute attr = Provider
+                  .GetCorrectAttribute<ICustomRouteAttribute>(
+                     this,
+                     prov => prov.CustomRouteAttributeType,
+                     inherit: true,
+                     errorMessage: (attrType, mistakenAttrType) =>
+                        String.Format(CultureInfo.InvariantCulture,
+                           "Must use {0} instead of {1} on {2}.",
+                           attrType.FullName,
+                           mistakenAttrType.FullName,
+                           Type.FullName
+                        )
+                  );
 
                if (attr != null)
                   _CustomRoute = attr.Url;
@@ -281,8 +278,51 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
+      public bool CustomRouteIsAbsolute {
+         get {
+            if (CustomRoute == null)
+               return false;
+
+            return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
+         }
+      }
+
       public static bool NameEquals(string name1, string name2) {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
+      }
+
+      string BuildUrl(bool template) {
+
+         string custRoute = this.CustomRoute;
+
+         var segments = new List<string>();
+         segments.AddRange(this.BaseRouteAndNamespaceSegments);
+
+         if (custRoute != null) {
+
+            if (this.CustomRouteIsAbsolute) {
+
+               segments.Clear();
+
+               if (this.Register.BaseRoute != null)
+                  segments.AddRange(this.Register.BaseRoute.Split('/'));
+
+               custRoute = custRoute.Substring(2);
+            }
+
+            segments.AddRange(custRoute.Split('/'));
+
+         } else {
+
+            if (!this.IsRootController)
+               segments.Add(template ? "{controller}" : this.ControllerSegment);
+
+            segments.AddRange(this.RouteProperties.Select(p => p.RouteSegment));
+         }
+
+         string url = String.Join("/", segments);
+
+         return url;
       }
 
       void CheckOverloads(IEnumerable<ActionInfo> actions) {
@@ -294,24 +334,27 @@ namespace MvcCodeRouting.Controllers {
              where g.Count() > 1
              select g).ToList();
 
-         var withoutRequiredAttr =
-            (from g in overloadedActions
-             let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
-             where distinctParamCount.Count() > 1
-             let bad = g.Where(a => !a.HasActionOverloadDisambiguationAttribute)
-             where bad.Count() > 0
-             select bad).ToList();
+         if (!Provider.CanDisambiguateActionOverloads) {
 
-         if (withoutRequiredAttr.Count > 0) {
-            var first = withoutRequiredAttr.First();
+            var withoutRequiredAttr =
+               (from g in overloadedActions
+                let distinctParamCount = g.Select(a => a.RouteParameters.Count).Distinct()
+                where distinctParamCount.Count() > 1
+                let bad = g.Where(a => !a.HasActionOverloadDisambiguationAttribute)
+                where bad.Count() > 0
+                select bad).ToList();
 
-            throw new InvalidOperationException(
-               String.Format(CultureInfo.InvariantCulture,
-                  "The following action methods must be decorated with {0} for disambiguation: {1}.",
-                  Provider.ActionOverloadDisambiguationAttributeType.FullName,
-                  String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
-               )
-            );
+            if (withoutRequiredAttr.Count > 0) {
+               var first = withoutRequiredAttr.First();
+
+               throw new InvalidOperationException(
+                  String.Format(CultureInfo.InvariantCulture,
+                     "The following action methods must be decorated with {0} for disambiguation: {1}.",
+                     Provider.ActionOverloadDisambiguationAttributeType.FullName,
+                     String.Join(", ", first.Select(a => String.Concat(a.DeclaringType.FullName, ".", a.MethodName, "(", String.Join(", ", a.Parameters.Select(p => p.Type.Name)), ")")))
+                  )
+               );
+            }
          }
 
          var overloadsComparer = new ActionSignatureComparer();
@@ -328,7 +371,7 @@ namespace MvcCodeRouting.Controllers {
 
             throw new InvalidOperationException(
                String.Format(CultureInfo.InvariantCulture,
-                  "Overloaded action methods must have parameters that are equal in name, position and constraint ({0}).",
+                  "Overloaded action methods must have route parameters that are equal in name, position and constraint ({0}).",
                   String.Concat(first.Key.Controller.Type.FullName, ".", first.First().MethodName)
                )
             );
@@ -359,6 +402,68 @@ namespace MvcCodeRouting.Controllers {
          }
       }
 
+      void CheckDefaultActions(IEnumerable<ActionInfo> actions) { 
+         
+         // - Index is the default action by convention
+         // - You can use [DefaultAction] to override the convention
+         //   - Can only be applied to one action per controller type
+         //   - Can be inherited from base controller
+         //   - Derived controllers can override the inherited [DefaultAction] by applying it to a different action
+         // - Default action cannot have required route parameters (either no parameters or all optional)
+
+         Func<ActionInfo, bool> correctRouteParameterSetup = a =>
+            a.RouteParameters.Count == 0 || a.RouteParameters.All(p => p.IsOptional);
+
+         ActionInfo defaultAction = null;
+
+         Type attrType = this.Provider.DefaultActionAttributeType;
+
+         if (attrType != null) {
+
+            var defaultActions =
+               (from a in actions
+                where a.GetCustomAttributes(attrType, inherit: false).Any()
+                select a).ToArray();
+
+            if (defaultActions.Any()) {
+
+               var byDeclaringType =
+                  from a in defaultActions
+                  group a by a.DeclaringType;
+
+               if (defaultActions.Length > byDeclaringType.Count()) {
+                  throw new InvalidOperationException(
+                     "{0} can only be used once per declaring type: {1}.".FormatInvariant(attrType.FullName, byDeclaringType.First(g => g.Count() > 1).Key.FullName)
+                  );
+               }
+
+               for (Type t = this.Type; t != null; t = t.BaseType) {
+
+                  defaultAction = defaultActions.SingleOrDefault(a => a.DeclaringType == t);
+
+                  if (defaultAction != null) {
+
+                     if (!correctRouteParameterSetup(defaultAction)) {
+                        throw new InvalidOperationException(
+                           "Default actions cannot have required route parameters: {0}.".FormatInvariant(
+                              String.Concat(defaultAction.DeclaringType.FullName, ".", defaultAction.MethodName, "(", String.Join(", ", defaultAction.Parameters.Select(p => p.Type.Name)), ")")
+                           )
+                        );
+                     }
+
+                     break;
+                  }
+               }
+            } 
+         }
+
+         if (defaultAction == null) 
+            defaultAction = actions.FirstOrDefault(a => ActionInfo.NameEquals(a.Name, "Index") && correctRouteParameterSetup(a));
+
+         if (defaultAction != null) 
+            defaultAction.IsDefaultAction = true;
+      }
+
       protected ControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) {
          
          this.Type = type;
@@ -372,15 +477,11 @@ namespace MvcCodeRouting.Controllers {
       public abstract bool IsDefined(Type attributeType, bool inherit);
       protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
-      RouteParameter CreateRouteParameter(PropertyInfo property) {
+      RouteParameter CreateRouteParameter(PropertyInfo property, IFromRouteAttribute routeAttr) {
 
          Type propertyType = property.PropertyType;
 
-         var routeAttr = property.GetCustomAttributes(Provider.FromRouteAttributeType, inherit: true)
-            .Cast<IFromRouteAttribute>()
-            .Single();
-
-         string name = routeAttr.TokenName ?? property.Name;
+         string name = routeAttr.Name.HasValue() ? routeAttr.Name : property.Name;
          string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
 
          return new RouteParameter(name, constraint);
