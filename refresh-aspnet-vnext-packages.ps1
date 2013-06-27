@@ -1,6 +1,6 @@
 ﻿$nightly = "http://www.myget.org/F/aspnetwebstacknightly/"
 $output = "packages\aspnet-vnext"
-Remove-Item $output\*.* -Recurse -ErrorAction Ignore
+Remove-Item $output\*.* -Recurse -ErrorAction SilentlyContinue
 
 .\.nuget\NuGet.exe install Microsoft.AspNet.Mvc -Prerelease -OutputDirectory $output -ExcludeVersion -Source $nightly
 .\.nuget\NuGet.exe install Microsoft.Net.Http -Prerelease -OutputDirectory $output -ExcludeVersion
