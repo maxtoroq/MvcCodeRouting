@@ -49,6 +49,21 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
+      public void IsNamedAsControllerIfNoIndex() {
+
+         var controller = typeof(DefaultAction.DefaultAction11Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
+
+         Assert.AreEqual("DefaultAction11", routes.GetRouteData(httpContextMock.Object).GetRequiredString("action"));
+         Assert.AreEqual("/", Url.Action("DefaultAction11", controller));
+      }
+
+      [TestMethod]
       public void CanUseEmptyStringInUrlGeneration() {
 
          // #32
@@ -174,6 +189,7 @@ namespace MvcCodeRouting.Tests.Routing.DefaultAction {
    public class DefaultAction2Controller : Controller {
       public void Index() { }
       public void Foo() { }
+      public void DefaultAction2() { }
    }
 
    public class DefaultAction3Controller : Controller {
@@ -197,6 +213,7 @@ namespace MvcCodeRouting.Tests.Routing.DefaultAction {
    public class DefaultAction6Controller : Controller {
 
       public void Index() { }
+      public void DefaultAction6() { }
 
       [DefaultAction]
       public void Foo() { }
@@ -242,5 +259,10 @@ namespace MvcCodeRouting.Tests.Routing.DefaultAction {
 
       [DefaultAction]
       public void Bar() { }
+   }
+
+   public class DefaultAction11Controller : Controller {
+
+      public void DefaultAction11() { }
    }
 }
