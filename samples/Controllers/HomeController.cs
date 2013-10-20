@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -13,11 +14,18 @@ namespace Samples.Controllers {
          return View();
       }
 
-      public ActionResult MvcVersion() { 
-         
-         var assembly = typeof(Controller).Assembly;
+      public ActionResult MvcVersion() {
 
-         return Content(String.Format("ASP.NET MVC version: {0} ({1})", assembly.GetName().Version, ((AssemblyFileVersionAttribute)assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false)[0]).Version));
+         Assembly mvcAssembly = typeof(Controller).Assembly;
+         Assembly webApiAssembly = typeof(System.Web.Http.ApiController).Assembly;
+
+         var sb = new StringBuilder()
+            .AppendFormat("ASP.NET MVC version: {0} ({1})", mvcAssembly.GetName().Version, ((AssemblyFileVersionAttribute)mvcAssembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false)[0]).Version)
+            .AppendLine()
+            .AppendFormat("ASP.NET Web API version: {0} ({1})", webApiAssembly.GetName().Version, ((AssemblyFileVersionAttribute)webApiAssembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false)[0]).Version)
+            ;
+
+         return Content(sb.ToString(), "text/plain");
       }
    }
 }
