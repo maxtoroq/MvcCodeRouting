@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.SelfHost", "samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http", "MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj", "{1047C724-56F3-4791-9B07-EEE2CB5C45B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.net35", "MvcCodeRouting\MvcCodeRouting.net35.csproj", "{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.Tests", "MvcCodeRouting.Web.Http.Tests\MvcCodeRouting.Web.Http.Tests.csproj", "{210DCAEF-9EDF-4912-84B8-8717F57A78A8}"
 EndProject
 Global
@@ -59,12 +57,6 @@ Global
 		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1047C724-56F3-4791-9B07-EEE2CB5C45B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.aspnet-vnext|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.aspnet-vnext|Any CPU.Build.0 = Debug|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.aspnet-vnext|Any CPU.ActiveCfg = aspnet-vnext|Any CPU
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.aspnet-vnext|Any CPU.Build.0 = aspnet-vnext|Any CPU
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
