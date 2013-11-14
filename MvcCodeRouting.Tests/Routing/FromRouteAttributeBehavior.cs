@@ -71,7 +71,7 @@ namespace MvcCodeRouting.Tests.Routing {
          routes.MapCodeRoutes(controller);
 
          var httpContextMock = new Mock<HttpContextBase>();
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/Foo/no");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/Foo/yes");
 
          var httpResponseMock = new Mock<HttpResponseBase>();
          httpContextMock.Setup(c => c.Response).Returns(httpResponseMock.Object);
@@ -82,13 +82,44 @@ namespace MvcCodeRouting.Tests.Routing {
             ValidateRequest = false
          };
 
-         var controllerContext = new ControllerContext(httpContextMock.Object, routeData, controllerInstance);
+         var requestContext = new RequestContext(httpContextMock.Object, routeData);
+         var controllerContext = new ControllerContext(requestContext, controllerInstance);
          
          controllerInstance.ValueProvider = new ValueProviderCollection(new IValueProvider[] { new RouteDataValueProvider(controllerContext) });
 
-         controllerInstance.ActionInvoker.InvokeAction(controllerContext, routeData.GetRequiredString("action"));
+         ((IController)controllerInstance).Execute(requestContext);
 
-         httpResponseMock.Verify(c => c.Write(It.Is<string>(s => s == "False")), Times.AtLeastOnce());
+         httpResponseMock.Verify(c => c.Write(It.Is<string>(s => s == "True")), Times.AtLeastOnce());
+      }
+
+      [TestMethod]
+      public void UsesSpecifiedBinder_Property() {
+
+         var controller = typeof(FromRouteAttr.FromRouteAttribute3Controller);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller);
+
+         var httpContextMock = new Mock<HttpContextBase>();
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/yes/Foo");
+
+         var httpResponseMock = new Mock<HttpResponseBase>();
+         httpContextMock.Setup(c => c.Response).Returns(httpResponseMock.Object);
+
+         var routeData = routes.GetRouteData(httpContextMock.Object);
+
+         var controllerInstance = new FromRouteAttr.FromRouteAttribute3Controller {
+            ValidateRequest = false
+         };
+
+         var requestContext = new RequestContext(httpContextMock.Object, routeData);
+         var controllerContext = new ControllerContext(requestContext, controllerInstance);
+
+         controllerInstance.ValueProvider = new ValueProviderCollection(new IValueProvider[] { new RouteDataValueProvider(controllerContext) });
+
+         ((IController)controllerInstance).Execute(requestContext);
+
+         httpResponseMock.Verify(c => c.Write(It.Is<string>(s => s == "True")), Times.AtLeastOnce());
       }
    }
 }
@@ -107,6 +138,21 @@ namespace MvcCodeRouting.Tests.Routing.FromRouteAttr {
 
       public bool Foo([FromRoute(Constraint = "yes|no", BinderType = typeof(YesNoModelBinder))]bool a) {
          return a;
+      }
+   }
+
+   public class FromRouteAttribute3Controller : Controller {
+
+      [FromRoute(Constraint = "yes|no", BinderType = typeof(YesNoModelBinder))]
+      public bool a { get; set; }
+
+      protected override void Initialize(RequestContext requestContext) {
+         base.Initialize(requestContext);
+         MvcCodeRouting.Web.Mvc.MvcExtensions.BindRouteProperties(this);
+      }
+
+      public bool Foo() {
+         return this.a;
       }
    }
 
