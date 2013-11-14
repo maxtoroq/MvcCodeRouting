@@ -14,13 +14,17 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Metadata;
 using System.Web.Http.Metadata.Providers;
 using System.Web.Http.ModelBinding;
+using System.Web.Http.ValueProviders.Providers;
 
 namespace MvcCodeRouting.Web.Http {
    
@@ -34,7 +38,6 @@ namespace MvcCodeRouting.Web.Http {
       /// </summary>
       /// <param name="controller">The controller to bind.</param>
       /// <remarks>You can call this method from <see cref="ApiController.Initialize"/>.</remarks>
-      [Obsolete("This method is not implemented yet. Please wait for the next release.", error: true)]
       public static void BindRouteProperties(this ApiController controller) { 
          
          if (controller == null) throw new ArgumentNullException("controller");
@@ -45,52 +48,98 @@ namespace MvcCodeRouting.Web.Http {
          if (controllerData.Properties.Length == 0)
             return;
 
-         ModelMetadata metadata = controllerData.Metadata;
-         metadata.Model = controller;
-
          var modelState = new ModelStateDictionary();
+
+         var actionContext = new HttpActionContext { 
+            ControllerContext = controller.ControllerContext 
+         };
 
          var bindingContext = new ModelBindingContext {
             FallbackToEmptyPrefix = true,
-            ModelMetadata = metadata,
             ModelState = modelState,
-            //PropertyFilter = (p) => controllerData.Properties.Contains(p, StringComparer.Ordinal),
+            ValueProvider = new RouteDataValueProvider(actionContext, CultureInfo.InvariantCulture)
          };
 
-         // TODO
-         throw new NotImplementedException();
+         for (int i = 0; i < controllerData.Properties.Length; i++) {
+
+            var propertyData = controllerData.Properties[i];
+
+            propertyData.BindProperty(controller.ControllerContext, actionContext, bindingContext);
+
+            if (!modelState.IsValid)
+               break;
+         }
+
+         if (!modelState.IsValid) {
+            ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First();
+
+            HttpStatusCode statusCode = HttpStatusCode.NotFound;
+            string message = "Not Found";
+
+            if (error.Exception != null)
+               throw new HttpResponseException(controller.Request.CreateErrorResponse(statusCode, message, error.Exception));
+
+            throw new HttpResponseException(controller.Request.CreateErrorResponse(statusCode, message));
+         }
       }
 
       class ControllerData {
 
-         public readonly ModelMetadata Metadata;
-         public readonly string[] Properties;
-         public readonly string[] CustomTokens;
-         public readonly bool HasCustomTokens;
+         public readonly PropertyData[] Properties;
 
          public ControllerData(Type type) {
 
             var metadataProvider = new EmptyModelMetadataProvider();
 
-            this.Metadata = metadataProvider.GetMetadataForType(null, type);
-
-            var properties =
+            this.Properties =
                (from p in type.GetProperties()
                 let attr = p.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
                   .Cast<FromRouteAttribute>()
                   .SingleOrDefault()
                 where attr != null
-                select new {
-                   PropertyName = p.Name,
-                   CustomTokenName = (attr.Name.HasValue()
-                      && !String.Equals(p.Name, attr.Name, StringComparison.OrdinalIgnoreCase)) ?
-                         attr.Name
-                         : null
-                }).ToArray();
+                select new PropertyData(
+                   property: p,
+                   attribute: attr,
+                   metadata: metadataProvider.GetMetadataForType(null, p.PropertyType)
+                )).ToArray();
+         }
+      }
 
-            this.Properties = properties.Select(p => p.PropertyName).ToArray();
-            this.CustomTokens = properties.Select(p => p.CustomTokenName).ToArray();
-            this.HasCustomTokens = this.CustomTokens.Any(s => s != null);
+      class PropertyData {
+
+         readonly PropertyInfo Property;
+         readonly string Name;
+         readonly FromRouteAttribute Attribute;
+         readonly ModelMetadata Metadata;
+
+         public PropertyData(PropertyInfo property, FromRouteAttribute attribute, ModelMetadata metadata) {
+
+            this.Property = property;
+            this.Name = property.Name;
+            this.Attribute = attribute;
+            this.Metadata = metadata;
+         }
+
+         public void BindProperty(HttpControllerContext controllerContext, HttpActionContext actionContext, ModelBindingContext bindingContext) {
+
+            bindingContext.ModelName = this.Attribute.Name ?? this.Name;
+            bindingContext.ModelMetadata = this.Metadata;
+
+            IModelBinder binder = this.Attribute.GetModelBinder(controllerContext.Configuration, this.Metadata.ModelType);
+
+            if (!binder.BindModel(actionContext, bindingContext))
+               return;
+
+            object value = bindingContext.Model;
+
+            try {
+               this.Property.SetValue(controllerContext.Controller, value, null);
+
+            } catch (Exception ex) {
+
+               if (bindingContext.ModelState.IsValidField(bindingContext.ModelName))
+                  bindingContext.ModelState.AddModelError(bindingContext.ModelName, ex);
+            }
          }
       }
    }

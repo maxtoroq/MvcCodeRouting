@@ -178,6 +178,8 @@
     <Compile Include="Controllers\Admin\Tasks\MaintenanceController.cs" />
     <Compile Include="Controllers\Admin\UserController.cs" />
     <Compile Include="Controllers\Api\ApiController.cs" />
+    <Compile Include="Controllers\Api\Book\BookController.cs" />
+    <Compile Include="Controllers\Api\Book\ChapterController.cs" />
     <Compile Include="Controllers\Api\UserController.cs" />
     <Compile Include="Controllers\AsyncController.cs" />
     <Compile Include="Controllers\Custom\BlogController.cs" />
