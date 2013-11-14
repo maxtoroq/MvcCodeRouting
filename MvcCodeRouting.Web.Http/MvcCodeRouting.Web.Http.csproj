@@ -67,6 +67,10 @@
           <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.WebApi.WebHost\lib\net45\System.Web.Http.WebHost.dll</HintPath>
           <SpecificVersion>False</SpecificVersion>
         </Reference>
+         <Reference Include="System.Net.Http.Formatting, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+            <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.WebApi.Client\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+            <SpecificVersion>False</SpecificVersion>
+         </Reference>
         <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.Mvc\lib\net45\System.Web.Mvc.dll</HintPath>
           <SpecificVersion>False</SpecificVersion>
