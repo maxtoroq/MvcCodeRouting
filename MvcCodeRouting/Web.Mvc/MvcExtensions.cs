@@ -15,12 +15,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
-using MvcCodeRouting.Controllers;
+using FromRouteAttr = MvcCodeRouting.FromRouteAttribute;
 
 namespace MvcCodeRouting.Web.Mvc {
 
@@ -48,45 +47,22 @@ namespace MvcCodeRouting.Web.Mvc {
          if (controllerData.Properties.Length == 0)
             return;
 
-         ModelMetadata metadata = controllerData.Metadata;
-         metadata.Model = controller;
-
          var modelState = new ModelStateDictionary();
 
          var bindingContext = new ModelBindingContext {
             FallbackToEmptyPrefix = true,
-            ModelMetadata = metadata,
             ModelState = modelState,
-            PropertyFilter = (p) => controllerData.Properties.Contains(p, StringComparer.Ordinal),
          };
 
-         RouteValueDictionary values = null;
-         bool hasCustomValues = false;
+         for (int i = 0; i < controllerData.Properties.Length; i++) {
 
-         if (controllerData.HasCustomTokens) {
+            var propertyData = controllerData.Properties[i];
 
-            values = new RouteValueDictionary(controller.ControllerContext.RouteData.Values);
-            
-            for (int i = 0; i < controllerData.CustomTokens.Length; i++) {
-               string tokenName = controllerData.CustomTokens[i];
-               string propertyName = controllerData.Properties[i];
+            propertyData.BindProperty(controller.ControllerContext, bindingContext);
 
-               if (tokenName != null 
-                  && !values.ContainsKey(propertyName)) {
-                  
-                  values[propertyName] = values[tokenName];
-                  hasCustomValues = true;
-               }
-            }
+            if (!modelState.IsValid)
+               break;
          }
-
-         bindingContext.ValueProvider = (hasCustomValues) ?
-            new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture)
-            : new RouteDataValueProvider(controller.ControllerContext);
-
-         IModelBinder binder = ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
-
-         binder.BindModel(controller.ControllerContext, bindingContext);
 
          if (!modelState.IsValid) {
             ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First(); 
@@ -101,41 +77,64 @@ namespace MvcCodeRouting.Web.Mvc {
          }
       }
 
+#pragma warning disable 0618
+
       class ControllerData {
 
-         public readonly ModelMetadata Metadata;
-         public readonly string[] Properties;
-         public readonly string[] CustomTokens;
-         public readonly bool HasCustomTokens;
+         public readonly PropertyData[] Properties;
 
          public ControllerData(Type type) {
 
             var metadataProvider = new EmptyModelMetadataProvider();
             
-            this.Metadata = metadataProvider.GetMetadataForType(null, type);
-
-#pragma warning disable 0618
-
-            var properties =
+            this.Properties =
                (from p in type.GetProperties()
-                let attr = p.GetCustomAttributes(typeof(MvcCodeRouting.FromRouteAttribute), inherit: true)
-                  .Cast<IFromRouteAttribute>()
+                let attr = p.GetCustomAttributes(typeof(FromRouteAttr), inherit: true)
+                  .Cast<FromRouteAttr>()
                   .SingleOrDefault()
                 where attr != null
-                select new {
-                   PropertyName = p.Name,
-                   CustomTokenName = (attr.Name.HasValue()
-                      && !String.Equals(p.Name, attr.Name, StringComparison.OrdinalIgnoreCase)) ?
-                         attr.Name
-                         : null
-                }).ToArray();
+                select new PropertyData(
+                   property: p,
+                   attribute: attr,
+                   metadata: metadataProvider.GetMetadataForType(null, p.PropertyType)
+                )).ToArray();
+         }
+      }
 
-#pragma warning restore 0618
+      class PropertyData {
 
-            this.Properties = properties.Select(p => p.PropertyName).ToArray();
-            this.CustomTokens = properties.Select(p => p.CustomTokenName).ToArray();
-            this.HasCustomTokens = this.CustomTokens.Any(s => s != null);
+         readonly PropertyInfo Property;
+         readonly string Name;
+         readonly FromRouteAttr Attribute;
+         readonly ModelMetadata Metadata;
+
+         public PropertyData(PropertyInfo property, FromRouteAttr attribute, ModelMetadata metadata) {
+
+            this.Property = property;
+            this.Name = property.Name;
+            this.Attribute = attribute;
+            this.Metadata = metadata;
+         }
+
+         public void BindProperty(ControllerContext controllerContext, ModelBindingContext bindingContext) {
+
+            bindingContext.ModelName = this.Name;
+            bindingContext.ModelMetadata = this.Metadata;
+
+            object value = this.Attribute.BindModel(controllerContext, bindingContext);
+
+            try {
+               this.Property.SetValue(controllerContext.Controller, value, null);
+
+            } catch (Exception ex) {
+               
+               if (bindingContext.ModelState.IsValidField(this.Name))
+                  bindingContext.ModelState.AddModelError(this.Name, ex);
+            }
          }
       }
    }
+
+#pragma warning restore 0618
+
 }

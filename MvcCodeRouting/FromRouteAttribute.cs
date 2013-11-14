@@ -95,24 +95,10 @@ namespace MvcCodeRouting {
 
          RouteValueDictionary values = controllerContext.RouteData.Values;
 
-         string paramName = (this.Name != null
-            && !String.Equals(bindingContext.ModelName, this.Name, StringComparison.OrdinalIgnoreCase)
-            && !values.ContainsKey(bindingContext.ModelName)) ?
-            bindingContext.ModelName
-            : null;
+         if (this.Name != null) 
+            bindingContext.ModelName = this.Name;
 
-         if (paramName != null) {
-
-            values = new RouteValueDictionary(values) { 
-               { paramName, values[this.Name] }
-            };
-
-            bindingContext.ValueProvider = new DictionaryValueProvider<object>(values, CultureInfo.InvariantCulture);
-         
-         } else {
-            
-            bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
-         }
+         bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
 
          IModelBinder binder = GetRealBinder(bindingContext);
 
