@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Routing;
 using MvcCodeRouting.Web.Http;
@@ -92,6 +93,9 @@ namespace MvcCodeRouting {
          
          if (!(configuration.Services.GetHttpControllerSelector() is CustomHttpControllerSelector))
             configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
+
+         if (!(configuration.Services.GetActionSelector() is CustomApiControllerActionSelector))
+            configuration.Services.Replace(typeof(IHttpActionSelector), new CustomApiControllerActionSelector());
       }
    }
 }
