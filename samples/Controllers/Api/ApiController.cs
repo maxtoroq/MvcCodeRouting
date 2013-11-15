@@ -13,7 +13,7 @@ namespace Samples.Controllers.Api {
 
          string usersUrl = (Request.RequestUri.AbsolutePath.Length > 1) ?
             Url.Route(null, new { controller = "+User" })
-            : Url.Route("3", new { controller = "User" });
+            : "/user";
 
          return new api {
             users = new link { text = "Users", href = usersUrl }

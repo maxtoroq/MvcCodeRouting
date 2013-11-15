@@ -61,8 +61,8 @@ namespace MvcCodeRouting {
          IHttpRoute[] newRoutes = RouteFactory.CreateRoutes<IHttpRoute>(registerSettings);
 
          foreach (IHttpRoute route in newRoutes) {
-            // TODO: in Web API v1 name cannot be null
-            configuration.Routes.Add((configuration.Routes.Count + 1).ToString(CultureInfo.InvariantCulture), route);
+            // In Web API v1 name cannot be null
+            configuration.Routes.Add(Guid.NewGuid().ToString(), route);
          }
 
          EnableCodeRouting(configuration);
