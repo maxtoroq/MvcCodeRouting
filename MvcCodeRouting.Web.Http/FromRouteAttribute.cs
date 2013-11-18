@@ -61,6 +61,11 @@ namespace MvcCodeRouting.Web.Http {
          this.Name = name;
       }
 
+      /// <summary>
+      /// Gets the value providers that will be fed to the model binder.
+      /// </summary>
+      /// <param name="configuration">The <see cref="HttpConfiguration"/> configuration object.</param>
+      /// <returns>A collection of <see cref="ValueProviderFactory"/> instances.</returns>
       public override IEnumerable<ValueProviderFactory> GetValueProviderFactories(HttpConfiguration configuration) {
 
          if (configuration == null) throw new ArgumentNullException("configuration");

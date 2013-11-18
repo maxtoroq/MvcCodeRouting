@@ -21,9 +21,15 @@ using System.ComponentModel;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
+   /// <summary>
+   /// Executes the initialization code needed to use <see cref="N:MvcCodeRouting.Web.Http"/> on ASP.NET (WebHost).
+   /// </summary>
    [EditorBrowsable(EditorBrowsableState.Never)]
    public static class PreApplicationStartCode {
 
+      /// <summary>
+      /// Executes the initialization code.
+      /// </summary>
       public static void Start() {
 
          CodeRoutingExtensions.Initialize();

@@ -27,7 +27,10 @@ using System.Web.Http.ModelBinding;
 using System.Web.Http.ValueProviders.Providers;
 
 namespace MvcCodeRouting.Web.Http {
-   
+
+   /// <summary>
+   /// Extensions methods that provide utility functions for various ASP.NET Web API classes.
+   /// </summary>
    public static class HttpExtensions {
 
       static readonly ConcurrentDictionary<Type, ControllerData> controllerDataCache = new ConcurrentDictionary<Type, ControllerData>();

@@ -22,7 +22,10 @@ using System.Web.Http.Routing;
 using MvcCodeRouting.Web.Http;
 
 namespace MvcCodeRouting {
-   
+
+   /// <summary>
+   /// Extension methods for reflection-based route creation and related functionality.
+   /// </summary>
    public static class CodeRoutingHttpExtensions {
 
       static CodeRoutingHttpExtensions() {
@@ -31,18 +34,52 @@ namespace MvcCodeRouting {
 
       internal static void Initialize() { }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly.
+      /// </summary>
+      /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
+      /// <param name="rootController">The route controller for the application.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController) {
          return MapCodeRoutes(configuration, rootController, null);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly.
+      /// </summary>
+      /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
+      /// <param name="rootController">The route controller for the application.</param>
+      /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController, CodeRoutingSettings settings) {
          return MapCodeRoutes(configuration, null, rootController, settings);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly, and prepends the
+      /// provided base route to the URL of each created route.
+      /// </summary>
+      /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
+      /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
+      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController) {
          return MapCodeRoutes(configuration, baseRoute, rootController, null);
       }
 
+      /// <summary>
+      /// Creates routes for the specified root controller and all other controllers
+      /// in the same namespace or any sub-namespace, in the same assembly, and prepends the
+      /// provided base route to the URL of each created route.
+      /// </summary>
+      /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
+      /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
+      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
+      /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController, CodeRoutingSettings settings) {
 
          if (configuration == null) throw new ArgumentNullException("configuration");
