@@ -16,9 +16,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Web.Http.Routing;
+using MvcCodeRouting.Controllers;
 using MvcCodeRouting.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting {
    
    class HttpRouteFactory : RouteFactory {
 

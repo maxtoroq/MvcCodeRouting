@@ -18,13 +18,13 @@ using MvcCodeRouting.Controllers;
 using MvcCodeRouting.ParameterBinding;
 using MvcCodeRouting.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting {
    
    class HttpCodeRoutingProvider : CodeRoutingProvider {
 
       readonly RouteFactory _RouteFactory = new HttpRouteFactory();
-      readonly Type _FromRouteAttributeType = typeof(FromRouteAttribute);
-      readonly Type _CustomRouteAttributeType = typeof(CustomRouteAttribute);
+      readonly Type _FromRouteAttributeType = typeof(Web.Http.FromRouteAttribute);
+      readonly Type _CustomRouteAttributeType = typeof(Web.Http.CustomRouteAttribute);
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }

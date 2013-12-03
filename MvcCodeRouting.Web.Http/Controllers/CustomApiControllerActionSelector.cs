@@ -19,7 +19,7 @@ using System.Text;
 using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting.Web.Http.Controllers {
    
    class CustomApiControllerActionSelector : ApiControllerActionSelector {
 

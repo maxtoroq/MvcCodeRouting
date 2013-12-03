@@ -23,7 +23,7 @@ using System.Web.Http.Dispatcher;
 using System.Web.Http.Routing;
 using MvcCodeRouting.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting.Web.Http.Dispatcher {
    
    class CustomHttpControllerSelector : DefaultHttpControllerSelector {
 

@@ -16,9 +16,8 @@ using System;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting.Controllers {
    
    abstract class HttpControllerInfo : ControllerInfo {
 

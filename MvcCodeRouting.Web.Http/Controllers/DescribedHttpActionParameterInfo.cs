@@ -17,9 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Http.Controllers;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting.Controllers {
    
    class DescribedHttpActionParameterInfo : ActionParameterInfo {
 
