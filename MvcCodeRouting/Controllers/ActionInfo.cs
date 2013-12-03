@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using MvcCodeRouting.ParameterBinding;
 
 namespace MvcCodeRouting.Controllers {
 
@@ -169,22 +170,25 @@ namespace MvcCodeRouting.Controllers {
 
       static RouteParameter CreateRouteParameter(ActionParameterInfo actionParam) {
 
+         Type parameterType = TypeHelpers.GetNullableUnderlyingType(actionParam.Type);
+
          IFromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
 
-         string tokenName = actionParam.Name;
-         string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(actionParam.Type, routeAttr);
+         string name = actionParam.Name;
+         string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(parameterType, routeAttr);
          bool isOptional = actionParam.IsOptional;
          bool isCatchAll = false;
+         ParameterBinder binder = actionParam.Action.Controller.GetBinderForType(parameterType, routeAttr);
 
          if (routeAttr != null) {
 
             isCatchAll = routeAttr.CatchAll;
 
             if (routeAttr.Name.HasValue())
-               tokenName = routeAttr.Name;
+               name = routeAttr.Name;
          }
 
-         return new RouteParameter(tokenName, constraint, isOptional, isCatchAll);
+         return new RouteParameter(name, parameterType, constraint, isOptional, isCatchAll, binder);
       }
 
       protected ActionInfo(ControllerInfo controller) {

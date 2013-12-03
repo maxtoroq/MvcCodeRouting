@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2013 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.ParameterBinding {
    
-   static class DataTokenKeys {
-      public const string Namespaces = "Namespaces";
-      public const string Configuration = "Configuration";
-      public const string BaseRoute = "MvcCodeRouting.BaseRoute";
-      public const string RouteContext = "MvcCodeRouting.RouteContext";
-      public const string ViewsLocation = "MvcCodeRouting.ViewsLocation";
-      public const string ParameterBinders = "MvcCodeRouting.ParameterBinders";
+   public class ParameterBinderCollection : KeyedCollection<Type, ParameterBinder> {
+
+      protected override Type GetKeyForItem(ParameterBinder item) {
+         return item.ParameterType;
+      }
+
+      public bool TryGetItem(Type key, out ParameterBinder item) {
+         return this.Dictionary.TryGetValue(key, out item);
+      }
    }
 }

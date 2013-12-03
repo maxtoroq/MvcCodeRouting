@@ -1,4 +1,4 @@
-﻿// Copyright 2011 Max Toro Q.
+﻿// Copyright 2013 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ using System.Text;
 
 namespace MvcCodeRouting {
    
-   static class DataTokenKeys {
-      public const string Namespaces = "Namespaces";
-      public const string Configuration = "Configuration";
-      public const string BaseRoute = "MvcCodeRouting.BaseRoute";
-      public const string RouteContext = "MvcCodeRouting.RouteContext";
-      public const string ViewsLocation = "MvcCodeRouting.ViewsLocation";
-      public const string ParameterBinders = "MvcCodeRouting.ParameterBinders";
+   static class TypeHelpers {
+
+      public static Type GetNullableUnderlyingType(Type type) {
+
+         bool isNullableValueType = type.IsGenericType
+            && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+         return (isNullableValueType) ? Nullable.GetUnderlyingType(type) : type;
+      }
    }
 }

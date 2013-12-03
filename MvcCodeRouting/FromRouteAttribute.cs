@@ -13,12 +13,15 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
 
 namespace MvcCodeRouting {
    
@@ -93,31 +96,86 @@ namespace MvcCodeRouting {
       /// <returns>The bound value.</returns>
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
-         RouteValueDictionary values = controllerContext.RouteData.Values;
+         if (this.BinderType != null
+            && typeof(ParameterBinder).IsInstanceOfType(this.BinderType)) {
 
+            // For back compat, skip model binding only if a ParameterBinder is specified
+            // using [FromRoute(BinderType)]
+
+            return BindParameter(controllerContext, bindingContext);
+         }
+         
          if (this.Name != null) 
             bindingContext.ModelName = this.Name;
 
-         bindingContext.ValueProvider = new RouteDataValueProvider(controllerContext);
+         // For action parameters, ValueProvider is ValueProviderCollection (composite).
+         // For controller properties (BindRouteProperties), it's null.
+         // That's why we always need to set it to the appropriate instance here.
 
-         IModelBinder binder = GetRealBinder(bindingContext);
+         bindingContext.ValueProvider = (ValueProviderFactories.Factories
+            .OfType<RouteDataValueProviderFactory>()
+            .FirstOrDefault()
+            ?? new RouteDataValueProviderFactory())
+            .GetValueProvider(controllerContext);
 
-         return binder.BindModel(controllerContext, bindingContext);
+         IModelBinder modelBinder = GetRealBinder(this, bindingContext.ModelType, fallbackToDefault: true);
+
+         return modelBinder.BindModel(controllerContext, bindingContext);
       }
 
-      IModelBinder GetRealBinder(ModelBindingContext bindingContext) {
+      object BindParameter(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
-         if (this.BinderType != null) {
+         RouteData routeData = controllerContext.RouteData;
+         string name = this.Name ?? bindingContext.ModelName;
+         object rawValue;
+
+         if (!routeData.Values.TryGetValue(name, out rawValue)
+            || rawValue == null
+            || bindingContext.ModelType.IsInstanceOfType(rawValue)) {
+
+            return rawValue;
+         }
+
+         Route route = routeData.Route as Route;
+         object binders;
+         IDictionary<string, object> bindersDictionary;
+         object binder;
+         ParameterBinder paramBinder = null;
+
+         if (route != null
+            && route.DataTokens.TryGetValue(name, out binders)
+            && (bindersDictionary = binders as IDictionary<string, object>) != null
+            && bindersDictionary.TryGetValue(name, out binder)) {
+
+            paramBinder = binder as ParameterBinder;
+         }
+
+         if (paramBinder == null)
+            paramBinder = ParameterBinder.CreateInstance(this.BinderType);
+
+         object parsedValue;
+
+         paramBinder.TryBind(Convert.ToString(rawValue, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, out parsedValue);
+
+         return parsedValue;
+      }
+
+      static IModelBinder GetRealBinder(IFromRouteAttribute fromRouteAttr, Type modelType, bool fallbackToDefault) {
+
+         if (fromRouteAttr != null
+            && fromRouteAttr.BinderType != null) {
 
             try {
-               return (IModelBinder)Activator.CreateInstance(this.BinderType);
+               return (IModelBinder)Activator.CreateInstance(fromRouteAttr.BinderType);
 
             } catch (Exception ex) {
-               throw new InvalidOperationException("An error occurred when trying to create the IModelBinder '{0}'. Make sure that the binder has a public parameterless constructor.".FormatInvariant(this.BinderType.FullName), ex);
+               throw new InvalidOperationException("An error occurred when trying to create the IModelBinder '{0}'. Make sure that the binder has a public parameterless constructor.".FormatInvariant(fromRouteAttr.BinderType.FullName), ex);
             }
          }
 
-         return ModelBinders.Binders.GetBinder(bindingContext.ModelType, fallbackToDefault: true);
+         modelType = TypeHelpers.GetNullableUnderlyingType(modelType);
+
+         return ModelBinders.Binders.GetBinder(modelType, fallbackToDefault);
       }
    }
 }

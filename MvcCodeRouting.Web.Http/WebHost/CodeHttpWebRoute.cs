@@ -17,7 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.Http;
+using System.Web.Http.Routing;
 using System.Web.Routing;
+using MvcCodeRouting.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
@@ -30,6 +33,43 @@ namespace MvcCodeRouting.Web.Http.WebHost {
       // that's why we replace it with CodeHttpWebRoute in MapCodeRoutes
 
       readonly Route originalRoute;
+
+      public static Route ConvertToWebRoute(object route, RegisterSettings registerSettings) {
+
+         HttpConfiguration httpConfig = registerSettings.Settings.HttpConfiguration();
+
+         CodeHttpRoute httpRoute = (CodeHttpRoute)route;
+
+         // httpWebRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
+         // with HttpRoute property set to httpRoute
+
+         GlobalConfiguration.Configuration.Routes.Add(null, httpRoute);
+         Route httpWebRoute = (Route)RouteTable.Routes.Last();
+         RouteTable.Routes.RemoveAt(RouteTable.Routes.Count - 1);
+
+         foreach (var item in httpWebRoute.Constraints.ToArray()) {
+
+            var paramBindConstraint = item.Value as ParameterBindingRouteConstraint;
+
+            if (paramBindConstraint != null) {
+               httpWebRoute.Constraints[item.Key] = new Web.Routing.ParameterBindingRouteConstraint(paramBindConstraint.Binder);
+               continue;
+            }
+
+            var regexConstraint = item.Value as RegexRouteConstraint;
+
+            if (regexConstraint != null) {
+               httpWebRoute.Constraints[item.Key] = new Web.Routing.RegexRouteConstraint(regexConstraint.Regex);
+               continue;
+            }
+         }
+
+         var codeWebRoute = new CodeHttpWebRoute(httpWebRoute, httpRoute);
+
+         CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
+
+         return codeWebRoute;
+      }
 
       public CodeHttpWebRoute(Route originalRoute, CodeHttpRoute httpRoute) 
          : base(originalRoute.Url, originalRoute.Defaults, originalRoute.Constraints, originalRoute.DataTokens, originalRoute.RouteHandler) {

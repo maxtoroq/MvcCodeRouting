@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Mvc {
@@ -42,7 +43,7 @@ namespace MvcCodeRouting.Web.Mvc {
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 
-         return new CodeRoute(routeSettings.RouteTemplate, routeSettings.Defaults, routeSettings.Constraints, routeSettings.DataTokens, new MvcRouteHandler()) {
+         return new CodeRoute(routeSettings.RouteTemplate, new RouteValueDictionary(routeSettings.Defaults), new RouteValueDictionary(routeSettings.Constraints), new RouteValueDictionary(routeSettings.DataTokens), new MvcRouteHandler()) {
             ActionMapping = routeSettings.ActionMapping,
             ControllerMapping = routeSettings.ControllerMapping,
             NonActionParameterTokens = nonActionParameterTokens

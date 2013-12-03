@@ -51,7 +51,7 @@ namespace MvcCodeRouting.Web.Mvc {
 
          var bindingContext = new ModelBindingContext {
             FallbackToEmptyPrefix = true,
-            ModelState = modelState,
+            ModelState = modelState
          };
 
          for (int i = 0; i < controllerData.Properties.Length; i++) {

@@ -59,15 +59,14 @@ namespace MvcCodeRouting.Web.Http {
 
          var bindingContext = new ModelBindingContext {
             FallbackToEmptyPrefix = true,
-            ModelState = modelState,
-            ValueProvider = new RouteDataValueProvider(actionContext, CultureInfo.InvariantCulture)
+            ModelState = modelState
          };
 
          for (int i = 0; i < controllerData.Properties.Length; i++) {
 
             var propertyData = controllerData.Properties[i];
 
-            propertyData.BindProperty(controller.ControllerContext, actionContext, bindingContext);
+            propertyData.BindProperty(actionContext, bindingContext);
 
             if (!modelState.IsValid)
                break;
@@ -123,20 +122,18 @@ namespace MvcCodeRouting.Web.Http {
             this.Metadata = metadata;
          }
 
-         public void BindProperty(HttpControllerContext controllerContext, HttpActionContext actionContext, ModelBindingContext bindingContext) {
+         public void BindProperty(HttpActionContext actionContext, ModelBindingContext bindingContext) {
 
-            bindingContext.ModelName = this.Attribute.Name ?? this.Name;
+            bindingContext.ModelName = this.Name;
             bindingContext.ModelMetadata = this.Metadata;
 
-            IModelBinder binder = this.Attribute.GetModelBinder(controllerContext.Configuration, this.Metadata.ModelType);
-
-            if (!binder.BindModel(actionContext, bindingContext))
+            if (!this.Attribute.BindModel(actionContext, bindingContext))
                return;
 
             object value = bindingContext.Model;
 
             try {
-               this.Property.SetValue(controllerContext.Controller, value, null);
+               this.Property.SetValue(actionContext.ControllerContext.Controller, value, null);
 
             } catch (Exception ex) {
 

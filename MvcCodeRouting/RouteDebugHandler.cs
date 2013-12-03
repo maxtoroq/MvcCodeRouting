@@ -236,16 +236,16 @@ namespace MvcCodeRouting {
             stringVal = "<span class='keyword'>null</span>";
 
          else if (type == typeof(string))
-            stringVal = String.Concat("<span class='string'>@\"", val, "\"</span>");
+            stringVal = String.Concat("<span class='string'>", (constraint ? "@" : ""), "\"", val.ToString(), "\"</span>");
 
          else if (IsMvcParameter(type))
-            stringVal = "<span class='type'>UrlParameter</span>.Optional";
+            stringVal = String.Concat("<span class='type' title='", type.FullName, "'>UrlParameter</span>.Optional");
 
          else if (IsWebApiParameter(type))
-            stringVal = "<span class='type'>RouteParameter</span>.Optional";
+            stringVal = String.Concat("<span class='type' title='", type.FullName, "'>RouteParameter</span>.Optional");
 
          else if (constraint)
-            stringVal = String.Concat("<span class='keyword'>new</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
+            stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName ,"'>", type.Name, "</span>", "()");
 
          else
             stringVal = val.ToString();
@@ -402,16 +402,16 @@ namespace MvcCodeRouting {
             stringVal = "<span class='keyword'>Nothing<span>";
 
          else if (type == typeof(string))
-            stringVal = String.Concat("<span class='string'>\"", val, "\"</span>");
+            stringVal = String.Concat("<span class='string'>\"", val.ToString(), "\"</span>");
 
          else if (IsMvcParameter(type))
-            stringVal = "<span class='type'>UrlParameter</span>.Optional";
+            stringVal = String.Concat("<span class='type' title='", type.FullName, "'>UrlParameter</span>.Optional");
          
          else if (IsWebApiParameter(type))
-            stringVal = "<span class='type'>RouteParameter</span>.Optional";
+            stringVal = String.Concat("<span class='type' title='", type.FullName, "'>RouteParameter</span>.Optional");
 
          else if (constraint)
-            stringVal = String.Concat("<span class='keyword'>New</span> ", type.Namespace, (!String.IsNullOrEmpty(type.Namespace) ? "." : ""), "<span class='type'>", type.Name, "</span>", "()");
+            stringVal = String.Concat("<span class='keyword'>New</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "()");
 
          else
             stringVal = val.ToString();

@@ -110,6 +110,9 @@
     <Compile Include="HttpExtensions.cs" />
     <Compile Include="HttpRouteFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Routing\ParameterBindingRouteConstraint.cs" />
+    <Compile Include="Routing\RegexRouteConstraint.cs" />
+    <Compile Include="Routing\TypeAwareRouteConstraint.cs" />
     <Compile Include="WebHost\CodeHttpWebRoute.cs" />
     <Compile Include="WebHost\PreApplicationStartCode.cs" />
   </ItemGroup>

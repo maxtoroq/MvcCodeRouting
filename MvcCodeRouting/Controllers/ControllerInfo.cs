@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using MvcCodeRouting.ParameterBinding;
 
 namespace MvcCodeRouting.Controllers {
    
@@ -477,14 +478,39 @@ namespace MvcCodeRouting.Controllers {
       public abstract bool IsDefined(Type attributeType, bool inherit);
       protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
+      public ParameterBinder GetBinderForType(Type type, IFromRouteAttribute routeAttr) {
+
+         type = TypeHelpers.GetNullableUnderlyingType(type);
+
+         Type binderType = (routeAttr != null) ?
+            routeAttr.BinderType
+            : null;
+
+         ParameterBinder paramBinder;
+
+         if (binderType != null
+            && typeof(ParameterBinder).IsAssignableFrom(binderType)) {
+
+            paramBinder = ParameterBinder.CreateInstance(binderType);
+   
+         } else {
+
+            this.Register.Settings.ParameterBinders.TryGetItem(type, out paramBinder);
+         }
+
+         return paramBinder;
+      }
+
       RouteParameter CreateRouteParameter(PropertyInfo property, IFromRouteAttribute routeAttr) {
 
-         Type propertyType = property.PropertyType;
+         Type parameterType = TypeHelpers.GetNullableUnderlyingType(property.PropertyType);
 
          string name = routeAttr.Name.HasValue() ? routeAttr.Name : property.Name;
-         string constraint = this.Register.Settings.GetConstraintForType(propertyType, routeAttr);
+         string constraint = this.Register.Settings.GetConstraintForType(parameterType, routeAttr);
 
-         return new RouteParameter(name, constraint);
+         ParameterBinder binder = GetBinderForType(parameterType, routeAttr);
+
+         return new RouteParameter(name, parameterType, constraint, binder: binder);
       }
    }
 }

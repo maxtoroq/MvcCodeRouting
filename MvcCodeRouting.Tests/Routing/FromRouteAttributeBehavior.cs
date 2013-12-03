@@ -203,7 +203,12 @@ namespace MvcCodeRouting.Tests.Routing.FromRouteAttr {
 
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
-         switch ((string)bindingContext.ValueProvider.GetValue(bindingContext.ModelName).RawValue) {
+         ValueProviderResult vpResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+
+         if (vpResult.RawValue is bool)
+            return (bool)vpResult.RawValue;
+
+         switch (vpResult.AttemptedValue) {
             case "yes":
                return true;
             case "no":

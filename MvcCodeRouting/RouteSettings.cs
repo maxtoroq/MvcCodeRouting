@@ -16,26 +16,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting {
    
    class RouteSettings {
 
-      readonly RouteValueDictionary _Defaults = new RouteValueDictionary();
-      readonly RouteValueDictionary _Constraints = new RouteValueDictionary();
-      readonly RouteValueDictionary _DataTokens = new RouteValueDictionary();
+      readonly IDictionary<string, object> _Defaults = CreateRouteValueDictionary();
+      readonly IDictionary<string, object> _Constraints = CreateRouteValueDictionary();
+      readonly IDictionary<string, object> _DataTokens = CreateRouteValueDictionary();
 
       public ICollection<ActionInfo> Actions { get; private set; }
       public string RouteTemplate { get; private set; }
 
-      public RouteValueDictionary Defaults { get { return _Defaults; } }
-      public RouteValueDictionary Constraints { get { return _Constraints; } }
-      public RouteValueDictionary DataTokens { get { return _DataTokens; } }
+      public IDictionary<string, object> Defaults { get { return _Defaults; } }
+      public IDictionary<string, object> Constraints { get { return _Constraints; } }
+      public IDictionary<string, object> DataTokens { get { return _DataTokens; } }
 
       public IDictionary<string, string> ControllerMapping { get; set; }
       public IDictionary<string, string> ActionMapping { get; set; }
+
+      public static IDictionary<string, object> CreateRouteValueDictionary() {
+         return new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+      }
 
       public RouteSettings(string routeTemplate, IEnumerable<ActionInfo> actions) {
          

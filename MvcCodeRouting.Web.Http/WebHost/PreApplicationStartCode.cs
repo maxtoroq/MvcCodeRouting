@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Http;
 using System.ComponentModel;
+using System.Web.Routing;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
@@ -36,6 +37,8 @@ namespace MvcCodeRouting.Web.Http.WebHost {
          CodeRoutingHttpExtensions.Initialize();
 
          CodeRoutingSettings.Defaults.HttpConfiguration(GlobalConfiguration.Configuration);
+
+         HttpRouteFactory.RouteConverters[typeof(Route)] = CodeHttpWebRoute.ConvertToWebRoute;
       }
    }
 }

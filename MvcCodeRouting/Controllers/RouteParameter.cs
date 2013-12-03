@@ -13,13 +13,8 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
-using System.Reflection;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
+using MvcCodeRouting.ParameterBinding;
 
 namespace MvcCodeRouting.Controllers {
    
@@ -28,8 +23,11 @@ namespace MvcCodeRouting.Controllers {
 
       public string Name { get; private set; }
       public string Constraint { get; private set; }
+      public ParameterBinder Binder { get; private set; }
       public bool IsOptional { get; internal set; }
       public bool IsCatchAll { get; private set; }
+
+      internal Type ParameterType { get; private set; }
 
       public string RouteSegment { get { return String.Concat("{", ((IsCatchAll) ? "*" : ""), Name, "}"); } }
 
@@ -37,26 +35,17 @@ namespace MvcCodeRouting.Controllers {
          return String.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
       }
 
-      public RouteParameter(string name) {
+      public RouteParameter(string name, Type parameterType, string constraint = null, bool isOptional = false, bool isCatchAll = false, ParameterBinder binder = null) {
+
+         if (name == null) throw new ArgumentNullException("name");
+         if (parameterType == null) throw new ArgumentNullException("parameterType");
+
          this.Name = name;
-      }
-
-      public RouteParameter(string name, string constraint) 
-         : this(name) {
-         
          this.Constraint = constraint;
-      }
-
-      public RouteParameter(string name, string constraint, bool isOptional) 
-         : this(name, constraint) {
-         
          this.IsOptional = isOptional;
-      }
-
-      public RouteParameter(string name, string constraint, bool isOptional, bool isCatchAll) 
-         : this(name, constraint, isOptional) {
-         
          this.IsCatchAll = isCatchAll;
+         this.Binder = binder;
+         this.ParameterType = parameterType;
       }
 
       public bool Equals(RouteParameter other) {
@@ -66,7 +55,8 @@ namespace MvcCodeRouting.Controllers {
 
          return NameEquals(this.Name, other.Name)
             && this.IsOptional == other.IsOptional
-            && this.Constraint == other.Constraint;
+            && this.Constraint == other.Constraint
+            && Object.Equals(this.Binder, other.Binder);
       }
 
       public override bool Equals(object obj) {
@@ -81,6 +71,7 @@ namespace MvcCodeRouting.Controllers {
             hash = hash * 23 + this.Name.GetHashCode();
             hash = hash * 23 + this.IsOptional.GetHashCode();
             hash = hash * 23 + ((this.Constraint != null) ? this.Constraint.GetHashCode() : 0);
+            hash = hash * 23 + ((this.Binder != null) ? this.Binder.GetHashCode() : 0);
 
             return hash;
          }

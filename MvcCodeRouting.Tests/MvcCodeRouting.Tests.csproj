@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="ModelBinding\FromRouteBinderPrecedenceBehavior.cs" />
     <Compile Include="ModelBinding\BinderPrecedenceFacts.cs" />
+    <Compile Include="ParameterBinding\CanonicalBindingBehavior.cs" />
     <Compile Include="Routing\ActionNameBehavior.cs" />
     <Compile Include="Routing\ControllerReflectionBehavior.cs" />
     <Compile Include="Routing\CustomRouteBehavior.cs" />

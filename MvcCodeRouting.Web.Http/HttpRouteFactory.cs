@@ -13,17 +13,20 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
-using System.Text;
-using System.Web.Http;
 using System.Web.Http.Routing;
-using System.Web.Routing;
-using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Http {
    
    class HttpRouteFactory : RouteFactory {
+
+      static readonly ConcurrentDictionary<Type, Func<object, RegisterSettings, object>> _RouteConverters = 
+         new ConcurrentDictionary<Type, Func<object, RegisterSettings, object>>();
+
+      internal static ConcurrentDictionary<Type, Func<object, RegisterSettings, object>> RouteConverters {
+         get { return _RouteConverters; }
+      }
 
       public override object OptionalParameterValue {
          get { return System.Web.Http.RouteParameter.Optional; }
@@ -47,25 +50,12 @@ namespace MvcCodeRouting.Web.Http {
 
       public override object ConvertRoute(object route, Type conversionType, RegisterSettings registerSettings) {
 
-         if (conversionType != typeof(Route))
+         Func<object, RegisterSettings, object> converterFn;
+
+         if (!RouteConverters.TryGetValue(conversionType, out converterFn))
             return base.ConvertRoute(route, conversionType, registerSettings);
 
-         HttpConfiguration httpConfig = registerSettings.Settings.HttpConfiguration();
-
-         CodeHttpRoute httpRoute = (CodeHttpRoute)route;
-
-         // httpWebRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
-         // with HttpRoute property set to httpRoute
-
-         GlobalConfiguration.Configuration.Routes.Add(null, httpRoute);
-         Route httpWebRoute = (Route)RouteTable.Routes.Last();
-         RouteTable.Routes.RemoveAt(RouteTable.Routes.Count - 1);
-
-         var codeWebRoute = new WebHost.CodeHttpWebRoute(httpWebRoute, httpRoute);
-
-         CodeRoutingHttpExtensions.EnableCodeRouting(httpConfig);
-
-         return codeWebRoute;
+         return converterFn(route, registerSettings);
       }
    }
 }

@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Web.Routing;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
+using MvcCodeRouting.ParameterBinding.Binders;
 
 namespace MvcCodeRouting {
    
@@ -30,6 +32,7 @@ namespace MvcCodeRouting {
       static readonly CodeRoutingSettings _Defaults = new CodeRoutingSettings(defaultsConstructor: true);
 
       readonly IDictionary<Type, string> _DefaultConstraints = new Dictionary<Type, string>();
+      readonly ParameterBinderCollection _ParameterBinders = new ParameterBinderCollection();
       readonly Collection<Type> _IgnoredControllers = new Collection<Type>();
       readonly IDictionary<string, object> _Properties = new Dictionary<string, object>();
       Func<RouteFormatterArgs, string> _RouteFormatter;
@@ -55,6 +58,10 @@ namespace MvcCodeRouting {
       /// </remarks>
       public IDictionary<Type, string> DefaultConstraints {
          get { return _DefaultConstraints; }
+      }
+
+      public ParameterBinderCollection ParameterBinders {
+         get { return _ParameterBinders; }
       }
 
       /// <summary>
@@ -142,6 +149,11 @@ namespace MvcCodeRouting {
          foreach (var item in settings.DefaultConstraints)
             this.DefaultConstraints.Add(item.Key, item.Value);
 
+         this.ParameterBinders.Clear();
+
+         foreach (var item in settings.ParameterBinders) 
+            this.ParameterBinders.Add(item);
+
          this.Properties.Clear();
 
          foreach (var item in settings.Properties) 
@@ -166,17 +178,21 @@ namespace MvcCodeRouting {
          this.IgnoredControllers.Clear();
 
          this.DefaultConstraints.Clear();
-         this.DefaultConstraints.Add(typeof(Boolean), "true|false");
-         this.DefaultConstraints.Add(typeof(Guid), @"\b[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Za-z0-9]{12}\b");
 
-         foreach (Type type in new[] { typeof(Decimal), typeof(Double), typeof(Single) })
-            this.DefaultConstraints.Add(type, @"-?(0|[1-9]\d*)(\.\d+)?");
-
-         foreach (Type type in new[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) })
-            this.DefaultConstraints.Add(type, @"0|-?[1-9]\d*");
-
-         foreach (Type type in new[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) })
-            this.DefaultConstraints.Add(type, @"0|[1-9]\d*");
+         this.ParameterBinders.Clear();
+         this.ParameterBinders.Add(new BooleanParameterBinder());
+         this.ParameterBinders.Add(new GuidParameterBinder());
+         this.ParameterBinders.Add(new DecimalParameterBinder());
+         this.ParameterBinders.Add(new DoubleParameterBinder());
+         this.ParameterBinders.Add(new SingleParameterBinder());
+         this.ParameterBinders.Add(new SByteParameterBinder());
+         this.ParameterBinders.Add(new Int16ParameterBinder());
+         this.ParameterBinders.Add(new Int32ParameterBinder());
+         this.ParameterBinders.Add(new Int64ParameterBinder());
+         this.ParameterBinders.Add(new ByteParameterBinder());
+         this.ParameterBinders.Add(new UInt16ParameterBinder());
+         this.ParameterBinders.Add(new UInt32ParameterBinder());
+         this.ParameterBinders.Add(new UInt64ParameterBinder());
       }
 
       internal string FormatRouteSegment(RouteFormatterArgs args) {
@@ -188,16 +204,14 @@ namespace MvcCodeRouting {
 
       internal string GetConstraintForType(Type type, IFromRouteAttribute routeAttr) {
 
-         bool isNullableValueType = type.IsGenericType 
-            && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-
          string constraint = null;
 
          if (routeAttr != null)
             constraint = routeAttr.Constraint;
 
          if (constraint == null) {
-            type = (isNullableValueType) ? Nullable.GetUnderlyingType(type) : type;
+
+            type = TypeHelpers.GetNullableUnderlyingType(type);
 
             this.DefaultConstraints.TryGetValue(type, out constraint);
 

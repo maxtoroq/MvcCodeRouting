@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
+using MvcCodeRouting.Web.Routing;
 
 namespace MvcCodeRouting.Web.Mvc {
    
@@ -63,6 +62,14 @@ namespace MvcCodeRouting.Web.Mvc {
 
       protected override ControllerInfo CreateControllerInfo(Type controllerType, RegisterSettings registerSettings) {
          return MvcControllerInfo.Create(controllerType, registerSettings, this);
+      }
+
+      public override object CreateParameterBindingRouteConstraint(ParameterBinder binder) {
+         return new ParameterBindingRouteConstraint(binder);
+      }
+
+      public override object CreateRegexRouteConstraint(string pattern, Type parameterType) {
+         return new RegexRouteConstraint(pattern);
       }
    }
 }

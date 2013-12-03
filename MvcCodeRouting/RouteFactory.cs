@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.Web.Routing;
 
 namespace MvcCodeRouting {
    
@@ -313,20 +314,30 @@ namespace MvcCodeRouting {
             routeSettings.Constraints.Add("action", actionConstraint);
          }
 
-         foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null)) {
+         IDictionary<string, object> binders = RouteSettings.CreateRouteValueDictionary();
 
-            string regex = param.Constraint;
+         foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null || p.Binder != null)) {
 
-            if (param.IsOptional)
-               regex = String.Concat("(", regex, ")?");
+            object routeConstraint;
 
-            routeSettings.Constraints.Add(param.Name, regex);
+            if (param.Constraint != null) {
+               routeConstraint = first.Controller.Provider.CreateRegexRouteConstraint(param.Constraint, param.ParameterType);
+            
+            } else {
+               routeConstraint = first.Controller.Provider.CreateParameterBindingRouteConstraint(param.Binder);
+            }
+
+            if (param.Binder != null)
+               binders[param.Name] = param.Binder;
+
+            routeSettings.Constraints.Add(param.Name, routeConstraint);
          }
 
          routeSettings.DataTokens[DataTokenKeys.Namespaces] = new string[1] { first.Controller.Namespace };
          routeSettings.DataTokens[DataTokenKeys.BaseRoute] = baseRoute;
          routeSettings.DataTokens[DataTokenKeys.RouteContext] = String.Join("/", first.Controller.CodeRoutingContext);
          routeSettings.DataTokens[DataTokenKeys.ViewsLocation] = String.Join("/", first.Controller.CodeRoutingContext.Where(s => !s.Contains('{')));
+         routeSettings.DataTokens[DataTokenKeys.ParameterBinders] = binders;
 
          return routeSettings;
       }

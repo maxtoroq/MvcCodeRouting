@@ -15,6 +15,8 @@
 using System;
 using System.Web.Http;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
+using MvcCodeRouting.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http {
    
@@ -40,8 +42,6 @@ namespace MvcCodeRouting.Web.Http {
          get { return _CustomRouteAttributeType; }
       }
 
-      // TODO: Do we need custom default actions on Web Api ?
-
       public override Type DefaultActionAttributeType {
          get { return null; }
       }
@@ -52,6 +52,14 @@ namespace MvcCodeRouting.Web.Http {
 
       protected override ControllerInfo CreateControllerInfo(Type controllerType, RegisterSettings registerSettings) {
          return HttpControllerInfo.Create(controllerType, registerSettings, this);
+      }
+
+      public override object CreateParameterBindingRouteConstraint(ParameterBinder binder) {
+         return new ParameterBindingRouteConstraint(binder);
+      }
+
+      public override object CreateRegexRouteConstraint(string pattern, Type parameterType) {
+         return new RegexRouteConstraint(pattern);
       }
    }
 }
