@@ -141,10 +141,10 @@
     <Compile Include="Web.Mvc\ReflectedMvcControllerInfo.cs" />
     <Compile Include="Web.Mvc\RequireRouteParametersAttribute.cs" />
     <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
+    <Compile Include="Web.Routing\CodeRoute.cs" />
     <Compile Include="Web.Routing\ParameterBindingRouteConstraint.cs" />
     <Compile Include="Web.Routing\RegexRouteConstraint.cs" />
     <Compile Include="Web.Routing\TypeAwareRouteConstraint.cs" />
-    <Compile Include="Web\CodeRoute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
