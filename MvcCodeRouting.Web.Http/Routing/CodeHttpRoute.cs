@@ -19,7 +19,7 @@ using System.Net.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http {
+namespace MvcCodeRouting.Web.Http.Routing {
 
    [DebuggerDisplay("{RouteTemplate}")]
    class CodeHttpRoute : HttpRoute, ICodeRoute {
