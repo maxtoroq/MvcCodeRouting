@@ -69,7 +69,6 @@
     <Compile Include="DataTokenKeys.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="ICodeRoute.cs" />
-    <Compile Include="NET40.cs" />
     <Compile Include="ParameterBinding\Binders\BooleanParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\ByteParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\DecimalParameterBinder.cs" />
@@ -94,6 +93,7 @@
     <Compile Include="RouteSegmentType.cs" />
     <Compile Include="RouteSettings.cs" />
     <Compile Include="Utilities\FormatInvariantExtensions.cs" />
+    <Compile Include="Utilities\NET40.cs" />
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TypeHelpers.cs" />
