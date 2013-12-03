@@ -97,13 +97,13 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CodeRoutingHttpExtensions.cs" />
+    <Compile Include="Controllers\CustomApiControllerActionSelector.cs" />
     <Compile Include="Controllers\DescribedHttpActionInfo.cs" />
     <Compile Include="Controllers\DescribedHttpActionParameterInfo.cs" />
     <Compile Include="Controllers\DescribedHttpControllerInfo.cs" />
     <Compile Include="Controllers\HttpControllerInfo.cs" />
-    <Compile Include="CustomApiControllerActionSelector.cs" />
-    <Compile Include="CustomHttpControllerSelector.cs" />
     <Compile Include="CustomRouteAttribute.cs" />
+    <Compile Include="Dispatcher\CustomHttpControllerSelector.cs" />
     <Compile Include="FromRouteAttribute.cs" />
     <Compile Include="HttpCodeRoutingProvider.cs" />
     <Compile Include="HttpExtensions.cs" />
