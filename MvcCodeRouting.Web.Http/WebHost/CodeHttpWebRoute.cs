@@ -13,18 +13,15 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Routing;
 using System.Web.Routing;
 using MvcCodeRouting.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http.WebHost {
    
-   class CodeHttpWebRoute : CodeRoute {
+   class CodeHttpWebRoute : Web.Routing.CodeRoute {
 
       // originalRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
       // with HttpRoute property set to CodeHttpRoute

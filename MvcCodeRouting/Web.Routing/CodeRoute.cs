@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Web;
 using System.Web.Routing;
 
-namespace MvcCodeRouting.Web {
+namespace MvcCodeRouting.Web.Routing {
    
    [DebuggerDisplay("{Url}")]
    class CodeRoute : Route, ICodeRoute {
