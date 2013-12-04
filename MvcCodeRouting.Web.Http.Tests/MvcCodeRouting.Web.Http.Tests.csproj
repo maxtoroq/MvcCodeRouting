@@ -131,6 +131,10 @@
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj">
+      <Project>{cc6f1081-86c9-4b3f-a6eb-b6003dce83a4}</Project>
+      <Name>MvcCodeRouting.Web.Http.WebHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj">
       <Project>{1047c724-56f3-4791-9b07-eee2cb5c45b7}</Project>
       <Name>MvcCodeRouting.Web.Http</Name>

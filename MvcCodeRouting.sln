@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.net35", "Mvc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.Tests", "MvcCodeRouting.Web.Http.Tests\MvcCodeRouting.Web.Http.Tests.csproj", "{210DCAEF-9EDF-4912-84B8-8717F57A78A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.WebHost", "MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj", "{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		aspnet-vnext|Any CPU = aspnet-vnext|Any CPU
@@ -71,6 +73,12 @@ Global
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{210DCAEF-9EDF-4912-84B8-8717F57A78A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.aspnet-vnext|Any CPU.ActiveCfg = aspnet-vnext|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.aspnet-vnext|Any CPU.Build.0 = aspnet-vnext|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

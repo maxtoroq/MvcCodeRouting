@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1047C724-56F3-4791-9B07-EEE2CB5C45B7}</ProjectGuid>
+    <ProjectGuid>{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MvcCodeRouting.Web.Http</RootNamespace>
-    <AssemblyName>MvcCodeRouting.Web.Http</AssemblyName>
+    <RootNamespace>MvcCodeRouting.Web.Http.WebHost</RootNamespace>
+    <AssemblyName>MvcCodeRouting.Web.Http.WebHost</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -32,7 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net40\MvcCodeRouting.Web.Http.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\MvcCodeRouting.Web.Http.WebHost.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -64,6 +64,10 @@
           <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.WebApi.Core\lib\net45\System.Web.Http.dll</HintPath>
           <SpecificVersion>False</SpecificVersion>
         </Reference>
+        <Reference Include="System.Web.Http.WebHost, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+          <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.WebApi.WebHost\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+          <SpecificVersion>False</SpecificVersion>
+        </Reference>
         <Reference Include="System.Net.Http.Formatting, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.WebApi.Client\lib\net45\System.Net.Http.Formatting.dll</HintPath>
           <SpecificVersion>False</SpecificVersion>
@@ -82,6 +86,9 @@
         <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
         </Reference>
+        <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+          <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+        </Reference>
         <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
         </Reference>
@@ -89,36 +96,25 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CodeRoutingHttpExtensions.cs" />
-    <Compile Include="Controllers\CustomApiControllerActionSelector.cs" />
-    <Compile Include="Controllers\DescribedHttpActionInfo.cs" />
-    <Compile Include="Controllers\DescribedHttpActionParameterInfo.cs" />
-    <Compile Include="Controllers\DescribedHttpControllerInfo.cs" />
-    <Compile Include="Controllers\HttpControllerInfo.cs" />
-    <Compile Include="CustomRouteAttribute.cs" />
-    <Compile Include="Dispatcher\CustomHttpControllerSelector.cs" />
-    <Compile Include="FromRouteAttribute.cs" />
-    <Compile Include="HttpCodeRoutingProvider.cs" />
-    <Compile Include="HttpExtensions.cs" />
-    <Compile Include="HttpRouteFactory.cs" />
+    <Compile Include="CodeHttpWebRoute.cs" />
+    <Compile Include="PreApplicationStartCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Routing\CodeHttpRoute.cs" />
-    <Compile Include="Routing\ParameterBindingRouteConstraint.cs" />
-    <Compile Include="Routing\RegexRouteConstraint.cs" />
-    <Compile Include="Routing\TypeAwareRouteConstraint.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj">
+      <Project>{1047c724-56f3-4791-9b07-eee2cb5c45b7}</Project>
+      <Name>MvcCodeRouting.Web.Http</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvcCodeRouting\MvcCodeRouting.csproj">
       <Project>{94d52e7e-6949-439f-80ed-212daa85db6c}</Project>
       <Name>MvcCodeRouting</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
