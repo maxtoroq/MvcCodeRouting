@@ -19,9 +19,9 @@ using System.Web.Http;
 using System.Web.Routing;
 using MvcCodeRouting.Web.Http.Routing;
 
-namespace MvcCodeRouting.Web.Http.WebHost {
+namespace MvcCodeRouting.Web.Routing {
    
-   class CodeHttpWebRoute : Web.Routing.CodeRoute {
+   class CodeHttpWebRoute : CodeRoute {
 
       // originalRoute is System.Web.Http.WebHost.Routing.HttpWebRoute
       // with HttpRoute property set to CodeHttpRoute
@@ -46,17 +46,17 @@ namespace MvcCodeRouting.Web.Http.WebHost {
 
          foreach (var item in httpWebRoute.Constraints.ToArray()) {
 
-            var paramBindConstraint = item.Value as ParameterBindingRouteConstraint;
+            var paramBindConstraint = item.Value as Web.Http.Routing.ParameterBindingRouteConstraint;
 
             if (paramBindConstraint != null) {
-               httpWebRoute.Constraints[item.Key] = new Web.Routing.ParameterBindingRouteConstraint(paramBindConstraint.Binder);
+               httpWebRoute.Constraints[item.Key] = new ParameterBindingRouteConstraint(paramBindConstraint.Binder);
                continue;
             }
 
-            var regexConstraint = item.Value as RegexRouteConstraint;
+            var regexConstraint = item.Value as Web.Http.Routing.RegexRouteConstraint;
 
             if (regexConstraint != null) {
-               httpWebRoute.Constraints[item.Key] = new Web.Routing.RegexRouteConstraint(regexConstraint.Regex);
+               httpWebRoute.Constraints[item.Key] = new RegexRouteConstraint(regexConstraint.Regex);
                continue;
             }
          }
