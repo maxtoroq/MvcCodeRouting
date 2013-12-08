@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.WebHost", "MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj", "{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{732A90B2-493A-488A-BF05-E85418149AFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		aspnet-vnext|Any CPU = aspnet-vnext|Any CPU
@@ -82,5 +84,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F2F9856-1D63-4AFD-ACB1-82ACB7CD80BC} = {732A90B2-493A-488A-BF05-E85418149AFF}
+		{210DCAEF-9EDF-4912-84B8-8717F57A78A8} = {732A90B2-493A-488A-BF05-E85418149AFF}
 	EndGlobalSection
 EndGlobal
