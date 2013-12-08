@@ -48,7 +48,7 @@ namespace MvcCodeRouting.Tests.Routing {
          Assert.IsNull(Url.Action("", controller));
       }
 
-      [TestMethod]
+      //[TestMethod] // breaking change
       public void IsNamedAsControllerIfNoIndex() {
 
          var controller = typeof(DefaultAction.DefaultAction11Controller);

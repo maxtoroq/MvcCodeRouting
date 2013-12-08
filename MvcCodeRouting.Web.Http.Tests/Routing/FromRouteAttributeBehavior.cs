@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.Dependencies;
-using System.Web.Http.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MvcCodeRouting.Web.Http.Tests.Routing {
@@ -27,40 +20,17 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       [TestMethod]
       public void UseCustomName() {
 
-         var controller = typeof(FromRouteAttr.FromRouteAttributeController);
+         var controller = typeof(FromRouteAttr.UseCustomNameController);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
 
          Assert.IsNotNull(routes.First().RouteTemplate.Contains("{b}"));
       }
 
-      [TestMethod]
-      public void BindCustomName() {
-
-         var controller = typeof(FromRouteAttr.FromRouteAttributeController);
-
-         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
-         
-         var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/hello");
-         var routeData = routes.GetRouteData(request);
-
-         var controllerInstance = new FromRouteAttr.FromRouteAttributeController();
-
-         var controllerContext = new HttpControllerContext(config, routeData, request) {
-            ControllerDescriptor = new HttpControllerDescriptor(config, (string)routeData.Values["controller"], controller),
-            Controller = controllerInstance
-         };
-
-         var result = controllerInstance.ExecuteAsync(controllerContext, CancellationToken.None).Result;
-         string value;
-
-         Assert.IsTrue(result.TryGetContentValue(out value) && value == "hello");
-      }
-
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void FailIfUsingWrongAttribute() {
 
-         var controller = typeof(FromRouteAttr.FromRouteAttribute2Controller);
+         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttributeController);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
@@ -68,7 +38,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void FailIfUsingWrongAttribute2() {
 
-         var controller = typeof(FromRouteAttr.FromRouteAttribute3Controller);
+         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttribute2Controller);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
@@ -76,7 +46,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void FailIfUsingWrongAttribute3() {
 
-         var controller = typeof(FromRouteAttr.FromRouteAttribute4Controller);
+         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttribute3Controller);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
@@ -84,7 +54,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void FailIfUsingWrongAttribute4() {
 
-         var controller = typeof(FromRouteAttr.FromRouteAttribute5Controller);
+         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttribute4Controller);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
@@ -93,7 +63,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
 
 namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
 
-   public class FromRouteAttributeController : ApiController {
+   public class UseCustomNameController : ApiController {
 
       public string Get([FromRoute("b")]string a) {
          return a;
@@ -102,17 +72,17 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
 
 #pragma warning disable 0618
 
-   public class FromRouteAttribute2Controller : ApiController {
+   public class FailIfUsingWrongAttributeController : ApiController {
 
       public void Get([MvcCodeRouting.FromRoute]string foo) { }
    }
 
-   public class FromRouteAttribute3Controller : ApiController {
+   public class FailIfUsingWrongAttribute2Controller : ApiController {
 
       public void Get([MvcCodeRouting.Web.Mvc.FromRoute]string foo) { }
    }
 
-   public class FromRouteAttribute4Controller : ApiController {
+   public class FailIfUsingWrongAttribute3Controller : ApiController {
 
       [MvcCodeRouting.FromRoute]
       public string Bar { get; set; }
@@ -120,7 +90,7 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
       public void Get() { }
    }
 
-   public class FromRouteAttribute5Controller : ApiController {
+   public class FailIfUsingWrongAttribute4Controller : ApiController {
 
       [MvcCodeRouting.Web.Mvc.FromRoute]
       public string Bar { get; set; }

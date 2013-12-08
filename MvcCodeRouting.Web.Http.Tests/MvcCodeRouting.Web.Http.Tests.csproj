@@ -119,6 +119,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ModelBinding\CustomNameBehavior.cs" />
     <Compile Include="ModelBinding\FromRouteBinderPrecedenceBehavior.cs" />
     <Compile Include="ModelBinding\BinderPrecedenceFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
