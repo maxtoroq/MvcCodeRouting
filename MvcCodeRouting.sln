@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{38B86E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "samples\Samples.csproj", "{A427C676-379E-4C9D-8031-296746BB2402}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "samples\WebHost\Samples.csproj", "{A427C676-379E-4C9D-8031-296746BB2402}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.SelfHost", "samples.selfhost\Samples.SelfHost.csproj", "{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.SelfHost", "samples\SelfHost\Samples.SelfHost.csproj", "{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http", "src\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj", "{1047C724-56F3-4791-9B07-EEE2CB5C45B7}"
 EndProject
