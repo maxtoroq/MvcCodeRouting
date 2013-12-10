@@ -61,7 +61,7 @@
       <ItemGroup>
         <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <Private>True</Private>
-          <HintPath>..\packages\aspnet-vnext\Microsoft.AspNet.Mvc\lib\net45\System.Web.Mvc.dll</HintPath>
+          <HintPath>..\..\packages\aspnet-vnext\Microsoft.AspNet.Mvc\lib\net45\System.Web.Mvc.dll</HintPath>
           <SpecificVersion>False</SpecificVersion>
         </Reference>
       </ItemGroup>
@@ -70,7 +70,7 @@
       <ItemGroup>
         <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
           <Private>True</Private>
-          <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
+          <HintPath>..\..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
         </Reference>
       </ItemGroup>
     </Otherwise>
