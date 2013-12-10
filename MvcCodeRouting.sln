@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Web
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting", "MvcCodeRouting\MvcCodeRouting.csproj", "{94D52E7E-6949-439F-80ED-212DAA85DB6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting", "src\MvcCodeRouting\MvcCodeRouting.csproj", "{94D52E7E-6949-439F-80ED-212DAA85DB6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Tests", "MvcCodeRouting.Tests\MvcCodeRouting.Tests.csproj", "{4F2F9856-1D63-4AFD-ACB1-82ACB7CD80BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Tests", "tests\MvcCodeRouting.Tests\MvcCodeRouting.Tests.csproj", "{4F2F9856-1D63-4AFD-ACB1-82ACB7CD80BC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{38B86E9A-3C7A-4950-BBB5-70335D493327}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,13 +16,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "samples\Samples.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.SelfHost", "samples.selfhost\Samples.SelfHost.csproj", "{264E91D4-96DC-4DEA-A5A4-031BEDAEE351}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http", "MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj", "{1047C724-56F3-4791-9B07-EEE2CB5C45B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http", "src\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj", "{1047C724-56F3-4791-9B07-EEE2CB5C45B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.net35", "MvcCodeRouting\MvcCodeRouting.net35.csproj", "{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.net35", "src\MvcCodeRouting\MvcCodeRouting.net35.csproj", "{CA8647EC-4B0B-4FFA-9212-6E9221C82EF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.Tests", "MvcCodeRouting.Web.Http.Tests\MvcCodeRouting.Web.Http.Tests.csproj", "{210DCAEF-9EDF-4912-84B8-8717F57A78A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.Tests", "tests\MvcCodeRouting.Web.Http.Tests\MvcCodeRouting.Web.Http.Tests.csproj", "{210DCAEF-9EDF-4912-84B8-8717F57A78A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.WebHost", "MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj", "{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Http.WebHost", "src\MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj", "{CC6F1081-86C9-4B3F-A6EB-B6003DCE83A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{732A90B2-493A-488A-BF05-E85418149AFF}"
 EndProject
