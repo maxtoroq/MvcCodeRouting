@@ -18,9 +18,10 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
    
    public class GuidParameterBinder : ParameterBinder {
 
-      public GuidParameterBinder() 
-         : base(typeof(Guid)) { }
-      
+      public override Type ParameterType {
+         get { return typeof(Guid); }
+      }
+
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 
          result = null;

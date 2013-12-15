@@ -19,8 +19,9 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
    
    public class ByteParameterBinder : ParameterBinder {
 
-      public ByteParameterBinder() 
-         : base(typeof(byte)) { }
+      public override Type ParameterType {
+         get { return typeof(byte); }
+      }
 
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 

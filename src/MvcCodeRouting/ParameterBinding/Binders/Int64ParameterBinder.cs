@@ -19,8 +19,9 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
    
    public class Int64ParameterBinder : ParameterBinder {
 
-      public Int64ParameterBinder() 
-         : base(typeof(long)) { }
+      public override Type ParameterType {
+         get { return typeof(long); }
+      }
 
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 

@@ -20,12 +20,10 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
    
    public class DoubleParameterBinder : ParameterBinder {
 
-      readonly Regex regex;
+      readonly Regex regex = new Regex(@"^(-?(0|[1-9]\d*)(\.\d+)?)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-      public DoubleParameterBinder() 
-         : base(typeof(double)) {
-
-         this.regex = new Regex(@"^(-?(0|[1-9]\d*)(\.\d+)?)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+      public override Type ParameterType {
+         get { return typeof(double); }
       }
 
       public override bool TryBind(string value, IFormatProvider provider, out object result) {

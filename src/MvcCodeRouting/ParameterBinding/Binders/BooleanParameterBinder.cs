@@ -18,8 +18,9 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
    
    public class BooleanParameterBinder : ParameterBinder {
 
-      public BooleanParameterBinder() 
-         : base(typeof(bool)) { }
+      public override Type ParameterType {
+         get { return typeof(bool); }
+      }
 
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 

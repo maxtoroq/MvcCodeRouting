@@ -27,11 +27,7 @@ namespace MvcCodeRouting.ParameterBinding {
    /// </remarks>
    public abstract class ParameterBinder {
 
-      readonly Type _ParameterType;
-
-      public Type ParameterType {
-         get { return _ParameterType; }
-      }
+      public abstract Type ParameterType { get; }
 
       internal static ParameterBinder CreateInstance(Type binderType) {
 
@@ -43,12 +39,7 @@ namespace MvcCodeRouting.ParameterBinding {
          }
       }
 
-      protected ParameterBinder(Type parameterType) {
-
-         if (parameterType == null) throw new ArgumentNullException("parameterType");
-
-         _ParameterType = parameterType;
-      }
+      protected ParameterBinder() { }
 
       public abstract bool TryBind(string value, IFormatProvider provider, out object result);
    }
