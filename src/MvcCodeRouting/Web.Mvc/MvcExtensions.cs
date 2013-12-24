@@ -116,6 +116,7 @@ namespace MvcCodeRouting.Web.Mvc {
             this.Metadata = metadata;
          }
 
+         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Exception is rethrown by caller.")]
          public void BindProperty(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
             bindingContext.ModelName = this.Name;

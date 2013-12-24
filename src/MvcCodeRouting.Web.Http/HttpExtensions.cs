@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -122,6 +123,7 @@ namespace MvcCodeRouting.Web.Http {
             this.Metadata = metadata;
          }
 
+         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Exception is rethrown by caller.")]
          public void BindProperty(HttpActionContext actionContext, ModelBindingContext bindingContext) {
 
             bindingContext.ModelName = this.Name;
