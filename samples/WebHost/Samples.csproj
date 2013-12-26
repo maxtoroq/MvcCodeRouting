@@ -188,7 +188,6 @@
     <Compile Include="Controllers\Book\ChapterController.cs" />
     <Compile Include="Controllers\Custom\CustomRouteController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SomeLongNamespace\SomeLongControllerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
