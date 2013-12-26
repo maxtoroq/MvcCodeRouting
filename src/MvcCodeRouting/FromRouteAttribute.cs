@@ -96,17 +96,88 @@ namespace MvcCodeRouting {
       /// <returns>The bound value.</returns>
       public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
 
-         if (this.BinderType != null
-            && typeof(ParameterBinder).IsInstanceOfType(this.BinderType)) {
+         if (this.BinderType != null) {
 
-            // For back compat, skip model binding only if a ParameterBinder is specified
-            // using [FromRoute(BinderType)]
+            if (typeof(ParameterBinder).IsAssignableFrom(this.BinderType)) {
 
-            return BindParameter(controllerContext, bindingContext);
+               object r1;
+
+               ParamBind(controllerContext, bindingContext, out r1);
+
+               return r1;
+            }
+
+            return ModelBind(controllerContext, bindingContext);
          }
-         
-         if (this.Name != null) 
+
+         bool isDefaultBinder;
+         IModelBinder modelBinder = GetModelBinder(this, bindingContext.ModelType, out isDefaultBinder);
+
+         if (!isDefaultBinder) {
+            return ModelBind(controllerContext, bindingContext, modelBinder);
+         }
+
+         object r2;
+
+         if (ParamBind(controllerContext, bindingContext, out r2).HasValue) {
+            return r2;
+         }
+
+         return ModelBind(controllerContext, bindingContext, modelBinder);
+      }
+
+      bool? ParamBind(ControllerContext controllerContext, ModelBindingContext bindingContext, out object result) {
+
+         RouteData routeData = controllerContext.RouteData;
+         string name = this.Name ?? bindingContext.ModelName;
+
+         object rawValue;
+
+         if (!routeData.Values.TryGetValue(name, out rawValue)) {
+
+            result = null;
+            return false;
+         }
+
+         if (rawValue == null
+            || bindingContext.ModelType.IsInstanceOfType(rawValue)) {
+
+            result = rawValue;
+            return true;
+         }
+
+         ParameterBinder paramBinder = null;
+
+         Route route = routeData.Route as Route;
+         object binders;
+         IDictionary<string, object> bindersDictionary;
+         object binder;
+
+         if (route != null
+            && route.DataTokens.TryGetValue(name, out binders)
+            && (bindersDictionary = binders as IDictionary<string, object>) != null
+            && bindersDictionary.TryGetValue(name, out binder)) {
+
+            paramBinder = (ParameterBinder)binder;
+         }
+
+         if (paramBinder == null) {
+            paramBinder = ParameterBinder.GetInstance(bindingContext.ModelType, this.BinderType);
+         }
+
+         if (paramBinder == null) {
+            result = null;
+            return null;
+         }
+
+         return paramBinder.TryBind(Convert.ToString(rawValue, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, out result);
+      }
+
+      object ModelBind(ControllerContext controllerContext, ModelBindingContext bindingContext, IModelBinder binder = null) {
+
+         if (this.Name != null) {
             bindingContext.ModelName = this.Name;
+         }
 
          // For action parameters, ValueProvider is ValueProviderCollection (composite).
          // For controller properties (BindRouteProperties), it's null.
@@ -118,54 +189,22 @@ namespace MvcCodeRouting {
             ?? new RouteDataValueProviderFactory())
             .GetValueProvider(controllerContext);
 
-         IModelBinder modelBinder = GetRealBinder(this, bindingContext.ModelType, fallbackToDefault: true);
-
-         return modelBinder.BindModel(controllerContext, bindingContext);
-      }
-
-      object BindParameter(ControllerContext controllerContext, ModelBindingContext bindingContext) {
-
-         RouteData routeData = controllerContext.RouteData;
-         string name = this.Name ?? bindingContext.ModelName;
-         object rawValue;
-
-         if (!routeData.Values.TryGetValue(name, out rawValue)
-            || rawValue == null
-            || bindingContext.ModelType.IsInstanceOfType(rawValue)) {
-
-            return rawValue;
+         if (binder == null) {
+            bool isDefaultBinder;
+            binder = GetModelBinder(this, bindingContext.ModelType, out isDefaultBinder);
          }
 
-         Route route = routeData.Route as Route;
-         object binders;
-         IDictionary<string, object> bindersDictionary;
-         object binder;
-         ParameterBinder paramBinder = null;
-
-         if (route != null
-            && route.DataTokens.TryGetValue(name, out binders)
-            && (bindersDictionary = binders as IDictionary<string, object>) != null
-            && bindersDictionary.TryGetValue(name, out binder)) {
-
-            paramBinder = binder as ParameterBinder;
-         }
-
-         if (paramBinder == null)
-            paramBinder = ParameterBinder.CreateInstance(this.BinderType);
-
-         object parsedValue;
-
-         paramBinder.TryBind(Convert.ToString(rawValue, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, out parsedValue);
-
-         return parsedValue;
+         return binder.BindModel(controllerContext, bindingContext);
       }
 
-      static IModelBinder GetRealBinder(IFromRouteAttribute fromRouteAttr, Type modelType, bool fallbackToDefault) {
+      static IModelBinder GetModelBinder(IFromRouteAttribute fromRouteAttr, Type modelType, out bool isDefaultBinder) {
 
          if (fromRouteAttr != null
             && fromRouteAttr.BinderType != null) {
 
             try {
+               isDefaultBinder = false;
+
                return (IModelBinder)Activator.CreateInstance(fromRouteAttr.BinderType);
 
             } catch (Exception ex) {
@@ -175,7 +214,16 @@ namespace MvcCodeRouting {
 
          modelType = TypeHelpers.GetNullableUnderlyingType(modelType);
 
-         return ModelBinders.Binders.GetBinder(modelType, fallbackToDefault);
+         IModelBinder binder = ModelBinders.Binders.GetBinder(modelType, fallbackToDefault: false);
+
+         if (binder != null) {
+            isDefaultBinder = false;
+            return binder;
+         }
+
+         isDefaultBinder = true;
+         
+         return ModelBinders.Binders.DefaultBinder;
       }
    }
 }

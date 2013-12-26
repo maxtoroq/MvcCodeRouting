@@ -83,6 +83,7 @@
     <Compile Include="ParameterBinding\Binders\UInt32ParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\UInt64ParameterBinder.cs" />
     <Compile Include="ParameterBinding\ParameterBinder.cs" />
+    <Compile Include="ParameterBinding\ParameterBinderAttribute.cs" />
     <Compile Include="ParameterBinding\ParameterBinderCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterSettings.cs" />

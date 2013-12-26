@@ -23,6 +23,7 @@ namespace MvcCodeRouting.Web.Routing {
    class RegexRouteConstraint : IRouteConstraint {
 
       readonly Regex _Regex;
+      internal readonly string OriginalPattern;
 
       public Regex Regex {
          get { return _Regex; }
@@ -32,6 +33,7 @@ namespace MvcCodeRouting.Web.Routing {
 
          if (pattern == null) throw new ArgumentNullException("pattern");
 
+         OriginalPattern = pattern;
          _Regex = new Regex("^(" + pattern + ")$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
       }
 

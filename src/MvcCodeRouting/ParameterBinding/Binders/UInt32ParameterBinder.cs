@@ -16,13 +16,26 @@ using System;
 using System.Globalization;
 
 namespace MvcCodeRouting.ParameterBinding.Binders {
-   
+
+   /// <summary>
+   /// Binds <see cref="UInt32"/> route parameters.
+   /// </summary>
    public class UInt32ParameterBinder : ParameterBinder {
 
+      /// <summary>
+      /// Returns the <see cref="Type"/> for <see cref="UInt32"/>.
+      /// </summary>
       public override Type ParameterType {
          get { return typeof(uint); }
       }
 
+      /// <summary>
+      /// Attempts to bind a route parameter.
+      /// </summary>
+      /// <param name="value">The value of the route parameter.</param>
+      /// <param name="provider">The format provider to be used.</param>
+      /// <param name="result">The bound value, an instance of <see cref="UInt32"/>.</param>
+      /// <returns>true if the parameter is successfully bound; else, false.</returns>
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 
          result = null;

@@ -51,15 +51,23 @@ namespace MvcCodeRouting {
       /// and controller properties.
       /// </summary>
       /// <remarks>
-      /// This dictionary includes default values for <see cref="Boolean"/>, <see cref="Guid"/>,
-      /// <see cref="Decimal"/>, <see cref="Double"/>, <see cref="Single"/>, <see cref="SByte"/>,
-      /// <see cref="Int16"/>, <see cref="Int32"/>, <see cref="Int64"/>, <see cref="Byte"/>,
-      /// <see cref="UInt16"/>, <see cref="UInt32"/> and <see cref="UInt64"/>.
+      /// Consider using <see cref="ParameterBinders"/> instead, for a more flexible constraining
+      /// mechanism.
       /// </remarks>
       public IDictionary<Type, string> DefaultConstraints {
          get { return _DefaultConstraints; }
       }
 
+      /// <summary>
+      /// Gets the default binders used for route parameters that represent action parameters 
+      /// and controller properties.
+      /// </summary>
+      /// <remarks>
+      /// This collection includes default binders for <see cref="Boolean"/>, <see cref="Guid"/>,
+      /// <see cref="Decimal"/>, <see cref="Double"/>, <see cref="Single"/>, <see cref="SByte"/>,
+      /// <see cref="Int16"/>, <see cref="Int32"/>, <see cref="Int64"/>, <see cref="Byte"/>,
+      /// <see cref="UInt16"/>, <see cref="UInt32"/> and <see cref="UInt64"/>.
+      /// </remarks>
       public ParameterBinderCollection ParameterBinders {
          get { return _ParameterBinders; }
       }

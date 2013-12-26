@@ -21,10 +21,7 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding {
          routes = config.Routes;
       }
 
-      [TestMethod]
-      public void TypeVsParameter_ParameterWins() {
-
-         var controller = typeof(BinderPrecedence.TypeVsParameter.BinderPrecedenceController);
+      void Run(Type controller, BinderPrecedence.BinderPrecedence expected) {
 
          config.MapCodeRoutes(controller);
 
@@ -44,7 +41,15 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding {
             .Result
             .TryGetContentValue(out value);
 
-         Assert.AreEqual(BinderPrecedence.BinderPrecedence.Parameter.ToString(), value);
+         Assert.AreEqual(expected.ToString(), value);
+      }
+
+      [TestMethod]
+      public void TypeVsParameter_ParameterWins() {
+
+         var controller = typeof(BinderPrecedence.TypeVsParameter.BinderPrecedenceController);
+
+         Run(controller, BinderPrecedence.BinderPrecedence.Parameter);
       }
 
       [TestMethod]
@@ -52,25 +57,7 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding {
 
          var controller = typeof(BinderPrecedence.TypeVsGlobal.BinderPrecedenceController);
 
-         config.MapCodeRoutes(controller);
-
-         var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
-         var routeData = routes.GetRouteData(request);
-
-         var controllerInstance = (ApiController)Activator.CreateInstance(controller);
-
-         var controllerContext = new HttpControllerContext(config, routeData, request) {
-            ControllerDescriptor = new HttpControllerDescriptor(config, (string)routeData.Values["controller"], controller),
-            Controller = controllerInstance
-         };
-
-         string value;
-
-         controllerInstance.ExecuteAsync(controllerContext, CancellationToken.None)
-            .Result
-            .TryGetContentValue(out value);
-
-         Assert.AreEqual(BinderPrecedence.BinderPrecedence.Type.ToString(), value);
+         Run(controller, BinderPrecedence.BinderPrecedence.Type);
       }
 
       [TestMethod]
@@ -78,25 +65,7 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding {
 
          var controller = typeof(BinderPrecedence.ParameterVsGlobal.BinderPrecedenceController);
 
-         config.MapCodeRoutes(controller);
-
-         var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
-         var routeData = routes.GetRouteData(request);
-
-         var controllerInstance = (ApiController)Activator.CreateInstance(controller);
-
-         var controllerContext = new HttpControllerContext(config, routeData, request) {
-            ControllerDescriptor = new HttpControllerDescriptor(config, (string)routeData.Values["controller"], controller),
-            Controller = controllerInstance
-         };
-
-         string value;
-
-         controllerInstance.ExecuteAsync(controllerContext, CancellationToken.None)
-            .Result
-            .TryGetContentValue(out value);
-
-         Assert.AreEqual(BinderPrecedence.BinderPrecedence.Parameter.ToString(), value);
+         Run(controller, BinderPrecedence.BinderPrecedence.Parameter);
       }
    }
 }
@@ -108,17 +77,10 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence {
       Parameter,
       Type,
       Global
-   } 
+   }
 }
 
 namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsParameter {
-
-   public class BinderPrecedenceController : ApiController {
-
-      public string Get([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
-         return model.Precedence.ToString();
-      }
-   }
 
    [ModelBinder(typeof(BinderPrecedenceTypeBinder))]
    public class BinderPrecedenceModel {
@@ -128,8 +90,8 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsPara
    class BinderPrecedenceParameterBinder : IModelBinder {
 
       public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext) {
-         
-         bindingContext.Model = new BinderPrecedenceModel { 
+
+         bindingContext.Model = new BinderPrecedenceModel {
             Precedence = BinderPrecedence.Parameter
          };
 
@@ -140,34 +102,25 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsPara
    class BinderPrecedenceTypeBinder : IModelBinder {
 
       public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext) {
-         
+
          bindingContext.Model = new BinderPrecedenceModel {
             Precedence = BinderPrecedence.Type
          };
 
          return true;
+      }
+   }
+
+   public class BinderPrecedenceController : ApiController {
+
+      public string Get([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
+         return model.Precedence.ToString();
       }
    }
 }
 
 namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsGlobal {
 
-   public class BinderPrecedenceController : ApiController {
-
-      protected override void Initialize(HttpControllerContext controllerContext) {
-         
-         base.Initialize(controllerContext);
-
-         var provider = new SimpleModelBinderProvider(typeof(BinderPrecedenceModel), new BinderPrecedenceGlobalBinder());
-
-         this.Configuration.Services.Insert(typeof(ModelBinderProvider), 0, provider);
-      }
-
-      public string Get([ModelBinder]BinderPrecedenceModel model) {
-         return model.Precedence.ToString();
-      }
-   }
-
    [ModelBinder(typeof(BinderPrecedenceTypeBinder))]
    public class BinderPrecedenceModel {
       public BinderPrecedence Precedence { get; set; }
@@ -188,7 +141,7 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsGlob
    class BinderPrecedenceGlobalBinder : IModelBinder {
 
       public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext) {
-         
+
          bindingContext.Model = new BinderPrecedenceModel {
             Precedence = BinderPrecedence.Global
          };
@@ -196,25 +149,23 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.TypeVsGlob
          return true;
       }
    }
-}
-
-namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.ParameterVsGlobal {
 
    public class BinderPrecedenceController : ApiController {
 
       protected override void Initialize(HttpControllerContext controllerContext) {
-
+         
          base.Initialize(controllerContext);
 
-         var provider = new SimpleModelBinderProvider(typeof(BinderPrecedenceModel), new BinderPrecedenceGlobalBinder());
-
-         this.Configuration.Services.Insert(typeof(ModelBinderProvider), 0, provider);
+         this.Configuration.BindParameter(typeof(BinderPrecedenceModel), new BinderPrecedenceGlobalBinder());
       }
 
-      public string Get([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
+      public string Get([ModelBinder]BinderPrecedenceModel model) {
          return model.Precedence.ToString();
       }
    }
+}
+
+namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.ParameterVsGlobal {
 
    public class BinderPrecedenceModel {
       public BinderPrecedence Precedence { get; set; }
@@ -235,12 +186,26 @@ namespace MvcCodeRouting.Web.Http.Tests.ModelBinding.BinderPrecedence.ParameterV
    class BinderPrecedenceGlobalBinder : IModelBinder {
 
       public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext) {
-         
+
          bindingContext.Model = new BinderPrecedenceModel {
             Precedence = BinderPrecedence.Global
          };
 
          return true;
+      }
+   }
+
+   public class BinderPrecedenceController : ApiController {
+
+      protected override void Initialize(HttpControllerContext controllerContext) {
+
+         base.Initialize(controllerContext);
+
+         this.Configuration.BindParameter(typeof(BinderPrecedenceModel), new BinderPrecedenceGlobalBinder());
+      }
+
+      public string Get([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
+         return model.Precedence.ToString();
       }
    }
 }

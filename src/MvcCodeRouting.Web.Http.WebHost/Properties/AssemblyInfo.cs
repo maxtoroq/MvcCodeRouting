@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -10,3 +11,5 @@ using MvcCodeRouting.Web.Http.WebHost;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliantAttribute(true)]
 [assembly: PreApplicationStartMethod(typeof(PreApplicationStartCode), "Start")]
+
+[module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mvc", Justification = "Term is recognized.")]

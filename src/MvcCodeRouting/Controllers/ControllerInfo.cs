@@ -486,16 +486,14 @@ namespace MvcCodeRouting.Controllers {
             routeAttr.BinderType
             : null;
 
-         ParameterBinder paramBinder;
+         ParameterBinder paramBinder = ParameterBinder.GetInstance(null, binderType);
 
-         if (binderType != null
-            && typeof(ParameterBinder).IsAssignableFrom(binderType)) {
-
-            paramBinder = ParameterBinder.CreateInstance(binderType);
-   
-         } else {
-
+         if (paramBinder == null) {
             this.Register.Settings.ParameterBinders.TryGetItem(type, out paramBinder);
+         }
+
+         if (paramBinder == null) {
+            paramBinder = ParameterBinder.GetInstance(type, null);
          }
 
          return paramBinder;

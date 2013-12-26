@@ -16,12 +16,25 @@ using System;
 
 namespace MvcCodeRouting.ParameterBinding.Binders {
    
+   /// <summary>
+   /// Binds <see cref="Boolean"/> route parameters.
+   /// </summary>
    public class BooleanParameterBinder : ParameterBinder {
 
+      /// <summary>
+      /// Returns the <see cref="Type"/> for <see cref="Boolean"/>.
+      /// </summary>
       public override Type ParameterType {
          get { return typeof(bool); }
       }
 
+      /// <summary>
+      /// Attempts to bind a route parameter.
+      /// </summary>
+      /// <param name="value">The value of the route parameter.</param>
+      /// <param name="provider">The format provider to be used.</param>
+      /// <param name="result">The bound value, an instance of <see cref="Boolean"/>.</param>
+      /// <returns>true if the parameter is successfully bound; else, false.</returns>
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 
          result = null;

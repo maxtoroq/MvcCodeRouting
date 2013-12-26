@@ -17,15 +17,28 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MvcCodeRouting.ParameterBinding.Binders {
-   
+
+   /// <summary>
+   /// Binds <see cref="Decimal"/> route parameters.
+   /// </summary>
    public class DecimalParameterBinder : ParameterBinder {
 
       readonly Regex regex = new Regex(@"^(-?(0|[1-9]\d*)(\.\d+)?)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+      /// <summary>
+      /// Returns the <see cref="Type"/> for <see cref="Decimal"/>.
+      /// </summary>
       public override Type ParameterType {
          get { return typeof(decimal); }
       }
 
+      /// <summary>
+      /// Attempts to bind a route parameter.
+      /// </summary>
+      /// <param name="value">The value of the route parameter.</param>
+      /// <param name="provider">The format provider to be used.</param>
+      /// <param name="result">The bound value, an instance of <see cref="Decimal"/>.</param>
+      /// <returns>true if the parameter is successfully bound; else, false.</returns>
       public override bool TryBind(string value, IFormatProvider provider, out object result) {
 
          result = null;
