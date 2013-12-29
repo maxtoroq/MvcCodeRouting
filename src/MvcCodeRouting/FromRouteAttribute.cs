@@ -154,7 +154,7 @@ namespace MvcCodeRouting {
          object binder;
 
          if (route != null
-            && route.DataTokens.TryGetValue(name, out binders)
+            && route.DataTokens.TryGetValue(DataTokenKeys.ParameterBinders, out binders)
             && (bindersDictionary = binders as IDictionary<string, object>) != null
             && bindersDictionary.TryGetValue(name, out binder)) {
 

@@ -141,7 +141,7 @@ namespace MvcCodeRouting.Web.Http {
          IDictionary<string, object> bindersDictionary;
          object binder;
 
-         if (routeData.Route.DataTokens.TryGetValue(name, out binders)
+         if (routeData.Route.DataTokens.TryGetValue(DataTokenKeys.ParameterBinders, out binders)
             && (bindersDictionary = binders as IDictionary<string, object>) != null
             && bindersDictionary.TryGetValue(name, out binder)) {
 
