@@ -278,7 +278,15 @@ namespace MvcCodeRouting {
                   stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", ValueToCSharpString(paramBindingConstraint.Binder, constraint: true), ")");
 
                } else {
-                  stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "()");
+
+                  var setConstraint = val as Web.Routing.SetRouteConstraint;
+
+                  if (setConstraint != null) {
+                     stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", String.Join(", ", setConstraint.GetValues().Select(s => ValueToCSharpString(s))), ")");
+                  
+                  } else {
+                     stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "()");
+                  }
                }
             }
 

@@ -206,8 +206,9 @@ namespace MvcCodeRouting {
 
          var controllerMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-         foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer))
+         foreach (string name in actions.Select(a => a.Controller.Name).Distinct(controllerMapping.Comparer)) {
             controllerMapping.Add(name, actions.First(a => ControllerInfo.NameEquals(a.Controller.Name, name)).Controller.ControllerSegment);
+         }
 
          string controllerCustomRoute = first.Controller.CustomRoute;
 
@@ -227,8 +228,9 @@ namespace MvcCodeRouting {
 
          var actionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-         foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer))
+         foreach (string name in actions.Select(a => a.Name).Distinct(actionMapping.Comparer)) {
             actionMapping.Add(name, actions.First(a => ActionInfo.NameEquals(a.Name, name)).ActionSegment);
+         }
 
          string actionCustomRoute = first.CustomRoute;
          bool allEmptyActionSegment = actionMapping.Values.All(s => s.Length == 0);
@@ -265,8 +267,9 @@ namespace MvcCodeRouting {
             ControllerMapping = (requiresControllerMapping) ? controllerMapping : null,
          };
 
-         if (!includeControllerToken)
+         if (!includeControllerToken) {
             routeSettings.Defaults.Add("controller", controllerMapping.Keys.First());
+         }
 
          ActionInfo defaultAction = (includeActionToken) ?
             actions.FirstOrDefault(a => a.IsDefaultAction)
@@ -292,26 +295,23 @@ namespace MvcCodeRouting {
                : null
                : actionDefault;
 
-            if (actionDef != null)
+            if (actionDef != null) {
                routeSettings.Defaults.Add("action", actionDef);
+            }
          }
 
          RouteParameterCollection parameters = first.RouteParameters;
 
-         foreach (var param in parameters.Where(p => p.IsOptional))
+         foreach (var param in parameters.Where(p => p.IsOptional)) {
             routeSettings.Defaults.Add(param.Name, this.OptionalParameterValue);
+         }
 
-         if (includeControllerToken)
-            routeSettings.Constraints.Add("controller", String.Join("|", controllerMapping.Values));
+         if (includeControllerToken) {
+            routeSettings.Constraints.Add("controller", first.Controller.Provider.CreateSetRouteConstraint(controllerMapping.Values.ToArray()));
+         }
 
          if (includeActionToken) {
-
-            string actionConstraint = String.Join("|", actionMapping.Values.Where(s => !String.IsNullOrEmpty(s)));
-
-            if (hasEmptyActionSegment)
-               actionConstraint = String.Concat("(", actionConstraint, ")?");
-
-            routeSettings.Constraints.Add("action", actionConstraint);
+            routeSettings.Constraints.Add("action", first.Controller.Provider.CreateSetRouteConstraint(actionMapping.Values.Where(s => !String.IsNullOrEmpty(s)).ToArray()));
          }
 
          IDictionary<string, object> binders = RouteSettings.CreateRouteValueDictionary();

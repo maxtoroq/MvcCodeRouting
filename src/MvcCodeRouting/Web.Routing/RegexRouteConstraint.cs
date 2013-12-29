@@ -56,8 +56,9 @@ namespace MvcCodeRouting.Web.Routing {
 
          string attemptedValue = Convert.ToString(rawValue, CultureInfo.InvariantCulture);
 
-         if (attemptedValue.Length == 0)
+         if (attemptedValue.Length == 0) {
             return true;
+         }
 
          return this.Regex.IsMatch(attemptedValue);
       }

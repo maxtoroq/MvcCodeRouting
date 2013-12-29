@@ -72,6 +72,7 @@ namespace MvcCodeRouting {
       protected abstract ControllerInfo CreateControllerInfo(Type controllerType, RegisterSettings registerSettings);
       public abstract object CreateParameterBindingRouteConstraint(ParameterBinder binder);
       public abstract object CreateRegexRouteConstraint(string pattern, Type parameterType);
+      public abstract object CreateSetRouteConstraint(string[] values);
 
       public TAttr GetCorrectAttribute<TAttr>(ICustomAttributeProvider context, Func<CodeRoutingProvider, Type> attribute, bool inherit, Func<Type, Type, string> errorMessage) where TAttr : class {
 

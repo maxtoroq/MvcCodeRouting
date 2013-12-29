@@ -46,21 +46,25 @@ namespace MvcCodeRouting.Web.Routing {
             return true;
          }
 
-         if (this.ParameterType.IsInstanceOfType(rawValue))
+         if (this.ParameterType.IsInstanceOfType(rawValue)) {
             return true;
+         }
 
          string attemptedValue = Convert.ToString(rawValue, CultureInfo.InvariantCulture);
 
-         if (attemptedValue.Length == 0)
+         if (attemptedValue.Length == 0) {
             return true;
+         }
 
          object parsedVal;
 
-         if (!TryParse(httpContext, parameterName, rawValue, attemptedValue, CultureInfo.InvariantCulture, out parsedVal))
+         if (!TryParse(httpContext, parameterName, rawValue, attemptedValue, CultureInfo.InvariantCulture, out parsedVal)) {
             return false;
+         }
 
-         if (routeDirection == RouteDirection.IncomingRequest)
+         if (routeDirection == RouteDirection.IncomingRequest) {
             values[parameterName] = parsedVal;
+         }
 
          return true;
       }

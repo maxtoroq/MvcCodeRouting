@@ -15,28 +15,26 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Web.Http.Routing;
+using System.Linq;
+using System.Web;
+using System.Web.Routing;
 
-namespace MvcCodeRouting.Web.Http.Routing {
+namespace MvcCodeRouting.Web.Routing {
+   
+   class SetRouteConstraint : IRouteConstraint {
 
-   class RegexRouteConstraint : IHttpRouteConstraint {
+      readonly HashSet<string> set;
 
-      readonly Regex _Regex;
+      public SetRouteConstraint(params string[] values) {
 
-      public Regex Regex {
-         get { return _Regex; }
+         if (values == null) {
+            values = new string[0];
+         }
+
+         this.set = new HashSet<string>(values, StringComparer.OrdinalIgnoreCase);
       }
 
-      public RegexRouteConstraint(string pattern) {
-
-         if (pattern == null) throw new ArgumentNullException("pattern");
-
-         _Regex = new Regex("^(" + pattern + ")$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-      }
-
-      public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection) {
+      public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
 
          object rawValue;
 
@@ -52,7 +50,11 @@ namespace MvcCodeRouting.Web.Http.Routing {
             return true;
          }
 
-         return this.Regex.IsMatch(attemptedValue);
+         return this.set.Contains(attemptedValue);
+      }
+
+      public string[] GetValues() {
+         return this.set.ToArray();
       }
    }
 }

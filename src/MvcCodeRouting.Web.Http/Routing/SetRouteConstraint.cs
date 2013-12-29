@@ -15,27 +15,24 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Routing;
 
 namespace MvcCodeRouting.Web.Http.Routing {
    
-   abstract class TypeAwareRouteConstraint : IHttpRouteConstraint {
+   class SetRouteConstraint : IHttpRouteConstraint {
 
-      readonly Type _ParameterType;
+      readonly HashSet<string> set;
 
-      public Type ParameterType {
-         get { return _ParameterType; }
+      public SetRouteConstraint(params string[] values) {
+
+         if (values == null) {
+            values = new string[0];
+         }
+
+         this.set = new HashSet<string>(values, StringComparer.OrdinalIgnoreCase);
       }
-
-      protected TypeAwareRouteConstraint(Type parameterType) {
-
-         if (parameterType == null) throw new ArgumentNullException("parameterType");
-
-         _ParameterType = parameterType;
-      }
-
-      protected abstract bool TryParse(HttpRequestMessage request, string parameterName, object rawValue, string attemptedValue, CultureInfo culture, out object result);
 
       public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection) {
 
@@ -47,27 +44,17 @@ namespace MvcCodeRouting.Web.Http.Routing {
             return true;
          }
 
-         if (this.ParameterType.IsInstanceOfType(rawValue)) {
-            return true;
-         }
-
          string attemptedValue = Convert.ToString(rawValue, CultureInfo.InvariantCulture);
 
          if (attemptedValue.Length == 0) {
             return true;
          }
 
-         object parsedVal;
+         return this.set.Contains(attemptedValue);
+      }
 
-         if (!TryParse(request, parameterName, rawValue, attemptedValue, CultureInfo.InvariantCulture, out parsedVal)) {
-            return false;
-         }
-
-         if (routeDirection == HttpRouteDirection.UriResolution) {
-            values[parameterName] = parsedVal;
-         }
-
-         return true;
+      public string[] GetValues() {
+         return this.set.ToArray();
       }
    }
 }

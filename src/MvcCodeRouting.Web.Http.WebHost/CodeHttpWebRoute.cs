@@ -59,6 +59,13 @@ namespace MvcCodeRouting.Web.Routing {
                httpWebRoute.Constraints[item.Key] = new RegexRouteConstraint(regexConstraint.Regex);
                continue;
             }
+
+            var setConstraint = item.Value as Web.Http.Routing.SetRouteConstraint;
+
+            if (setConstraint != null) {
+               httpWebRoute.Constraints[item.Key] = new SetRouteConstraint(setConstraint.GetValues());
+               continue;
+            }
          }
 
          var codeWebRoute = new CodeHttpWebRoute(httpWebRoute, httpRoute);

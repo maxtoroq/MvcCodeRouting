@@ -71,5 +71,9 @@ namespace MvcCodeRouting.Web.Mvc {
       public override object CreateRegexRouteConstraint(string pattern, Type parameterType) {
          return new RegexRouteConstraint(pattern);
       }
+
+      public override object CreateSetRouteConstraint(string[] values) {
+         return new SetRouteConstraint(values);
+      }
    }
 }

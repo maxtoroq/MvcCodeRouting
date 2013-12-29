@@ -105,6 +105,7 @@
     <Compile Include="Routing\CodeHttpRoute.cs" />
     <Compile Include="Routing\ParameterBindingRouteConstraint.cs" />
     <Compile Include="Routing\RegexRouteConstraint.cs" />
+    <Compile Include="Routing\SetRouteConstraint.cs" />
     <Compile Include="Routing\TypeAwareRouteConstraint.cs" />
   </ItemGroup>
   <ItemGroup>
