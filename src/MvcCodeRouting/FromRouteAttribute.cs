@@ -150,15 +150,13 @@ namespace MvcCodeRouting {
 
          Route route = routeData.Route as Route;
          object binders;
-         IDictionary<string, object> bindersDictionary;
-         object binder;
+         IDictionary<string, ParameterBinder> bindersDictionary;
 
          if (route != null
             && route.DataTokens.TryGetValue(DataTokenKeys.ParameterBinders, out binders)
-            && (bindersDictionary = binders as IDictionary<string, object>) != null
-            && bindersDictionary.TryGetValue(name, out binder)) {
+            && (bindersDictionary = binders as IDictionary<string, ParameterBinder>) != null) {
 
-            paramBinder = (ParameterBinder)binder;
+            bindersDictionary.TryGetValue(name, out paramBinder);
          }
 
          if (paramBinder == null) {

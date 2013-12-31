@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
 using MvcCodeRouting.Web.Routing;
 
 namespace MvcCodeRouting {
@@ -314,7 +315,7 @@ namespace MvcCodeRouting {
             routeSettings.Constraints.Add("action", first.Controller.Provider.CreateSetRouteConstraint(actionMapping.Values.Where(s => !String.IsNullOrEmpty(s)).ToArray()));
          }
 
-         IDictionary<string, object> binders = RouteSettings.CreateRouteValueDictionary();
+         var binders = new Dictionary<string, ParameterBinder>(StringComparer.OrdinalIgnoreCase);
 
          foreach (var param in first.Controller.RouteProperties.Concat(parameters).Where(p => p.Constraint != null || p.Binder != null)) {
 
@@ -327,8 +328,9 @@ namespace MvcCodeRouting {
                routeConstraint = first.Controller.Provider.CreateParameterBindingRouteConstraint(param.Binder);
             }
 
-            if (param.Binder != null)
+            if (param.Binder != null) {
                binders[param.Name] = param.Binder;
+            }
 
             routeSettings.Constraints.Add(param.Name, routeConstraint);
          }

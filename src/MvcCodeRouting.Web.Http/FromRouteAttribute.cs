@@ -138,14 +138,12 @@ namespace MvcCodeRouting.Web.Http {
          ParameterBinder paramBinder = null;
 
          object binders;
-         IDictionary<string, object> bindersDictionary;
-         object binder;
+         IDictionary<string, ParameterBinder> bindersDictionary;
 
          if (routeData.Route.DataTokens.TryGetValue(DataTokenKeys.ParameterBinders, out binders)
-            && (bindersDictionary = binders as IDictionary<string, object>) != null
-            && bindersDictionary.TryGetValue(name, out binder)) {
+            && (bindersDictionary = binders as IDictionary<string, ParameterBinder>) != null) {
 
-            paramBinder = (ParameterBinder)binder;
+            bindersDictionary.TryGetValue(name, out paramBinder);
          }
 
          if (paramBinder == null) {

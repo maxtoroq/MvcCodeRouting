@@ -478,37 +478,71 @@ namespace MvcCodeRouting.Controllers {
       public abstract bool IsDefined(Type attributeType, bool inherit);
       protected abstract bool IsNonAction(ICustomAttributeProvider action);
 
-      public ParameterBinder GetBinderForType(Type type, IFromRouteAttribute routeAttr) {
+      RouteParameter CreateRouteParameter(PropertyInfo property, IFromRouteAttribute routeAttr) {
+         return CreateRouteParameter(property.Name, property.PropertyType, routeAttr, isOptional: false, isCatchAll: false);
+      }
+
+      internal RouteParameter CreateRouteParameter(string name, Type type, IFromRouteAttribute routeAttr, bool isOptional, bool isCatchAll) {
+
+         if (routeAttr != null
+            && routeAttr.Name.HasValue()) {
+
+            name = routeAttr.Name;
+         }
 
          type = TypeHelpers.GetNullableUnderlyingType(type);
 
-         Type binderType = (routeAttr != null) ?
-            routeAttr.BinderType
-            : null;
+         string constraint = this.Register.Settings.GetConstraintForType(type, routeAttr);
 
-         ParameterBinder paramBinder = ParameterBinder.GetInstance(null, binderType);
+         BinderSource binderSource;
+         ParameterBinder binder = GetBinderForType(type, routeAttr, out binderSource);
 
-         if (paramBinder == null) {
-            this.Register.Settings.ParameterBinders.TryGetItem(type, out paramBinder);
+         if (constraint.HasValue()
+            && binderSource != BinderSource.Parameter) {
+            
+            binder = null;
          }
 
-         if (paramBinder == null) {
-            paramBinder = ParameterBinder.GetInstance(type, null);
+         return new RouteParameter(name, type, constraint, isOptional, isCatchAll, binder);
+      }
+
+      ParameterBinder GetBinderForType(Type type, IFromRouteAttribute routeAttr, out BinderSource source) {
+
+         ParameterBinder paramBinder = null;
+         source = BinderSource.None;
+
+         if (routeAttr != null
+            && routeAttr.BinderType != null) {
+
+            paramBinder = ParameterBinder.GetInstance(null, routeAttr.BinderType);
+
+            if (paramBinder != null) {
+               source = BinderSource.Parameter;
+               return paramBinder;
+            }
+         }
+
+         type = TypeHelpers.GetNullableUnderlyingType(type);
+
+         if (this.Register.Settings.ParameterBinders.TryGetItem(type, out paramBinder)) {
+            source = BinderSource.Settings;
+            return paramBinder;
+         }
+
+         paramBinder = ParameterBinder.GetInstance(type, null);
+
+         if (paramBinder != null) {
+            source = BinderSource.Type;
          }
 
          return paramBinder;
       }
 
-      RouteParameter CreateRouteParameter(PropertyInfo property, IFromRouteAttribute routeAttr) {
-
-         Type parameterType = TypeHelpers.GetNullableUnderlyingType(property.PropertyType);
-
-         string name = routeAttr.Name.HasValue() ? routeAttr.Name : property.Name;
-         string constraint = this.Register.Settings.GetConstraintForType(parameterType, routeAttr);
-
-         ParameterBinder binder = GetBinderForType(parameterType, routeAttr);
-
-         return new RouteParameter(name, parameterType, constraint, binder: binder);
+      enum BinderSource { 
+         None = 0,
+         Parameter,
+         Settings,
+         Type
       }
    }
 }

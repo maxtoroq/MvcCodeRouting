@@ -170,25 +170,13 @@ namespace MvcCodeRouting.Controllers {
 
       static RouteParameter CreateRouteParameter(ActionParameterInfo actionParam) {
 
-         Type parameterType = TypeHelpers.GetNullableUnderlyingType(actionParam.Type);
-
          IFromRouteAttribute routeAttr = actionParam.FromRouteAttribute;
 
-         string name = actionParam.Name;
-         string constraint = actionParam.Action.Controller.Register.Settings.GetConstraintForType(parameterType, routeAttr);
-         bool isOptional = actionParam.IsOptional;
-         bool isCatchAll = false;
-         ParameterBinder binder = actionParam.Action.Controller.GetBinderForType(parameterType, routeAttr);
+         bool isCatchAll = (routeAttr != null) ?
+            routeAttr.CatchAll
+            : false;
 
-         if (routeAttr != null) {
-
-            isCatchAll = routeAttr.CatchAll;
-
-            if (routeAttr.Name.HasValue())
-               name = routeAttr.Name;
-         }
-
-         return new RouteParameter(name, parameterType, constraint, isOptional, isCatchAll, binder);
+         return actionParam.Action.Controller.CreateRouteParameter(actionParam.Name, actionParam.Type, routeAttr, actionParam.IsOptional, isCatchAll);
       }
 
       protected ActionInfo(ControllerInfo controller) {
