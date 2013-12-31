@@ -73,6 +73,7 @@
     <Compile Include="ParameterBinding\Binders\ByteParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\DecimalParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\DoubleParameterBinder.cs" />
+    <Compile Include="ParameterBinding\Binders\EnumParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\GuidParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\Int16ParameterBinder.cs" />
     <Compile Include="ParameterBinding\Binders\Int32ParameterBinder.cs" />

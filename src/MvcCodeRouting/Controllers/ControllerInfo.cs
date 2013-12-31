@@ -20,6 +20,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using MvcCodeRouting.ParameterBinding;
+using MvcCodeRouting.ParameterBinding.Binders;
 
 namespace MvcCodeRouting.Controllers {
    
@@ -492,10 +493,16 @@ namespace MvcCodeRouting.Controllers {
 
          type = TypeHelpers.GetNullableUnderlyingType(type);
 
-         string constraint = this.Register.Settings.GetConstraintForType(type, routeAttr);
+         string constraint = GetConstraintForType(type, routeAttr);
 
          BinderSource binderSource;
          ParameterBinder binder = GetBinderForType(type, routeAttr, out binderSource);
+
+         if (binder == null
+            && type.IsEnum) {
+
+            binder = (ParameterBinder)Activator.CreateInstance(typeof(EnumParameterBinder<>).MakeGenericType(type));
+         }
 
          if (constraint.HasValue()
             && binderSource != BinderSource.Parameter) {
@@ -536,6 +543,24 @@ namespace MvcCodeRouting.Controllers {
          }
 
          return paramBinder;
+      }
+
+      string GetConstraintForType(Type type, IFromRouteAttribute routeAttr) {
+
+         string constraint = null;
+
+         if (routeAttr != null) {
+            constraint = routeAttr.Constraint;
+         }
+
+         if (constraint == null) {
+
+            type = TypeHelpers.GetNullableUnderlyingType(type);
+
+            this.Register.Settings.DefaultConstraints.TryGetValue(type, out constraint);
+         }
+
+         return constraint;
       }
 
       enum BinderSource { 

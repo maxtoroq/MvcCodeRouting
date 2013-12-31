@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Web.Routing;
-using MvcCodeRouting.Controllers;
 using MvcCodeRouting.ParameterBinding;
 using MvcCodeRouting.ParameterBinding.Binders;
 
@@ -208,29 +207,6 @@ namespace MvcCodeRouting {
          string formattedSegment = this.RouteFormatter(args);
 
          return formattedSegment;
-      }
-
-      internal string GetConstraintForType(Type type, IFromRouteAttribute routeAttr) {
-
-         string constraint = null;
-
-         if (routeAttr != null)
-            constraint = routeAttr.Constraint;
-
-         if (constraint == null) {
-
-            type = TypeHelpers.GetNullableUnderlyingType(type);
-
-            this.DefaultConstraints.TryGetValue(type, out constraint);
-
-            if (constraint == null
-               && type.IsEnum) {
-
-               constraint = String.Join("|", Enum.GetNames(type));
-            }
-         }
-
-         return constraint;
       }
    }
 }

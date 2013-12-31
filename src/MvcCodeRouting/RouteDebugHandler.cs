@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -268,24 +269,24 @@ namespace MvcCodeRouting {
             var regexConstraint = val as Web.Routing.RegexRouteConstraint;
 
             if (regexConstraint != null) {
-               stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", ValueToCSharpString(regexConstraint.OriginalPattern, constraint: true), ")");
+               stringVal = String.Concat("<span class='keyword'>new</span> ", TypeReferenceCSharp(type), "(", ValueToCSharpString(regexConstraint.OriginalPattern, constraint: true), ")");
 
             } else {
 
                var paramBindingConstraint = val as Web.Routing.ParameterBindingRouteConstraint;
 
                if (paramBindingConstraint != null) {
-                  stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", ValueToCSharpString(paramBindingConstraint.Binder, constraint: true), ")");
+                  stringVal = String.Concat("<span class='keyword'>new</span> ", TypeReferenceCSharp(type), "(", ValueToCSharpString(paramBindingConstraint.Binder, constraint: true), ")");
 
                } else {
 
                   var setConstraint = val as Web.Routing.SetRouteConstraint;
 
                   if (setConstraint != null) {
-                     stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", String.Join(", ", setConstraint.GetValues().Select(s => ValueToCSharpString(s))), ")");
+                     stringVal = String.Concat("<span class='keyword'>new</span> ", TypeReferenceCSharp(type), "(", String.Join(", ", setConstraint.GetValues().Select(s => ValueToCSharpString(s))), ")");
                   
                   } else {
-                     stringVal = String.Concat("<span class='keyword'>new</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "()");
+                     stringVal = String.Concat("<span class='keyword'>new</span> ", TypeReferenceCSharp(type), "()");
                   }
                }
             }
@@ -295,6 +296,34 @@ namespace MvcCodeRouting {
          }
 
          return stringVal;
+      }
+
+      static string TypeReferenceCSharp(Type type) {
+
+         var sb = new StringBuilder();
+         sb.AppendFormat("<span class='type' title='{0}'>", type.FullName);
+         sb.Append((type.IsGenericType) ? type.Name.Substring(0, type.Name.IndexOf('`')) : type.Name);
+         sb.Append("</span>");
+
+         if (type.IsGenericType) {
+
+            Type[] genericArgs = type.GetGenericArguments();
+
+            sb.Append("&lt;");
+
+            for (int i = 0; i < genericArgs.Length; i++) {
+
+               if (i > 0) {
+                  sb.Append(", ");
+               }
+
+               sb.Append(TypeReferenceCSharp(genericArgs[i]));
+            }
+
+            sb.Append(">"); 
+         }
+
+         return sb.ToString();
       }
 
       void RenderRoutesVB(RouteCollection routes) {
@@ -480,17 +509,17 @@ namespace MvcCodeRouting {
             var regexConstraint = val as Web.Routing.RegexRouteConstraint;
 
             if (regexConstraint != null) {
-               stringVal = String.Concat("<span class='keyword'>New</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", ValueToVBString(regexConstraint.OriginalPattern, constraint: true), ")");
+               stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "(", ValueToVBString(regexConstraint.OriginalPattern, constraint: true), ")");
 
             } else {
 
                var paramBindingConstraint = val as Web.Routing.ParameterBindingRouteConstraint;
 
                if (paramBindingConstraint != null) {
-                  stringVal = String.Concat("<span class='keyword'>New</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "(", ValueToVBString(paramBindingConstraint.Binder, constraint: true), ")");
+                  stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "(", ValueToVBString(paramBindingConstraint.Binder, constraint: true), ")");
 
                } else {
-                  stringVal = String.Concat("<span class='keyword'>New</span> <span class='type' title='", type.FullName, "'>", type.Name, "</span>", "()");
+                  stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "()");
                }
             }
 
@@ -499,6 +528,34 @@ namespace MvcCodeRouting {
          }
 
          return stringVal;
+      }
+
+      static string TypeReferenceVB(Type type) {
+
+         var sb = new StringBuilder();
+         sb.AppendFormat("<span class='type' title='{0}'>", type.FullName);
+         sb.Append((type.IsGenericType) ? type.Name.Substring(0, type.Name.IndexOf('`')) : type.Name);
+         sb.Append("</span>");
+
+         if (type.IsGenericType) {
+
+            Type[] genericArgs = type.GetGenericArguments();
+
+            sb.Append("(<span class='keyword'>Of</span> ");
+
+            for (int i = 0; i < genericArgs.Length; i++) {
+
+               if (i > 0) {
+                  sb.Append(", ");
+               }
+
+               sb.Append(TypeReferenceVB(genericArgs[i]));
+            }
+
+            sb.Append(")");
+         }
+
+         return sb.ToString();
       }
 
       void RenderTopComments(string lineCommentChars) {
