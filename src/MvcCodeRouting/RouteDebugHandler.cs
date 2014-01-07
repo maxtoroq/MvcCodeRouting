@@ -519,7 +519,15 @@ namespace MvcCodeRouting {
                   stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "(", ValueToVBString(paramBindingConstraint.Binder, constraint: true), ")");
 
                } else {
-                  stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "()");
+                  
+                  var setConstraint = val as Web.Routing.SetRouteConstraint;
+
+                  if (setConstraint != null) {
+                     stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "(", String.Join(", ", setConstraint.GetValues().Select(s => ValueToVBString(s))), ")");
+
+                  } else {
+                     stringVal = String.Concat("<span class='keyword'>New</span> ", TypeReferenceVB(type), "()");
+                  }
                }
             }
 
@@ -572,7 +580,7 @@ namespace MvcCodeRouting {
 
          writer.Write("<span class='comment'>");
          writer.Write(lineCommentChars);
-         writer.WriteLine(" <a href='http://mvccoderouting.codeplex.com'>{0}</a> v{1}", name, version);
+         writer.WriteLine(" <a href='http://mvccoderouting.codeplex.com/'>{0}</a> v{1}", name, version);
          writer.Write(lineCommentChars);
          writer.Write(" Format: <a" + (this.format == "csharp" ? " class='self'" : " href='?format=csharp'"));
          writer.Write(">C#</a> - <a" + (this.format == "vb" ? " class='self'" : " href='?format=vb'"));
