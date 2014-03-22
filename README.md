@@ -30,8 +30,7 @@ Install-Package MvcCodeRouting
 # Web API
 Install-Package MvcCodeRouting.Web.Http.WebHost
 ```
-<a href="https://mvccoderouting.codeplex.com/documentation?title=Donate"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate"/></a>
-<a href="http://flattr.com/thing/1761230/MvcCodeRouting" target="_blank"><img src="https://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this"/></a>
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://mvccoderouting.codeplex.com/documentation?title=Donate) [![Flattr this](https://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/1761230/MvcCodeRouting)
 
 Motivation
 ----------
