@@ -33,8 +33,8 @@ Install-Package MvcCodeRouting.Web.Http.WebHost
 
 Motivation
 ----------
-- [Why ASP.NET MVC Routing sucks](http://maxtoroq.blogspot.com/2014/02/why-aspnet-mvc-routing-sucks.html)
-- [Rethinking ASP.NET MVC: Workflow per Controller](http://maxtoroq.blogspot.com/2013/02/aspnet-mvc-workflow-per-controller.html)
+- [Why ASP.NET MVC Routing sucks](http://maxtoroq.github.io/2014/02/why-aspnet-mvc-routing-sucks.html)
+- [Rethinking ASP.NET MVC: Workflow per Controller](http://maxtoroq.github.io/2013/02/aspnet-mvc-workflow-per-controller.html)
 
 Resources
 ---------
