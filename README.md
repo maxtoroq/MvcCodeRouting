@@ -42,4 +42,4 @@ Resources
 - [Ask for help](https://mvccoderouting.codeplex.com/discussions)
 - [Report an issue](https://mvccoderouting.codeplex.com/workitem/list/basic)
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://mvccoderouting.codeplex.com/documentation?title=Donate) [![Flattr this](https://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/1761230/MvcCodeRouting)
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](http://maxtoroq.github.io/p/donate.html) [![Flattr this](https://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/1761230/MvcCodeRouting)
