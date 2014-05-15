@@ -55,8 +55,10 @@ namespace MvcCodeRouting {
          CodeRoute codeRoute = controllerContext.RouteData.Route as CodeRoute;
 
          if (codeRoute != null) {
-            for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) 
+
+            for (int i = 0; i < codeRoute.NonActionParameterTokens.Count; i++) {
                routeValues.Remove(codeRoute.NonActionParameterTokens[i]);
+            }
          }
 
 #pragma warning disable 0618

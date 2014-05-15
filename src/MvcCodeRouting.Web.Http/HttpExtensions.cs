@@ -49,8 +49,9 @@ namespace MvcCodeRouting.Web.Http {
          var controllerData = controllerDataCache
             .GetOrAdd(controller.GetType(), (type) => new ControllerData(type));
 
-         if (controllerData.Properties.Length == 0)
+         if (controllerData.Properties.Length == 0) {
             return;
+         }
 
          var modelState = new ModelStateDictionary();
 
@@ -69,18 +70,21 @@ namespace MvcCodeRouting.Web.Http {
 
             propertyData.BindProperty(actionContext, bindingContext);
 
-            if (!modelState.IsValid)
+            if (!modelState.IsValid) {
                break;
+            }
          }
 
          if (!modelState.IsValid) {
+
             ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First();
 
             HttpStatusCode statusCode = HttpStatusCode.NotFound;
             string message = "Not Found";
 
-            if (error.Exception != null)
+            if (error.Exception != null) {
                throw new HttpResponseException(controller.Request.CreateErrorResponse(statusCode, message, error.Exception));
+            }
 
             throw new HttpResponseException(controller.Request.CreateErrorResponse(statusCode, message));
          }
@@ -129,8 +133,9 @@ namespace MvcCodeRouting.Web.Http {
             bindingContext.ModelName = this.Name;
             bindingContext.ModelMetadata = this.Metadata;
 
-            if (!this.Attribute.BindModel(actionContext, bindingContext))
+            if (!this.Attribute.BindModel(actionContext, bindingContext)) {
                return;
+            }
 
             object value = bindingContext.Model;
 
@@ -139,8 +144,9 @@ namespace MvcCodeRouting.Web.Http {
 
             } catch (Exception ex) {
 
-               if (bindingContext.ModelState.IsValidField(bindingContext.ModelName))
+               if (bindingContext.ModelState.IsValidField(bindingContext.ModelName)) {
                   bindingContext.ModelState.AddModelError(bindingContext.ModelName, ex);
+               }
             }
          }
       }

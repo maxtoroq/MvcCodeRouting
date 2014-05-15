@@ -39,8 +39,9 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
 
          result = null;
 
-         if (String.IsNullOrWhiteSpace(value))
+         if (String.IsNullOrWhiteSpace(value)) {
             return false;
+         }
 
          if (value.Length < 36
             || value.Length > 38) {
@@ -63,8 +64,9 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
          }
 #else
 
-         if (!Guid.TryParse(value, out parsedResult)) 
+         if (!Guid.TryParse(value, out parsedResult)) {
             return false;
+         }
 #endif
 
          result = parsedResult;

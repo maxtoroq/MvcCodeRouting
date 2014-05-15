@@ -90,8 +90,9 @@ namespace MvcCodeRouting {
 
          Route[] newRoutes = RouteFactory.CreateRoutes<Route>(registerSettings);
 
-         foreach (Route route in newRoutes) 
+         foreach (Route route in newRoutes) {
             routes.Add(route);
+         }
 
          if (newRoutes.Length > 0 
             && registerSettings.Settings.EnableEmbeddedViews) {
@@ -114,8 +115,9 @@ namespace MvcCodeRouting {
 
             IViewEngine engine = engines[i];
 
-            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper))
+            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper)) {
                continue;
+            }
 
             engines[i] = new Web.Mvc.ViewEngineWrapper(engine);
          }

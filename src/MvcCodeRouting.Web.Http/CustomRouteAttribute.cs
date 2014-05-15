@@ -44,6 +44,7 @@ namespace MvcCodeRouting.Web.Http {
 
          if (!String.IsNullOrEmpty(url)
             && url[0] == '/') {
+
             throw new ArgumentException("Custom route cannot start with '/'.", "url");
          }
 

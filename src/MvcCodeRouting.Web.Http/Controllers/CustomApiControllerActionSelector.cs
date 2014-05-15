@@ -27,9 +27,10 @@ namespace MvcCodeRouting.Web.Http.Controllers {
 
          IHttpRouteData routeData = controllerContext.RouteData;
          bool containsAction = routeData.Values.ContainsKey("action");
-         
-         if (containsAction)
+
+         if (containsAction) {
             return base.SelectAction(controllerContext);
+         }
 
          try {
             routeData.Values["action"] = controllerContext.Request.Method.Method;

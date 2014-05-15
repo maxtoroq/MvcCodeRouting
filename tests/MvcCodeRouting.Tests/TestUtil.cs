@@ -35,8 +35,9 @@ namespace MvcCodeRouting.Tests {
 
          var routeData = new RouteData();
 
-         if (currentRouteContext != null)
+         if (currentRouteContext != null) {
             routeData.DataTokens["MvcCodeRouting.RouteContext"] = currentRouteContext;
+         }
 
          var requestContext = new RequestContext(httpContextMock.Object, routeData);
          var urlHelper = new UrlHelper(requestContext, routes);

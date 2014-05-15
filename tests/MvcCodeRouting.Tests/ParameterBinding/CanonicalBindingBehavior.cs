@@ -93,6 +93,8 @@ namespace MvcCodeRouting.Tests.ParameterBinding {
                Assert.AreEqual(item, Convert.ToString(result, CultureInfo.InvariantCulture));
             }
 
+            // TODO: Disallow -0 in v2
+
             foreach (var item in new[] { /*"-0",*/ "-05" }) {
 
                object result;
@@ -121,6 +123,8 @@ namespace MvcCodeRouting.Tests.ParameterBinding {
             Assert.IsTrue(binder.TryBind(item, CultureInfo.InvariantCulture, out result));
             Assert.AreEqual(item, Convert.ToString(result, CultureInfo.InvariantCulture));
          }
+
+         // TODO: Disallow trailing 0 in v2
 
          foreach (var item in new[] { "-.5", ".5", "+.5"/*, "0.50"*/, "0.", "5." }) {
 

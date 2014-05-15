@@ -56,19 +56,22 @@ namespace MvcCodeRouting.Web.Mvc {
 
             try {
                instance = (Controller)FormatterServices.GetUninitializedObject(controllerType);
+            
             } catch (SecurityException) { }
 
             if (instance != null) {
 
                ControllerActionInvoker actionInvoker = createActionInvoker(instance) as ControllerActionInvoker;
 
-               if (actionInvoker != null)
+               if (actionInvoker != null) {
                   controllerDescr = getControllerDescriptor(actionInvoker, new ControllerContext { Controller = instance });
+               }
             }
          }
 
-         if (controllerDescr != null)
+         if (controllerDescr != null) {
             return new DescribedMvcControllerInfo(controllerDescr, controllerType, registerSettings, provider);
+         }
 
          return new ReflectedMvcControllerInfo(controllerType, registerSettings, provider);
       }

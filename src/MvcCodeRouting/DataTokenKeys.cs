@@ -20,6 +20,7 @@ using System.Text;
 namespace MvcCodeRouting {
    
    static class DataTokenKeys {
+
       public const string Namespaces = "Namespaces";
       public const string Configuration = "Configuration";
       public const string BaseRoute = "MvcCodeRouting.BaseRoute";

@@ -171,8 +171,9 @@ namespace MvcCodeRouting.Web.Hosting {
 
          List<string> parts = relativeVirtualPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-         if (parts.Count > 1)
+         if (parts.Count > 1) {
             parts.RemoveRange(1, basePathParts.Length - 1);
+         }
 
          parts.Insert(0, this.assemblyName);
 

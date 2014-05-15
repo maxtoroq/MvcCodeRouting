@@ -86,9 +86,10 @@ namespace MvcCodeRouting.Web.Http {
          if (configuration == null) throw new ArgumentNullException("configuration");
 
          foreach (ValueProviderFactory valueProviderFactory in base.GetValueProviderFactories(configuration)) {
-            
-            if (valueProviderFactory is RouteDataValueProviderFactory)
+
+            if (valueProviderFactory is RouteDataValueProviderFactory) {
                return new ValueProviderFactory[1] { valueProviderFactory };
+            }
          }
 
          return new ValueProviderFactory[1] { new RouteDataValueProviderFactory() };

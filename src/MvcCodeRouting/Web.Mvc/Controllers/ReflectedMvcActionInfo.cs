@@ -41,11 +41,16 @@ namespace MvcCodeRouting.Web.Mvc {
       }
 
       protected override string GetName() {
-         return base.GetName() ?? this.method.Name;
+
+         return base.GetName() 
+            ?? this.method.Name;
       }
 
       protected override ActionParameterInfo[] GetParameters() {
-         return this.method.GetParameters().Select(p => new ReflectedMvcActionParameterInfo(p, this)).ToArray();
+
+         return this.method.GetParameters()
+            .Select(p => new ReflectedMvcActionParameterInfo(p, this))
+            .ToArray();
       }
 
       public override object[] GetCustomAttributes(bool inherit) {

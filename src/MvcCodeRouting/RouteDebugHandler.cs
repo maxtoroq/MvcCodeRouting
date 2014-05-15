@@ -108,6 +108,7 @@ namespace MvcCodeRouting {
                : null;
 
             if (routeContext != prevRouteContext) {
+
                if (prevRouteContext != null) {
                   writer.WriteLine();
                   writer.WriteLine("<span class='keyword'>#endregion</span>");
@@ -180,8 +181,9 @@ namespace MvcCodeRouting {
 
             foreach (var item in route.Defaults) {
 
-               if (i > 0)
+               if (i > 0) {
                   writer.Write(", ");
+               }
 
                writer.Write("{0} = {1}", item.Key, ValueToCSharpString(item.Value));
 
@@ -204,8 +206,9 @@ namespace MvcCodeRouting {
 
                foreach (var item in constraints) {
 
-                  if (j > 0)
+                  if (j > 0) {
                      writer.Write(", ");
+                  }
 
                   writer.Write("{0} = {1}", item.Key, ValueToCSharpString(item.Value, constraint: true));
 
@@ -228,8 +231,10 @@ namespace MvcCodeRouting {
                writer.Write("    <span class='keyword'>new</span>[] { ");
 
                for (int j = 0; j < namespaces.Length; j++) {
-                  if (j > 0)
+
+                  if (j > 0) {
                      writer.Write(", ");
+                  }
 
                   writer.Write("<span class='string'>\"");
                   writer.Write(namespaces[j]);
@@ -346,6 +351,7 @@ namespace MvcCodeRouting {
                : null;
 
             if (routeContext != prevRouteContext) {
+
                if (prevRouteContext != null) {
                   writer.WriteLine();
                   writer.WriteLine("<span class='keyword'>#End Region</span>");
@@ -420,8 +426,9 @@ namespace MvcCodeRouting {
 
             foreach (var item in route.Defaults) {
 
-               if (i > 0)
+               if (i > 0) {
                   writer.Write(", ");
+               }
 
                writer.Write(".{0} = {1}", item.Key, ValueToVBString(item.Value));
 
@@ -444,8 +451,9 @@ namespace MvcCodeRouting {
 
                foreach (var item in constraints) {
 
-                  if (j > 0)
+                  if (j > 0) {
                      writer.Write(", ");
+                  }
 
                   writer.Write(".{0} = {1}", item.Key, ValueToVBString(item.Value, constraint: true));
 
@@ -468,8 +476,10 @@ namespace MvcCodeRouting {
                writer.Write("    <span class='keyword'>New String</span>() {");
 
                for (int j = 0; j < namespaces.Length; j++) {
-                  if (j > 0)
+
+                  if (j > 0) {
                      writer.Write(", ");
+                  }
 
                   writer.Write("<span class='string'>\"");
                   writer.Write(namespaces[j]);
@@ -615,8 +625,9 @@ namespace MvcCodeRouting {
 
          while (handlerType != null) {
 
-            if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler")
+            if (handlerType.FullName == "System.Web.Http.WebHost.HttpControllerRouteHandler") {
                return true;
+            }
 
             handlerType = handlerType.BaseType;
          }

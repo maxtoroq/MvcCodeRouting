@@ -31,6 +31,7 @@ namespace MvcCodeRouting {
       public static void IncomingMapping(this ICodeRoute route, IDictionary<string, object> values) {
 
          if (route.ControllerMapping != null) {
+
             string controller = values["controller"] as string;
 
             if (controller != null) {
@@ -42,6 +43,7 @@ namespace MvcCodeRouting {
          }
 
          if (route.ActionMapping != null) {
+
             string action = values["action"] as string;
 
             if (action != null) {
@@ -55,21 +57,24 @@ namespace MvcCodeRouting {
 
       public static TVirtualPathData DoGetVirtualPath<TVirtualPathData>(this ICodeRoute route, IDictionary<string, object> values, IDictionary<string, object> requestRouteValues, IDictionary<string, object> requestRouteDataTokens, Func<TVirtualPathData> getVirtualPath) where TVirtualPathData : class {
 
-         if (values == null)
+         if (values == null) {
             return getVirtualPath();
+         }
 
          string controllerRef;
          string valuesRouteContext = GetRouteContext(values, requestRouteValues, requestRouteDataTokens, out controllerRef);
 
-         if (valuesRouteContext == null)
+         if (valuesRouteContext == null) {
             return null;
+         }
          
          string thisRouteContext = (string)route.DataTokens[DataTokenKeys.RouteContext];
 
          if (!String.Equals(valuesRouteContext, thisRouteContext, StringComparison.OrdinalIgnoreCase)) {
 
-            if (controllerRef != null)
+            if (controllerRef != null) {
                values["controller"] = controllerRef;
+            }
 
             return null;
          }
@@ -86,11 +91,16 @@ namespace MvcCodeRouting {
          // When the route matches don't change the controller back to its original value
          // because it's used by ASP.NET MVC on child requests (e.g. Html.Action())
          // to locate the controller (DefaultControllerFactory).
-         if (virtualPath == null && controllerRef != null)
-            values["controller"] = controllerRef;
+         
+         if (virtualPath == null 
+            && controllerRef != null) {
 
-         if (actionWasMapped) 
+            values["controller"] = controllerRef;
+         }
+
+         if (actionWasMapped) {
             values["action"] = unmappedAction;
+         }
 
          return virtualPath;
       }
@@ -99,24 +109,29 @@ namespace MvcCodeRouting {
 
          originalController = null;
 
-         if (values.ContainsKey("controller"))
+         if (values.ContainsKey("controller")) {
             originalController = (string)values["controller"];
+         }
 
          const string routeContextKey = "__routecontext";
 
-         if (values.ContainsKey(routeContextKey))
+         if (values.ContainsKey(routeContextKey)) {
             return (string)values[routeContextKey];
+         }
          
          string routeContext = null;
 
-         if (requestRouteDataTokens.ContainsKey(DataTokenKeys.RouteContext))
+         if (requestRouteDataTokens.ContainsKey(DataTokenKeys.RouteContext)) { 
             routeContext = (string)requestRouteDataTokens[DataTokenKeys.RouteContext];
+         }
 
-         if (routeContext == null)
+         if (routeContext == null) {
             return null;
+         }
 
-         if (String.IsNullOrEmpty(originalController))
+         if (String.IsNullOrEmpty(originalController)) {
             return routeContext;
+         }
 
          var theController = new StringBuilder(originalController);
 
@@ -137,8 +152,9 @@ namespace MvcCodeRouting {
 
                string baseRoute = requestRouteDataTokens[DataTokenKeys.BaseRoute] as string;
 
-               if (!String.IsNullOrEmpty(baseRoute))
+               if (!String.IsNullOrEmpty(baseRoute)) {
                   routeContextSegments.AddRange(baseRoute.Split('/'));
+               }
 
                theController.Remove(0, 1);
             }
@@ -154,8 +170,9 @@ namespace MvcCodeRouting {
             && theController.Length > 1
             && theController[1] == '.') {
 
-            if (routeContextSegments.Count == 0) 
+            if (routeContextSegments.Count == 0) {
                return null;
+            }
 
             routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
             theController.Remove(0, 2);
@@ -195,6 +212,7 @@ namespace MvcCodeRouting {
          if (originalValue == null
             || mapping == null
             || !mapping.ContainsKey(originalValue)) {
+
             return false;
          }
 

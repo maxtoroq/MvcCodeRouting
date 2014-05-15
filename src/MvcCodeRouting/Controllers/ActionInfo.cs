@@ -38,9 +38,8 @@ namespace MvcCodeRouting.Controllers {
       
       public string Name {
          get {
-            if (_Name == null) 
-               _Name = GetName();
-            return _Name;
+            return _Name
+               ?? (_Name = GetName());
          }
       }
 
@@ -49,23 +48,22 @@ namespace MvcCodeRouting.Controllers {
 
       public string ActionSegment {
          get {
-            if (_ActionSegment == null) 
-               _ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type));
-            return _ActionSegment;
+            return _ActionSegment
+               ?? (_ActionSegment = Controller.Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Action, Controller.Type)));
          }
       }
 
       public Collection<ActionParameterInfo> Parameters {
          get {
-            if (_Parameters == null) 
-               _Parameters = new Collection<ActionParameterInfo>(GetParameters());
-            return _Parameters;
+            return _Parameters
+               ?? (_Parameters = new Collection<ActionParameterInfo>(GetParameters()));
          }
       }
 
       public RouteParameterCollection RouteParameters {
          get {
             if (_RouteParameters == null) {
+
                _RouteParameters = new RouteParameterCollection(
                   (from p in Parameters
                    where p.FromRouteAttribute != null
@@ -81,12 +79,14 @@ namespace MvcCodeRouting.Controllers {
                   ActionParameterInfo id = Parameters.FirstOrDefault(p => p.Name.Equals("id", StringComparison.OrdinalIgnoreCase));
 
                   if (id != null) {
+
                      _RouteParameters = new RouteParameterCollection(
                         new[] { CreateRouteParameter(id) }
                      );
                   }
                }
             }
+
             return _RouteParameters;
          }
       }
@@ -121,19 +121,22 @@ namespace MvcCodeRouting.Controllers {
                         )
                   );
 
-               if (attr != null) 
+               if (attr != null) {
                   _CustomRoute = attr.Url;
+               }
 
                _CustomRouteInit = true;
             }
+
             return _CustomRoute;
          }
       }
 
       public bool CustomRouteHasActionToken {
          get {
-            if (CustomRoute == null)
+            if (CustomRoute == null) {
                return false;
+            }
 
             if (_CustomRouteHasActionToken == null) {
                _CustomRouteHasActionToken =
@@ -146,8 +149,9 @@ namespace MvcCodeRouting.Controllers {
 
       public bool CustomRouteIsAbsolute {
          get {
-            if (CustomRoute == null)
+            if (CustomRoute == null) {
                return false;
+            }
 
             return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
          }
@@ -196,7 +200,8 @@ namespace MvcCodeRouting.Controllers {
 
             var param = parameters[i];
 
-            if (param.IsCatchAll && i < parameters.Count - 1)
+            if (param.IsCatchAll && i < parameters.Count - 1) {
+
                throw new InvalidOperationException(
                   String.Format(CultureInfo.InvariantCulture,
                      "A catch-all parameter must be the last route parameter of the action method (parameter {0} on {1}).",
@@ -204,6 +209,7 @@ namespace MvcCodeRouting.Controllers {
                      String.Concat(this.DeclaringType.FullName, ".", this.MethodName, "(", String.Join(", ", this.Parameters.Select(p => p.Type.Name)), ")")
                   )
                );
+            }
          }
       }
    }

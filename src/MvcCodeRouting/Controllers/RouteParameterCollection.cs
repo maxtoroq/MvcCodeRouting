@@ -27,15 +27,19 @@ namespace MvcCodeRouting.Controllers {
 
       public bool Equals(RouteParameterCollection other) {
 
-         if (other == null)
+         if (other == null) {
             return false;
+         }
 
-         if (other.Count != this.Count)
+         if (other.Count != this.Count) {
             return false;
+         }
 
          for (int i = 0; i < this.Count; i++) {
-            if (!this[i].Equals(other[i]))
+
+            if (!this[i].Equals(other[i])) {
                return false;
+            }
          }
 
          return true;
@@ -48,10 +52,12 @@ namespace MvcCodeRouting.Controllers {
       public override int GetHashCode() {
 
          unchecked {
+
             int hash = 1;
 
-            foreach (var item in this)
+            foreach (var item in this) {
                hash = 31 * hash + (item == null ? 0 : item.GetHashCode());
+            }
 
             return hash;
          }

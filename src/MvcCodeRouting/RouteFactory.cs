@@ -46,19 +46,22 @@ namespace MvcCodeRouting {
 
             RouteSettings routeSettings = routeFactory.CreateRouteSettings(group);
 
-            if (config != null) 
+            if (config != null) {
                routeSettings.DataTokens[DataTokenKeys.Configuration] = config;
+            }
 
             object route = routeFactory.CreateRoute(routeSettings, registerSettings);
 
             if (route is TRoute) {
                routes.Add((TRoute)route);
+
             } else {
 
                TRoute convertedRoute = routeFactory.ConvertRoute(route, typeof(TRoute), registerSettings) as TRoute;
 
-               if (convertedRoute != null)
+               if (convertedRoute != null) {
                   routes.Add(convertedRoute);
+               }
                // TODO: else, throw exception?
             }
          }
@@ -81,6 +84,7 @@ namespace MvcCodeRouting {
              }).ToList();
 
          if (ambiguousController.Count > 0) {
+
             var first = ambiguousController.First();
 
             throw new InvalidOperationException(
@@ -134,6 +138,7 @@ namespace MvcCodeRouting {
                   var similar = ordered.Skip(1).Where(a => signatureComparer.Equals(firstInSet, a)).ToList();
 
                   if (similar.Count > 0) {
+
                      var signatureCompat = new[] { firstInSet }.Concat(similar).ToArray();
 
                      var maxParamCounts =
@@ -173,14 +178,16 @@ namespace MvcCodeRouting {
                               var first = range.First();
                               var last = range.Last();
 
-                              foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count))
+                              foreach (var param in first.RouteParameters.Skip(last.RouteParameters.Count)) {
                                  param.IsOptional = true;
+                              }
                            }
 
                            finalGrouping.Add(range);
 
-                           foreach (var item in range)
+                           foreach (var item in range) {
                               ordered.Remove(item);
+                           }
                         }
                      }
 
@@ -189,6 +196,7 @@ namespace MvcCodeRouting {
                      ordered.Remove(firstInSet);
                   }
                }
+
             } else {
 
                finalGrouping.Add(set);
@@ -247,15 +255,18 @@ namespace MvcCodeRouting {
          if (actionCustomRoute != null) {
 
             if (first.CustomRouteIsAbsolute) {
+
                actionCustomRoute = actionCustomRoute.Substring(2);
 
                segments.Clear();
 
-               if (baseRoute != null)
+               if (baseRoute != null) {
                   segments.AddRange(baseRoute.Split('/'));
+               }
             }
 
             segments.Add(actionCustomRoute);
+
          } else {
             segments.Add(!includeActionToken ? first.ActionSegment : "{action}");
             segments.AddRange(first.RouteParameters.Select(r => r.RouteSegment));

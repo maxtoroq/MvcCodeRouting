@@ -37,8 +37,9 @@ namespace MvcCodeRouting.Web.Mvc {
 
          string name = base.GetName();
 
-         if (name != this.method.Name)
+         if (name != this.method.Name) {
             return name;
+         }
 
          return AsyncMethodActionName(this.method);
       }

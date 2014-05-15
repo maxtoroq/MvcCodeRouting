@@ -47,15 +47,15 @@ namespace MvcCodeRouting.Controllers {
 
       public virtual string Name {
          get {
-            if (_Name == null) 
-               _Name = Type.Name.Substring(0, Type.Name.Length - "Controller".Length);
-            return _Name;
+            return _Name
+               ?? (_Name = Type.Name.Substring(0, Type.Name.Length - "Controller".Length));
          }
       }
 
       public string Namespace {
          get {
-            return Type.Namespace ?? "";
+            return Type.Namespace 
+               ?? "";
          }
       }
 
@@ -81,9 +81,8 @@ namespace MvcCodeRouting.Controllers {
 
       public string ControllerSegment {
          get {
-            if (_ControllerSegment == null) 
-               _ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type));
-            return _ControllerSegment;
+            return _ControllerSegment
+               ?? (_ControllerSegment = Register.Settings.FormatRouteSegment(new RouteFormatterArgs(Name, RouteSegmentType.Controller, Type)));
          }
       }
 
@@ -91,7 +90,7 @@ namespace MvcCodeRouting.Controllers {
          get {
             if (_CodeRoutingNamespace == null) {
 
-               List<string> segments = new List<string>();
+               var segments = new List<string>();
 
                if (IsInSubNamespace) {
                   
@@ -100,8 +99,10 @@ namespace MvcCodeRouting.Controllers {
                   if (segments.Count > 0 && NameEquals(segments.Last(), Name))
                      segments.RemoveAt(segments.Count - 1);
                }
+
                _CodeRoutingNamespace = new ReadOnlyCollection<string>(segments);
             }
+
             return _CodeRoutingNamespace;
          }
       }
@@ -112,7 +113,9 @@ namespace MvcCodeRouting.Controllers {
 
                if (Register.BaseRoute == null) {
                   _CodeRoutingContext = new ReadOnlyCollection<string>(CodeRoutingNamespace);
+               
                } else {
+
                   var segments = new List<string>();
                   segments.AddRange(Register.BaseRoute.Split('/'));
                   segments.AddRange(CodeRoutingNamespace);
@@ -120,6 +123,7 @@ namespace MvcCodeRouting.Controllers {
                   _CodeRoutingContext = new ReadOnlyCollection<string>(segments);
                }
             }
+
             return _CodeRoutingContext;
          }
       }
@@ -127,6 +131,7 @@ namespace MvcCodeRouting.Controllers {
       public ReadOnlyCollection<string> NamespaceSegments {
          get {
             if (_NamespaceSegments == null) {
+
                var namespaceSegments = new List<string>();
 
                namespaceSegments.AddRange(
@@ -135,6 +140,7 @@ namespace MvcCodeRouting.Controllers {
 
                _NamespaceSegments = new ReadOnlyCollection<string>(namespaceSegments);
             }
+
             return _NamespaceSegments;
          }
       }
@@ -145,7 +151,9 @@ namespace MvcCodeRouting.Controllers {
 
                if (Register.BaseRoute == null) {
                   _BaseRouteAndNamespaceSegments = new ReadOnlyCollection<string>(NamespaceSegments);
+               
                } else {
+
                   var segments = new List<string>();
                   segments.AddRange(Register.BaseRoute.Split('/'));
                   segments.AddRange(NamespaceSegments);
@@ -153,6 +161,7 @@ namespace MvcCodeRouting.Controllers {
                   _BaseRouteAndNamespaceSegments = new ReadOnlyCollection<string>(segments);
                }
             }
+
             return _BaseRouteAndNamespaceSegments;
          }
       }
@@ -163,8 +172,9 @@ namespace MvcCodeRouting.Controllers {
 
                var types = new List<Type>();
 
-               for (Type t = this.Type; t != null; t = t.BaseType) 
+               for (Type t = this.Type; t != null; t = t.BaseType) {
                   types.Add(t);
+               }
 
                types.Reverse();
 
@@ -198,6 +208,7 @@ namespace MvcCodeRouting.Controllers {
 
                _RouteProperties = new RouteParameterCollection(list);
             }
+
             return _RouteProperties;
 
             // [1] Procesing each type of the hierarchy one by one, hence inherit: false.
@@ -219,23 +230,22 @@ namespace MvcCodeRouting.Controllers {
 
                _Actions = new Collection<ActionInfo>(actions);
             }
+
             return _Actions;
          }
       }
 
       public string UrlTemplate {
          get {
-            if (_UrlTemplate == null) 
-               _UrlTemplate = BuildUrl(template: true);
-            return _UrlTemplate;
+            return _UrlTemplate
+               ?? (_UrlTemplate = BuildUrl(template: true));
          }
       }
 
       public string ControllerUrl {
          get {
-            if (_ControllerUrl == null)
-               _ControllerUrl = BuildUrl(template: false);
-            return _ControllerUrl;
+            return _ControllerUrl
+               ?? (_ControllerUrl = BuildUrl(template: false));
          }
       }
 
@@ -257,19 +267,22 @@ namespace MvcCodeRouting.Controllers {
                         )
                   );
 
-               if (attr != null)
+               if (attr != null) {
                   _CustomRoute = attr.Url;
+               }
 
                _CustomRouteInit = true;
             }
+
             return _CustomRoute;
          }
       }
 
       public bool CustomRouteHasControllerToken {
          get {
-            if (CustomRoute == null)
+            if (CustomRoute == null) {
                return false;
+            }
 
             if (_CustomRouteHasControllerToken == null) {
                _CustomRouteHasControllerToken =
@@ -282,8 +295,9 @@ namespace MvcCodeRouting.Controllers {
 
       public bool CustomRouteIsAbsolute {
          get {
-            if (CustomRoute == null)
+            if (CustomRoute == null) {
                return false;
+            }
 
             return CustomRoute.StartsWith("~/", StringComparison.OrdinalIgnoreCase);
          }
@@ -306,8 +320,9 @@ namespace MvcCodeRouting.Controllers {
 
                segments.Clear();
 
-               if (this.Register.BaseRoute != null)
+               if (this.Register.BaseRoute != null) {
                   segments.AddRange(this.Register.BaseRoute.Split('/'));
+               }
 
                custRoute = custRoute.Substring(2);
             }
@@ -316,8 +331,9 @@ namespace MvcCodeRouting.Controllers {
 
          } else {
 
-            if (!this.IsRootController)
+            if (!this.IsRootController) {
                segments.Add(template ? "{controller}" : this.ControllerSegment);
+            }
 
             segments.AddRange(this.RouteProperties.Select(p => p.RouteSegment));
          }
@@ -347,6 +363,7 @@ namespace MvcCodeRouting.Controllers {
                 select bad).ToList();
 
             if (withoutRequiredAttr.Count > 0) {
+
                var first = withoutRequiredAttr.First();
 
                throw new InvalidOperationException(
@@ -369,6 +386,7 @@ namespace MvcCodeRouting.Controllers {
              select g).ToList();
 
          if (overloadsWithDifferentParameters.Count > 0) {
+
             var first = overloadsWithDifferentParameters.First();
 
             throw new InvalidOperationException(
@@ -392,6 +410,7 @@ namespace MvcCodeRouting.Controllers {
              select grp).ToList();
 
          if (sameCustomRouteDifferentNames.Count > 0) {
+
             var first = sameCustomRouteDifferentNames.First();
             
             throw new InvalidOperationException(
@@ -414,7 +433,8 @@ namespace MvcCodeRouting.Controllers {
          // - Default action cannot have required route parameters (either no parameters or all optional)
 
          Func<ActionInfo, bool> correctRouteParameterSetup = a =>
-            a.RouteParameters.Count == 0 || a.RouteParameters.All(p => p.IsOptional);
+            a.RouteParameters.Count == 0 
+               || a.RouteParameters.All(p => p.IsOptional);
 
          ActionInfo defaultAction = null;
 
@@ -459,11 +479,13 @@ namespace MvcCodeRouting.Controllers {
             } 
          }
 
-         if (defaultAction == null) 
+         if (defaultAction == null) {
             defaultAction = actions.FirstOrDefault(a => ActionInfo.NameEquals(a.Name, "Index") && correctRouteParameterSetup(a));
+         }
 
-         if (defaultAction != null) 
+         if (defaultAction != null) {
             defaultAction.IsDefaultAction = true;
+         }
       }
 
       protected ControllerInfo(Type type, RegisterSettings registerSettings, CodeRoutingProvider provider) {

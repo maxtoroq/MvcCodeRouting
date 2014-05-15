@@ -58,18 +58,17 @@ namespace MvcCodeRouting.Web.Mvc {
 
             routeData.Values["controller"] = location;
 
-            if (partial) 
-               result = this.wrappedEngine.FindPartialView(controllerContext, viewName, useCache);
-            else 
-               result = this.wrappedEngine.FindView(controllerContext, viewName, masterName, useCache);
+            result = (partial) ? 
+               this.wrappedEngine.FindPartialView(controllerContext, viewName, useCache)
+               : this.wrappedEngine.FindView(controllerContext, viewName, masterName, useCache);
 
             routeData.Values["controller"] = controller;
 
          } else {
-            if (partial) 
-               result = this.wrappedEngine.FindPartialView(controllerContext, viewName, useCache);
-            else 
-               result = this.wrappedEngine.FindView(controllerContext, viewName, masterName, useCache);
+
+            result = (partial) ?
+               this.wrappedEngine.FindPartialView(controllerContext, viewName, useCache)
+               : this.wrappedEngine.FindView(controllerContext, viewName, masterName, useCache);
          }
 
          return result;

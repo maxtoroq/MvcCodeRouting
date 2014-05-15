@@ -42,16 +42,18 @@ namespace MvcCodeRouting {
 
          if (provider == null) throw new ArgumentNullException("provider");
 
-         lock (staticLock) 
+         lock (staticLock) {
             providers.Add(provider);
+         }
       }
 
       public static CodeRoutingProvider GetProviderForControllerType(Type controllerType) {
 
          foreach (CodeRoutingProvider provider in providers) {
 
-            if (provider.SupportsControllerType(controllerType))
+            if (provider.SupportsControllerType(controllerType)) {
                return provider;
+            }
          }
 
          return null;
@@ -61,8 +63,9 @@ namespace MvcCodeRouting {
 
          foreach (CodeRoutingProvider provider in providers) {
 
-            if (provider.SupportsControllerType(controllerType))
+            if (provider.SupportsControllerType(controllerType)) {
                return provider.CreateControllerInfo(controllerType, registerSettings);
+            }
          }
 
          return null;
@@ -82,8 +85,9 @@ namespace MvcCodeRouting {
             .Cast<TAttr>()
             .SingleOrDefault();
 
-         if (attr != null) 
+         if (attr != null) {
             return attr;
+         }
 
          foreach (CodeRoutingProvider otherProvider in providers.Where(p => !Object.ReferenceEquals(p, this))) {
 
@@ -93,8 +97,9 @@ namespace MvcCodeRouting {
                .Cast<TAttr>()
                .SingleOrDefault();
 
-            if (attr != null)
+            if (attr != null) {
                throw new InvalidOperationException(errorMessage(attrType, attr.GetType()));
+            }
          }
 
          return null;

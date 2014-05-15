@@ -27,9 +27,8 @@ namespace MvcCodeRouting.Web.Mvc {
 
       public override string Name {
          get {
-            if (_Name == null) 
-               _Name = controllerDescr.ControllerName;
-            return _Name;
+            return _Name
+               ?? (_Name = controllerDescr.ControllerName);
          }
       }
 

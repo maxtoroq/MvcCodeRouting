@@ -85,8 +85,9 @@ namespace MvcCodeRouting {
          if (configuration == null) throw new ArgumentNullException("configuration");
          if (rootController == null) throw new ArgumentNullException("rootController");
 
-         if (settings != null)
+         if (settings != null) {
             settings = new CodeRoutingSettings(settings);
+         }
 
          var registerSettings = new RegisterSettings(null, rootController) {
             BaseRoute = baseRoute,
@@ -113,8 +114,9 @@ namespace MvcCodeRouting {
 
          object httpConfiguration;
 
-         if (settings.Properties.TryGetValue("HttpConfiguration", out httpConfiguration))
+         if (settings.Properties.TryGetValue("HttpConfiguration", out httpConfiguration)) {
             return httpConfiguration as HttpConfiguration;
+         }
 
          return null;
       }
@@ -127,12 +129,14 @@ namespace MvcCodeRouting {
       }
 
       internal static void EnableCodeRouting(HttpConfiguration configuration) {
-         
-         if (!(configuration.Services.GetHttpControllerSelector() is CustomHttpControllerSelector))
-            configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
 
-         if (!(configuration.Services.GetActionSelector() is CustomApiControllerActionSelector))
+         if (!(configuration.Services.GetHttpControllerSelector() is CustomHttpControllerSelector)) {
+            configuration.Services.Replace(typeof(IHttpControllerSelector), new CustomHttpControllerSelector(configuration));
+         }
+
+         if (!(configuration.Services.GetActionSelector() is CustomApiControllerActionSelector)) {
             configuration.Services.Replace(typeof(IHttpActionSelector), new CustomApiControllerActionSelector());
+         }
       }
    }
 }

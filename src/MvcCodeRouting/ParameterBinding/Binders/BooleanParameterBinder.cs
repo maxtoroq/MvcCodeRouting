@@ -39,13 +39,15 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
 
          result = null;
 
-         if (String.IsNullOrWhiteSpace(value))
+         if (String.IsNullOrWhiteSpace(value)) {
             return false;
+         }
 
          bool parsedResult;
 
-         if (!Boolean.TryParse(value, out parsedResult)) 
+         if (!Boolean.TryParse(value, out parsedResult)) {
             return false;
+         }
 
          // disallow leading/trailing whitespace
 
@@ -62,6 +64,7 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
          }
 
          result = parsedResult;
+
          return true;
       }
    }

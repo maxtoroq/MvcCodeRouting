@@ -50,8 +50,9 @@ namespace MvcCodeRouting.Controllers {
 
       public bool Equals(RouteParameter other) {
 
-         if (other == null)
+         if (other == null) {
             return false;
+         }
 
          return NameEquals(this.Name, other.Name)
             && this.IsOptional == other.IsOptional
@@ -66,6 +67,7 @@ namespace MvcCodeRouting.Controllers {
       public override int GetHashCode() {
 
          unchecked {
+
             int hash = 17;
 
             hash = hash * 23 + this.Name.GetHashCode();
