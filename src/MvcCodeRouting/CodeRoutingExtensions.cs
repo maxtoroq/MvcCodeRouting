@@ -22,7 +22,7 @@ using MvcCodeRouting.Web.Hosting;
 namespace MvcCodeRouting {
 
    /// <summary>
-   /// Extension methods for reflection-based route creation and related functionality.
+   /// Provides the extension methods to register and configure modules in a host ASP.NET MVC application.
    /// </summary>
    public static class CodeRoutingExtensions {
 

@@ -24,7 +24,7 @@ using MvcCodeRouting.Web.Http.Dispatcher;
 namespace MvcCodeRouting {
 
    /// <summary>
-   /// Extension methods for reflection-based route creation and related functionality.
+   /// Provides the extension methods to register and configure modules in a host ASP.NET Web API application.
    /// </summary>
    public static class CodeRoutingHttpExtensions {
 
