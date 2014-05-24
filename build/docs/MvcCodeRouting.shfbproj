@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <!-- The configuration and platform will be used to determine which
+         assemblies to include from solution and project documentation
+         sources -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{c69a6222-a478-417c-9316-56029e8d86dc}</ProjectGuid>
+    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
+    <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
+         Studio adds them anyway -->
+    <AssemblyName>Documentation</AssemblyName>
+    <RootNamespace>Documentation</RootNamespace>
+    <Name>Documentation</Name>
+    <!-- SHFB properties -->
+    <OutputPath>output\</OutputPath>
+    <HtmlHelpName>Documentation</HtmlHelpName>
+    <Language>en-US</Language>
+    <HelpFileFormat>Website</HelpFileFormat>
+    <KeepLogFile>False</KeepLogFile>
+    <HelpTitle>MvcCodeRouting</HelpTitle>
+    <NamingMethod>MemberName</NamingMethod>
+    <SdkLinkTarget>Top</SdkLinkTarget>
+    <SyntaxFilters>C#, Visual Basic</SyntaxFilters>
+    <CopyrightText>
+    </CopyrightText>
+    <BinaryTOC>False</BinaryTOC>
+    <DocumentationSources>
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting\bin\Release\net40\MvcCodeRouting.dll" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http\bin\Release\net40\MvcCodeRouting.Web.Http.dll" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http.WebHost\bin\Release\net40\MvcCodeRouting.Web.Http.WebHost.dll" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http.WebHost\bin\Release\net40\MvcCodeRouting.Web.Http.WebHost.xml" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http\bin\Release\net40\MvcCodeRouting.Web.Http.xml" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting\bin\Release\net40\MvcCodeRouting.xml" />
+    </DocumentationSources>
+    <PlugInConfigurations>
+      <PlugInConfig id="Additional Reference Links" enabled="True">
+        <configuration>
+          <targets>
+            <target htmlSdkLinkType="None" help2SdkLinkType="Index" helpViewerSdkLinkType="Id" websiteSdkLinkType="Msdn" helpFileProject="Microsoft.shfbproj" />
+          </targets>
+        </configuration>
+      </PlugInConfig>
+    </PlugInConfigurations>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="MvcCodeRouting" isDocumented="True">The MvcCodeRouting namespace contains extension methods and classes used to register and configure modules in a host application.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="MvcCodeRouting.Web.Http" isDocumented="True">The MvcCodeRouting.Web.Http namespace contains attributes and extension methods for ASP.NET Web API controllers.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="MvcCodeRouting.Web.Mvc" isDocumented="True">The MvcCodeRouting.Web.Mvc namespace contains attributes and extension methods for ASP.NET MVC controllers.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="MvcCodeRouting.Web.Http.WebHost" isDocumented="True">The MvcCodeRouting.Web.Http.WebHost namespace contains the classes necessary to use MvcCodeRouting with ASP.NET Web API on WebHost (System.Web).</NamespaceSummaryItem>
+<NamespaceSummaryItem name="MvcCodeRouting.ParameterBinding" isDocumented="True">The MvcCodeRouting.ParameterBinding namespace contains classes that customize how route parameters are bound.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="MvcCodeRouting.ParameterBinding.Binders" isDocumented="True">The MvcCodeRouting.ParameterBinding.Binders namespace contains the built-in binders used to bind route parameters.</NamespaceSummaryItem></NamespaceSummaries>
+    <RootNamespaceContainer>True</RootNamespaceContainer>
+    <PresentationStyle>VS2010</PresentationStyle>
+    <Preliminary>False</Preliminary>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, TypeParameter, AutoDocumentDispose</MissingTags>
+    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <IndentHtml>False</IndentHtml>
+    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <CleanIntermediates>False</CleanIntermediates>
+    <MaximumGroupParts>2</MaximumGroupParts>
+    <NamespaceGrouping>False</NamespaceGrouping>
+    <RootNamespaceTitle>MvcCodeRouting Namespaces</RootNamespaceTitle>
+    <VisibleItems>InheritedMembers, Protected, SealedProtected</VisibleItems>
+  </PropertyGroup>
+  <!-- There are no properties for these groups.  AnyCPU needs to appear in
+       order for Visual Studio to perform the build.  The others are optional
+       common platform types that may appear. -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Win32' ">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Win32' ">
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Http">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.3.0.20105.1\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!-- Import the SHFB build targets -->
+  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+</Project>
