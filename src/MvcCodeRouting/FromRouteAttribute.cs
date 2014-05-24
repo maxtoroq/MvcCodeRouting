@@ -28,8 +28,8 @@ namespace MvcCodeRouting {
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
    /// controller properties, whose values must be bound using <see cref="RouteDataValueProvider"/>.
-   /// It also instructs the route creation process to add route parameters after the {action} token 
-   /// for each decorated action method parameter, and after the {controller} token for each 
+   /// It also instructs the route creation process to add route parameters after the {action} segment 
+   /// for each decorated action method parameter, and after the {controller} segment for each 
    /// decorated controller property.
    /// </summary>
    [Obsolete("Please use MvcCodeRouting.Web.Mvc.FromRouteAttribute instead.")]
@@ -54,7 +54,7 @@ namespace MvcCodeRouting {
       public virtual string Constraint { get; set; }
 
       /// <summary>
-      /// true if the parameter represents a catch-all token; otherwise, false.
+      /// true if the parameter represents a catch-all parameter; otherwise, false.
       /// This setting is ignored when used on controller properties.
       /// </summary>
       [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]

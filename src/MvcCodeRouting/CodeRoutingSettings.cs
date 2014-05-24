@@ -22,7 +22,7 @@ using MvcCodeRouting.ParameterBinding.Binders;
 namespace MvcCodeRouting {
    
    /// <summary>
-   /// Holds settings that customize the route creation process.
+   /// Specifies a set of features that affect the way modules are exposed in a host application.
    /// </summary>
    public class CodeRoutingSettings {
 
