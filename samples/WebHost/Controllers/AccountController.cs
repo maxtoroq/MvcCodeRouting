@@ -33,8 +33,9 @@ namespace Samples.Controllers {
 
       public ActionResult LogOnStatus() {
 
-         if (this.ControllerContext.IsChildAction) 
+         if (this.ControllerContext.IsChildAction) {
             return PartialView();
+         }
 
          return new EmptyResult();
       }

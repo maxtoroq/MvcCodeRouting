@@ -33,6 +33,7 @@ namespace MvcCodeRouting.Web.Mvc {
          List<MethodInfo> methods = GetCanonicalActionMethods().ToList();
 
          if (controllerIsAsync) { 
+
             MethodInfo[] asyncMethods = methods.Where(m => ReflectedMvcAsyncActionInfo.IsAsyncMethod(m)).ToArray();
 
             MethodInfo[] completedMethods =
@@ -42,8 +43,9 @@ namespace MvcCodeRouting.Web.Mvc {
                 .SelectMany(p => p)
                 .ToArray();
 
-            foreach (MethodInfo item in completedMethods) 
+            foreach (MethodInfo item in completedMethods) {
                methods.Remove(item);
+            }
          }
 
          return
@@ -51,7 +53,8 @@ namespace MvcCodeRouting.Web.Mvc {
              let info = (controllerIsAsync && ReflectedMvcAsyncActionInfo.IsAsyncMethod(m)) ?
                 new ReflectedMvcAsyncActionInfo(m, this)
                 : new ReflectedMvcActionInfo(m, this)
-             select info).ToArray();
+             select info)
+            .ToArray();
       }
 
       IEnumerable<MethodInfo> GetCanonicalActionMethods() {

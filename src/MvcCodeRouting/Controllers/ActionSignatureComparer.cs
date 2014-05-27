@@ -23,11 +23,13 @@ namespace MvcCodeRouting.Controllers {
 
       public bool Equals(ActionInfo x, ActionInfo y) {
 
-         if (x == null)
+         if (x == null) {
             return y == null;
+         }
 
-         if (y == null)
+         if (y == null) {
             return x == null;
+         }
 
          return CheckRouteParameters(x, y)
             && CheckRouteParameters(y, x);
@@ -36,9 +38,11 @@ namespace MvcCodeRouting.Controllers {
       static bool CheckRouteParameters(ActionInfo x, ActionInfo y) {
 
          for (int i = 0; i < x.RouteParameters.Count; i++) {
+
             var p = x.RouteParameters[i];
 
             if (y.RouteParameters.Count - 1 >= i) {
+
                var p2 = y.RouteParameters[i];
 
                if (!RouteParameter.NameEquals(p.Name, p2.Name)

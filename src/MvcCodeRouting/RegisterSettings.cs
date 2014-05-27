@@ -34,6 +34,7 @@ namespace MvcCodeRouting {
          get { return _BaseRoute; }
          set {
             if (!String.IsNullOrWhiteSpace(value)) {
+
                value = value.Trim();
 
                if (new[] { '~', '/' }.Any(c => value[0] == c)) {
@@ -49,9 +50,8 @@ namespace MvcCodeRouting {
 
       public Assembly Assembly {
          get {
-            if (_Assembly == null) 
-               _Assembly = this.RootController.Assembly;
-            return _Assembly;
+            return _Assembly
+               ?? (_Assembly = this.RootController.Assembly);
          }
          private set {
             _Assembly = value;
@@ -62,9 +62,8 @@ namespace MvcCodeRouting {
       
       public CodeRoutingSettings Settings {
          get {
-            if (_Settings == null) 
-               _Settings = new CodeRoutingSettings();
-            return _Settings;
+            return _Settings
+               ?? (_Settings = new CodeRoutingSettings());
          }
          set { _Settings = value; }
       }
@@ -72,12 +71,14 @@ namespace MvcCodeRouting {
       public string RootNamespace {
          get {
             if (_RootNamespace == null) {
+
                if (this.RootController != null) {
                   _RootNamespace = this.RootController.Namespace;
                } else {
                   throw new InvalidOperationException();
                }
             }
+
             return _RootNamespace;
          }
       }
@@ -89,6 +90,7 @@ namespace MvcCodeRouting {
                   String.Join("/", this.BaseRoute.Split('/').Where(s => !s.Contains('{'))) 
                   : "";
             }
+
             return _ViewsLocation;
          }
       }
@@ -99,12 +101,16 @@ namespace MvcCodeRouting {
 
             if (CodeRoutingProvider.GetProviderForControllerType(rootController) == null
                || !IsValidControllerType(rootController)) {
+
                throw new InvalidOperationException("The specified root controller is not a valid controller type.");
             }
 
-            if (assembly != null && rootController.Assembly != assembly)
+            if (assembly != null 
+               && rootController.Assembly != assembly) {
+
                throw new InvalidOperationException("The specified root controller does not belong to the specified assembly.");
-         
+            }
+
          } else if (assembly == null) {
             throw new ArgumentException("Either assembly or rootController must be specified.");
          }

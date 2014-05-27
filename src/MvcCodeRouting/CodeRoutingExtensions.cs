@@ -22,7 +22,7 @@ using MvcCodeRouting.Web.Hosting;
 namespace MvcCodeRouting {
 
    /// <summary>
-   /// Extension methods for reflection-based route creation and related functionality.
+   /// Provides the extension methods to register and configure modules in a host ASP.NET MVC application.
    /// </summary>
    public static class CodeRoutingExtensions {
 
@@ -90,8 +90,9 @@ namespace MvcCodeRouting {
 
          Route[] newRoutes = RouteFactory.CreateRoutes<Route>(registerSettings);
 
-         foreach (Route route in newRoutes) 
+         foreach (Route route in newRoutes) {
             routes.Add(route);
+         }
 
          if (newRoutes.Length > 0 
             && registerSettings.Settings.EnableEmbeddedViews) {
@@ -114,8 +115,9 @@ namespace MvcCodeRouting {
 
             IViewEngine engine = engines[i];
 
-            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper))
+            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper)) {
                continue;
+            }
 
             engines[i] = new Web.Mvc.ViewEngineWrapper(engine);
          }

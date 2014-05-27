@@ -38,8 +38,11 @@ namespace MvcCodeRouting.Web.Mvc {
 
          var nonActionParameterTokens = new List<string>();
 
-         if (baseRoute != null)
-            nonActionParameterTokens.AddRange(TokenPattern.Matches(baseRoute).Cast<Match>().Select(m => m.Groups[1].Value));
+         if (baseRoute != null) {
+            nonActionParameterTokens.AddRange(
+               TokenPattern.Matches(baseRoute).Cast<Match>().Select(m => m.Groups[1].Value)
+            );
+         }
 
          nonActionParameterTokens.AddRange(first.Controller.RouteProperties.Select(p => p.Name));
 

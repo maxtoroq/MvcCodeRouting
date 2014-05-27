@@ -88,24 +88,27 @@ namespace MvcCodeRouting.Web.Routing {
          
          RouteData data = base.GetRouteData(httpContext);
 
-         if (data != null) 
+         if (data != null) {
             data.Route = this.originalRoute;
+         }
 
          return data;
       }
 
       public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values) {
-         
-         if (values == null || !values.ContainsKey("httproute")) 
+
+         if (values == null || !values.ContainsKey("httproute")) {
             return null;
+         }
 
          values = new RouteValueDictionary(values);
          values.Remove("httproute");
 
          VirtualPathData data = base.GetVirtualPath(requestContext, values);
 
-         if (data != null) 
+         if (data != null) {
             data.Route = this.originalRoute;
+         }
 
          return data;
       }

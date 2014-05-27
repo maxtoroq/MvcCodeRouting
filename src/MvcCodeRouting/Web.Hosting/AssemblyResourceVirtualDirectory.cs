@@ -38,18 +38,15 @@ namespace MvcCodeRouting.Web.Hosting {
 
       public override IEnumerable Directories {
          get {
-            if (_Directories == null) {
-               List<VirtualDirectory> prevDirs = this.prevDirectory.Directories.Cast<VirtualDirectory>().ToList();
-
-               _Directories = prevDirs;
-            }
-            return _Directories;
+            return _Directories
+               ?? (_Directories = this.prevDirectory.Directories.Cast<VirtualDirectory>().ToList());
          }
       }
 
       public override IEnumerable Files {
          get {
             if (_Files == null) {
+
                List<VirtualFile> prevFiles = this.prevDirectory.Files.Cast<VirtualFile>().ToList();
 
                string[] fileResources = this.assemblyResources.GetFileResources();
@@ -59,14 +56,16 @@ namespace MvcCodeRouting.Web.Hosting {
                   string resourceName = fileResources[i];
                   string virtualPath = VirtualPathUtility.ToAbsolute("~/" + this.assemblyResources.ResourceNameToRelativeVirtualPath(resourceName));
 
-                  if (prevFiles.Exists(v => v.VirtualPath == virtualPath))
+                  if (prevFiles.Exists(v => v.VirtualPath == virtualPath)) {
                      continue;
+                  }
 
                   prevFiles.Add(this.assemblyResources.CreateVirtualFile(virtualPath, resourceName));
                }
 
                _Files = prevFiles;
             }
+
             return _Files;
          }
       }

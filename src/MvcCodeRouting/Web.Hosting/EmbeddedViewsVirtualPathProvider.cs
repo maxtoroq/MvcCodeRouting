@@ -37,18 +37,24 @@ namespace MvcCodeRouting.Web.Hosting {
          string basePath = String.Join("/", new[] { "Views", registerSettings.ViewsLocation }.Where(s => !String.IsNullOrEmpty(s)));
          var assemblyResources = new AssemblyResources(registerSettings.Assembly, basePath);
 
-         if (assemblyResources.HasResources) 
+         if (assemblyResources.HasResources) {
             ViewResources.Add(assemblyResources);
+         }
 
-         if (embeddedViewsEnabled && !registered)
+         if (embeddedViewsEnabled 
+            && !registered) {
+
             RegisterIfNecessary();
+         }
       }
 
       public static void RegisterIfNecessary() {
 
          embeddedViewsEnabled = true;
 
-         if (ViewResources.Count > 0 && !registered) {
+         if (ViewResources.Count > 0 
+            && !registered) {
+
             HostingEnvironment.RegisterVirtualPathProvider(new EmbeddedViewsVirtualPathProvider());
             registered = true;
          }
@@ -58,20 +64,24 @@ namespace MvcCodeRouting.Web.Hosting {
 
          bool prevExists = base.DirectoryExists(virtualDir);
 
-         if (prevExists)
+         if (prevExists) {
             return prevExists;
+         }
 
-         return GetAssemblyMatches(virtualDir).Any(r => r.DirectoryResourceExists(virtualDir));
+         return GetAssemblyMatches(virtualDir)
+            .Any(r => r.DirectoryResourceExists(virtualDir));
       }
 
       public override bool FileExists(string virtualPath) {
          
          bool prevExists = base.FileExists(virtualPath);
 
-         if (prevExists)
+         if (prevExists) {
             return prevExists;
+         }
 
-         return GetAssemblyMatches(virtualPath).Any(r => r.FileResourceExists(virtualPath));
+         return GetAssemblyMatches(virtualPath)
+            .Any(r => r.FileResourceExists(virtualPath));
       }
 
       public override VirtualDirectory GetDirectory(string virtualDir) {
@@ -81,8 +91,9 @@ namespace MvcCodeRouting.Web.Hosting {
          AssemblyResources firstMatch = GetAssemblyMatches(virtualDir)
             .FirstOrDefault(r => r.DirectoryResourceExists(virtualDir));
 
-         if (firstMatch != null) 
+         if (firstMatch != null) {
             return firstMatch.CreateVirtualDirectory(virtualDir, prev);
+         }
 
          return prev;
       }
@@ -91,8 +102,9 @@ namespace MvcCodeRouting.Web.Hosting {
 
          bool prevExists = base.FileExists(virtualPath);
 
-         if (prevExists)
+         if (prevExists) {
             return base.GetFile(virtualPath);
+         }
 
          string resourceName = null;
          Assembly satelliteAssembly = null;
@@ -100,8 +112,9 @@ namespace MvcCodeRouting.Web.Hosting {
          AssemblyResources firstMatch = GetAssemblyMatches(virtualPath)
             .FirstOrDefault(r => r.FileResourceExists(virtualPath, out resourceName, out satelliteAssembly));
 
-         if (firstMatch != null) 
+         if (firstMatch != null) {
             return firstMatch.CreateVirtualFile(virtualPath, resourceName, satelliteAssembly);
+         }
 
          return null;
       }
@@ -110,8 +123,9 @@ namespace MvcCodeRouting.Web.Hosting {
          
          bool prevExists = base.FileExists(virtualPath);
 
-         if (prevExists)
+         if (prevExists) {
             return base.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
+         }
 
          return null;
       }
@@ -119,14 +133,20 @@ namespace MvcCodeRouting.Web.Hosting {
       IEnumerable<AssemblyResources> GetAssemblyMatches(string virtualPath) {
 
          string appRelativePath = VirtualPathUtility.ToAppRelative(virtualPath);
-         
-         if (virtualPath.Length > 0 && virtualPath[0] == '~')
+
+         if (virtualPath.Length > 0 
+            && virtualPath[0] == '~') {
+
             virtualPath = VirtualPathUtility.ToAbsolute(appRelativePath);
+         }
 
          List<string> parts = appRelativePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
 
-         if (parts.Count < 1 || !parts[0].Equals("Views", VirtualPathComparison.Comparison))
+         if (parts.Count < 1 
+            || !parts[0].Equals("Views", VirtualPathComparison.Comparison)) {
+
             return NullViewResources;
+         }
          
          return this.virtualPathCache.GetOrAdd(virtualPath, (s) => {
 
@@ -134,18 +154,21 @@ namespace MvcCodeRouting.Web.Hosting {
                && virtualPath[virtualPath.Length - 1] != '/'
                && parts[parts.Count - 1].IndexOf('.') != -1;
 
-            if (isFile) 
+            if (isFile) {
                parts.RemoveAt(parts.Count - 1);
+            }
 
             for (int i = 0; i < parts.Count; i++) {
+
                string basePath = String.Join("/", parts.Take(parts.Count - i));
 
                AssemblyResources[] matches = ViewResources
                   .Where(d => d.BasePath.Equals(basePath, VirtualPathComparison.Comparison))
                   .ToArray();
 
-               if (matches.Length > 0)
+               if (matches.Length > 0) {
                   return matches;
+               }
             }
 
             return NullViewResources;

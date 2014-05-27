@@ -35,8 +35,9 @@ namespace MvcCodeRouting.Web.Http.Routing {
 
          IHttpRouteData data = base.GetRouteData(virtualPathRoot, request);
 
-         if (data != null)
+         if (data != null) {
             this.IncomingMapping(data.Values);
+         }
 
          return data;
       }

@@ -38,8 +38,9 @@ namespace MvcCodeRouting.Web.Routing {
 
          RouteData data = base.GetRouteData(httpContext);
 
-         if (data != null) 
+         if (data != null) {
             this.IncomingMapping(data.Values);
+         }
 
          return data;
       }

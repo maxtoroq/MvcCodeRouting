@@ -44,8 +44,9 @@ namespace MvcCodeRouting.Web.Mvc {
          var controllerData = controllerDataCache
             .GetOrAdd(controller.GetType(), (type) => new ControllerData(type));
 
-         if (controllerData.Properties.Length == 0)
+         if (controllerData.Properties.Length == 0) {
             return;
+         }
 
          var modelState = new ModelStateDictionary();
 
@@ -60,18 +61,21 @@ namespace MvcCodeRouting.Web.Mvc {
 
             propertyData.BindProperty(controller.ControllerContext, bindingContext);
 
-            if (!modelState.IsValid)
+            if (!modelState.IsValid) {
                break;
+            }
          }
 
          if (!modelState.IsValid) {
+
             ModelError error = modelState.First(m => m.Value.Errors.Count > 0).Value.Errors.First(); 
             
             int statusCode = 404;
             string message = "Not Found";
 
-            if (error.Exception != null)
+            if (error.Exception != null) {
                throw new HttpException(statusCode, message, error.Exception);
+            }
 
             throw new HttpException(statusCode, message);
          }
@@ -128,9 +132,10 @@ namespace MvcCodeRouting.Web.Mvc {
                this.Property.SetValue(controllerContext.Controller, value, null);
 
             } catch (Exception ex) {
-               
-               if (bindingContext.ModelState.IsValidField(this.Name))
+
+               if (bindingContext.ModelState.IsValidField(this.Name)) {
                   bindingContext.ModelState.AddModelError(this.Name, ex);
+               }
             }
          }
       }

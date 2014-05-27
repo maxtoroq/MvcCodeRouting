@@ -22,7 +22,7 @@ using MvcCodeRouting.ParameterBinding.Binders;
 namespace MvcCodeRouting {
    
    /// <summary>
-   /// Holds settings that customize the route creation process.
+   /// Specifies a set of features that affect the way modules are exposed in a host application.
    /// </summary>
    public class CodeRoutingSettings {
 
@@ -83,9 +83,8 @@ namespace MvcCodeRouting {
       /// </summary>
       public Func<RouteFormatterArgs, string> RouteFormatter {
          get {
-            if (_RouteFormatter == null)
-               _RouteFormatter = (args) => args.OriginalSegment;
-            return _RouteFormatter;
+            return _RouteFormatter
+               ?? (_RouteFormatter = (args) => args.OriginalSegment);
          }
          set { _RouteFormatter = value; }
       }
@@ -148,23 +147,27 @@ namespace MvcCodeRouting {
 
          this.IgnoredControllers.Clear();
 
-         foreach (Type item in settings.IgnoredControllers)
+         foreach (Type item in settings.IgnoredControllers) {
             this.IgnoredControllers.Add(item);
+         }
 
          this.DefaultConstraints.Clear();
 
-         foreach (var item in settings.DefaultConstraints)
+         foreach (var item in settings.DefaultConstraints) {
             this.DefaultConstraints.Add(item.Key, item.Value);
+         }
 
          this.ParameterBinders.Clear();
 
-         foreach (var item in settings.ParameterBinders) 
+         foreach (var item in settings.ParameterBinders) {
             this.ParameterBinders.Add(item);
+         }
 
          this.Properties.Clear();
 
-         foreach (var item in settings.Properties) 
+         foreach (var item in settings.Properties) {
             this.Properties.Add(item.Key, item.Value);
+         }
       }
 
       /// <summary>

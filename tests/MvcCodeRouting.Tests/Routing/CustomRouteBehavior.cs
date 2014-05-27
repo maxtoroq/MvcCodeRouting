@@ -50,7 +50,7 @@ namespace MvcCodeRouting.Tests.Routing {
       public void GroupActionsWithSameCustomRouteIfActionTokenIsPresent() {
 
          // #779
-         // Allow multiple actions with same custom route if {action} token is present
+         // Allow multiple actions with same custom route if the {action} parameter is present
 
          var controller = typeof(CustomRoute.CustomRoute3Controller);
 

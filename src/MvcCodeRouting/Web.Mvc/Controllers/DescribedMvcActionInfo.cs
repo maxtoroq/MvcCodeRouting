@@ -50,7 +50,9 @@ namespace MvcCodeRouting.Web.Mvc {
       }
 
       protected override string GetName() {
-         return base.GetName() ?? this.actionDescr.ActionName;
+
+         return base.GetName() 
+            ?? this.actionDescr.ActionName;
       }
 
       protected override ActionParameterInfo[] GetParameters() {

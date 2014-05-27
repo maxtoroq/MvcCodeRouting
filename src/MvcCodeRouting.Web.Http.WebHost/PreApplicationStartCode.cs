@@ -21,7 +21,7 @@ using MvcCodeRouting.Web.Routing;
 namespace MvcCodeRouting.Web.Http.WebHost {
    
    /// <summary>
-   /// Executes the initialization code needed to use <see cref="N:MvcCodeRouting.Web.Http"/> on ASP.NET (WebHost).
+   /// Executes the initialization code needed to use MvcCodeRouting with ASP.NET Web API on WebHost (System.Web).
    /// </summary>
    [EditorBrowsable(EditorBrowsableState.Never)]
    public static class PreApplicationStartCode {

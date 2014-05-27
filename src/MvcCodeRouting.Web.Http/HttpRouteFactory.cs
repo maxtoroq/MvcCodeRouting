@@ -54,8 +54,9 @@ namespace MvcCodeRouting {
 
          Func<object, RegisterSettings, object> converterFn;
 
-         if (!RouteConverters.TryGetValue(conversionType, out converterFn))
+         if (!RouteConverters.TryGetValue(conversionType, out converterFn)) {
             return base.ConvertRoute(route, conversionType, registerSettings);
+         }
 
          return converterFn(route, registerSettings);
       }

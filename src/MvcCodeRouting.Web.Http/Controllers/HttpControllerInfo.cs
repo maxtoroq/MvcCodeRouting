@@ -26,6 +26,7 @@ namespace MvcCodeRouting.Controllers {
          HttpConfiguration configuration = registerSettings.Settings.HttpConfiguration();
 
          if (configuration == null) {
+
             throw new ArgumentException(
                "You must first specify an {0} instance using the HttpConfiguration key on {1}.Properties.".FormatInvariant(
                   typeof(HttpConfiguration).FullName,

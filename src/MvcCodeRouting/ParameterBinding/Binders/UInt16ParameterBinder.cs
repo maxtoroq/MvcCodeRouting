@@ -40,14 +40,16 @@ namespace MvcCodeRouting.ParameterBinding.Binders {
 
          result = null;
 
-         if (String.IsNullOrWhiteSpace(value))
+         if (String.IsNullOrWhiteSpace(value)) {
             return false;
+         }
 
          const ushort zero = 0;
          ushort parsedResult;
 
-         if (!UInt16.TryParse(value, NumberStyles.None, provider, out parsedResult))
+         if (!UInt16.TryParse(value, NumberStyles.None, provider, out parsedResult)) {
             return false;
+         }
 
          // disallow leading sign or leading zero
 

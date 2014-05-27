@@ -39,6 +39,7 @@ namespace MvcCodeRouting.Web.Http.Dispatcher {
 
          if ((controller = routeData.Values["controller"] as string) == null 
             || (codeRoute = routeData.Route as CodeHttpRoute) == null) {
+
             return base.SelectController(request);
          }
 
