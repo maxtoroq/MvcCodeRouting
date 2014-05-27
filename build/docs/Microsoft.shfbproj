@@ -41,8 +41,8 @@
       <DocumentationSource sourceFile="..\..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.xml" />
       <DocumentationSource sourceFile="..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll" />
       <DocumentationSource sourceFile="..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.xml" />
-      <DocumentationSource sourceFile="..\..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll" />
-      <DocumentationSource sourceFile="..\..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.xml" />
+      <DocumentationSource sourceFile="..\..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll" />
+      <DocumentationSource sourceFile="..\..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.xml" />
     </DocumentationSources>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>Website</HelpFileFormat>
