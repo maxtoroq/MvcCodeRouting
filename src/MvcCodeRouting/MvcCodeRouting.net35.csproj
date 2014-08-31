@@ -113,6 +113,7 @@
     <Compile Include="Web.Mvc\Controllers\ReflectedMvcActionParameterInfo.cs" />
     <Compile Include="Web.Mvc\Controllers\ReflectedMvcAsyncActionInfo.cs" />
     <Compile Include="Web.Mvc\Controllers\ReflectedMvcControllerInfo.cs" />
+    <Compile Include="Web.Mvc\CustomControllerFactory.cs" />
     <Compile Include="Web.Mvc\CustomRouteAttribute.cs" />
     <Compile Include="Web.Mvc\DefaultActionAttribute.cs" />
     <Compile Include="Web.Mvc\FromRouteAttribute.cs" />

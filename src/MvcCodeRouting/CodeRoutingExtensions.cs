@@ -126,6 +126,16 @@ namespace MvcCodeRouting {
       }
 
       /// <summary>
+      /// Sets a custom <see cref="DefaultControllerFactory"/> implementation that provides a more
+      /// direct access to the controller types for routes created by MvcCodeRouting.
+      /// It enables a scenario where routes are created for controllers that are dynamically loaded at runtime.
+      /// </summary>
+      /// <param name="controllerBuilder">The controller builder.</param>
+      public static void EnableCodeRouting(this ControllerBuilder controllerBuilder) {
+         controllerBuilder.SetControllerFactory(new Web.Mvc.CustomControllerFactory());
+      }
+
+      /// <summary>
       /// Binds controller properties decorated with <see cref="FromRouteAttribute"/>
       /// using the current route values.
       /// </summary>

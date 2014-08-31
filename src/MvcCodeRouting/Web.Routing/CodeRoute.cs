@@ -26,6 +26,7 @@ namespace MvcCodeRouting.Web.Routing {
       public IDictionary<string, string> ControllerMapping { get; set; }
       public IDictionary<string, string> ActionMapping { get; set; }
       public IList<string> NonActionParameterTokens { get; set; }
+      public IDictionary<string, Type> ControllerTypes { get; set; }
 
       IDictionary<string, object> ICodeRoute.DataTokens {
          get { return this.DataTokens; }

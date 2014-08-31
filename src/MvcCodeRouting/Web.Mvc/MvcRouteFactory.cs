@@ -49,7 +49,11 @@ namespace MvcCodeRouting.Web.Mvc {
          return new CodeRoute(routeSettings.RouteTemplate, new RouteValueDictionary(routeSettings.Defaults), new RouteValueDictionary(routeSettings.Constraints), new RouteValueDictionary(routeSettings.DataTokens), new MvcRouteHandler()) {
             ActionMapping = routeSettings.ActionMapping,
             ControllerMapping = routeSettings.ControllerMapping,
-            NonActionParameterTokens = nonActionParameterTokens
+            NonActionParameterTokens = nonActionParameterTokens,
+            ControllerTypes = routeSettings.Actions
+               .Select(a => a.Controller)
+               .DistinctReference()
+               .ToDictionary(c => c.Name, c => c.Type, StringComparer.OrdinalIgnoreCase)
          };
       }
    }
