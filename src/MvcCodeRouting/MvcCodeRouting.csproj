@@ -75,6 +75,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\CodeRoutingMvcExtensions.cs">
+      <Link>Web.Mvc\CodeRoutingMvcExtensions.cs</Link>
+    </Compile>
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="Controllers\ActionInfo.cs" />

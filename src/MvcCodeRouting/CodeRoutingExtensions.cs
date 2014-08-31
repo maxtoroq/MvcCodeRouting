@@ -14,8 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Web.Mvc;
 using System.Web.Routing;
 using MvcCodeRouting.Web.Hosting;
 
@@ -24,13 +22,7 @@ namespace MvcCodeRouting {
    /// <summary>
    /// Provides the extension methods to register and configure modules in a host ASP.NET MVC application.
    /// </summary>
-   public static class CodeRoutingExtensions {
-
-      static CodeRoutingExtensions() {
-         CodeRoutingProvider.RegisterProvider(new Web.Mvc.MvcCodeRoutingProvider());
-      }
-
-      internal static void Initialize() { }
+   public static partial class CodeRoutingExtensions {
 
       /// <summary>
       /// Creates routes for the specified root controller and all other controllers
@@ -101,50 +93,6 @@ namespace MvcCodeRouting {
          }
 
          return newRoutes;
-      }
-
-      /// <summary>
-      /// Enables namespace-aware views location. Always call after you are done adding view engines.
-      /// </summary>
-      /// <param name="engines">The view engine collection.</param>
-      public static void EnableCodeRouting(this ViewEngineCollection engines) {
-
-         if (engines == null) throw new ArgumentNullException("engines");
-
-         for (int i = 0; i < engines.Count; i++) {
-
-            IViewEngine engine = engines[i];
-
-            if (engine.GetType() == typeof(Web.Mvc.ViewEngineWrapper)) {
-               continue;
-            }
-
-            engines[i] = new Web.Mvc.ViewEngineWrapper(engine);
-         }
-
-         EmbeddedViewsVirtualPathProvider.RegisterIfNecessary();
-      }
-
-      /// <summary>
-      /// Sets a custom <see cref="DefaultControllerFactory"/> implementation that provides a more
-      /// direct access to the controller types for routes created by MvcCodeRouting.
-      /// It enables a scenario where routes are created for controllers that are dynamically loaded at runtime.
-      /// </summary>
-      /// <param name="controllerBuilder">The controller builder.</param>
-      public static void EnableCodeRouting(this ControllerBuilder controllerBuilder) {
-         controllerBuilder.SetControllerFactory(new Web.Mvc.CustomControllerFactory());
-      }
-
-      /// <summary>
-      /// Binds controller properties decorated with <see cref="FromRouteAttribute"/>
-      /// using the current route values.
-      /// </summary>
-      /// <param name="controller">The controller to bind.</param>
-      /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
-      [Obsolete("Please use MvcCodeRouting.Web.Mvc.MvcExtensions.BindRouteProperties(ControllerBase) instead.")]
-      [EditorBrowsable(EditorBrowsableState.Never)]
-      public static void BindRouteProperties(this ControllerBase controller) {
-         Web.Mvc.MvcExtensions.BindRouteProperties(controller);
       }
    }
 }

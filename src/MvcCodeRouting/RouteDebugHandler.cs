@@ -19,7 +19,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace MvcCodeRouting {
@@ -614,11 +613,21 @@ namespace MvcCodeRouting {
       }
 
       static bool IsMvcHandler(Type handlerType) {
-         return typeof(MvcRouteHandler).IsAssignableFrom(handlerType);
+
+         while (handlerType != null) {
+
+            if (handlerType.FullName == "System.Web.Mvc.MvcRouteHandler") {
+               return true;
+            }
+
+            handlerType = handlerType.BaseType;
+         }
+
+         return false;
       }
 
       static bool IsMvcParameter(Type parameterType) {
-         return parameterType == typeof(UrlParameter);
+         return (parameterType.FullName == "System.Web.Mvc.UrlParameter");
       }
 
       static bool IsWebApiHandler(Type handlerType) {

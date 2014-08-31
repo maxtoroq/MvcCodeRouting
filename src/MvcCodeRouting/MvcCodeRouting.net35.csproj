@@ -53,6 +53,9 @@
     <Reference Include="System.Web.Routing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\CodeRoutingMvcExtensions.cs">
+      <Link>Web.Mvc\CodeRoutingMvcExtensions.cs</Link>
+    </Compile>
     <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingProvider.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
