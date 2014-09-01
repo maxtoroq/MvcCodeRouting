@@ -5,24 +5,24 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.ModelBinding {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding {
    
-   [TestClass]
-   public class FromRouteBinderPrecedenceBehavior {
+   //[TestClass]
+   public class BinderPrecedenceFacts {
 
       readonly RouteCollection routes;
 
-      public FromRouteBinderPrecedenceBehavior() {
+      public BinderPrecedenceFacts() {
          routes = TestUtil.GetRouteCollection();
       }
 
-      void Run(Type controller, FromRouteBinderPrecedence.BinderPrecedence expected) {
+      void Run(Type controller, BinderPrecedence.BinderPrecedence expected) {
 
          routes.Clear();
          routes.MapCodeRoutes(controller);
 
          var httpContextMock = new Mock<HttpContextBase>();
-         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/index/foo");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns("~/");
 
          var httpResponseMock = new Mock<HttpResponseBase>();
          httpContextMock.Setup(c => c.Response).Returns(httpResponseMock.Object);
@@ -45,30 +45,30 @@ namespace MvcCodeRouting.Tests.ModelBinding {
       [TestMethod]
       public void TypeVsParameter_ParameterWins() {
 
-         var controller = typeof(FromRouteBinderPrecedence.TypeVsParameter.BinderPrecedenceController);
+         var controller = typeof(BinderPrecedence.TypeVsParameter.BinderPrecedenceController);
 
-         Run(controller, FromRouteBinderPrecedence.BinderPrecedence.Parameter);
+         Run(controller, BinderPrecedence.BinderPrecedence.Parameter);
       }
 
       [TestMethod]
       public void TypeVsGlobal_GlobalWins() {
 
-         var controller = typeof(FromRouteBinderPrecedence.TypeVsGlobal.BinderPrecedenceController);
+         var controller = typeof(BinderPrecedence.TypeVsGlobal.BinderPrecedenceController);
 
-         Run(controller, FromRouteBinderPrecedence.BinderPrecedence.Global);
+         Run(controller, BinderPrecedence.BinderPrecedence.Global);
       }
 
       [TestMethod]
       public void ParameterVsGlobal_ParameterWins() {
 
-         var controller = typeof(FromRouteBinderPrecedence.ParameterVsGlobal.BinderPrecedenceController);
+         var controller = typeof(BinderPrecedence.ParameterVsGlobal.BinderPrecedenceController);
 
-         Run(controller, FromRouteBinderPrecedence.BinderPrecedence.Parameter);
+         Run(controller, BinderPrecedence.BinderPrecedence.Parameter);
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding.BinderPrecedence {
 
    public enum BinderPrecedence {
       None = 0,
@@ -78,7 +78,7 @@ namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence {
    }
 }
 
-namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.TypeVsParameter {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding.BinderPrecedence.TypeVsParameter {
 
    [ModelBinder(typeof(BinderPrecedenceTypeBinder))]
    public class BinderPrecedenceModel {
@@ -105,13 +105,13 @@ namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.TypeVsPara
 
    public class BinderPrecedenceController : Controller {
 
-      public string Index([Web.Mvc.FromRoute(BinderType = typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
+      public string Index([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
          return model.Precedence.ToString();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.TypeVsGlobal {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding.BinderPrecedence.TypeVsGlobal {
 
    [ModelBinder(typeof(BinderPrecedenceTypeBinder))]
    public class BinderPrecedenceModel {
@@ -142,13 +142,13 @@ namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.TypeVsGlob
          ModelBinders.Binders[typeof(BinderPrecedenceModel)] = new BinderPrecedenceGlobalBinder();
       }
 
-      public string Index([Web.Mvc.FromRoute]BinderPrecedenceModel model) {
+      public string Index(BinderPrecedenceModel model) {
          return model.Precedence.ToString();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.ParameterVsGlobal {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding.BinderPrecedence.ParameterVsGlobal {
 
    public class BinderPrecedenceModel {
       public BinderPrecedence Precedence { get; set; }
@@ -178,7 +178,7 @@ namespace MvcCodeRouting.Tests.ModelBinding.FromRouteBinderPrecedence.ParameterV
          ModelBinders.Binders[typeof(BinderPrecedenceModel)] = new BinderPrecedenceGlobalBinder();
       }
 
-      public string Index([Web.Mvc.FromRoute(BinderType = typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
+      public string Index([ModelBinder(typeof(BinderPrecedenceParameterBinder))]BinderPrecedenceModel model) {
          return model.Precedence.ToString();
       }
    }

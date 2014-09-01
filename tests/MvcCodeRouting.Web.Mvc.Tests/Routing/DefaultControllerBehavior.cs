@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class DefaultControllerBehavior {
@@ -74,7 +74,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.DefaultController {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.DefaultController {
 
    public class DefaultController1Controller : Controller {
       public void Index() { }
@@ -89,14 +89,14 @@ namespace MvcCodeRouting.Tests.Routing.DefaultController {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.DefaultController.DefaultController2 {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.DefaultController.DefaultController2 {
 
    public class DefaultController2Controller : Controller {
       public void Foo() { }
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.DefaultController.DefaultController3 {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.DefaultController.DefaultController3 {
 
    public class DefaultController3Controller : Controller {
       public void Index() { }

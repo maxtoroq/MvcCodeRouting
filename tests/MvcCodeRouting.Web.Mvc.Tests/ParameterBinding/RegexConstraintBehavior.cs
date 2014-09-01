@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MvcCodeRouting.ParameterBinding;
 
-namespace MvcCodeRouting.Tests.ParameterBinding {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding {
    
    [TestClass]
    public class RegexConstraintBehavior {
@@ -107,7 +107,7 @@ namespace MvcCodeRouting.Tests.ParameterBinding {
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint {
 
    public struct Month {
 
@@ -233,61 +233,61 @@ namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint {
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderParameter {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderParameter {
 
    public class RegexConstraintController : Controller {
 
-      public Month Archive([Web.Mvc.FromRoute(Constraint = "[0-9]{2}", BinderType = typeof(MonthParameterBinder))]Month? month) {
+      public Month Archive([FromRoute(Constraint = "[0-9]{2}", BinderType = typeof(MonthParameterBinder))]Month? month) {
          return month.GetValueOrDefault();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderParameter {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderParameter {
 
    public class RegexConstraintController : Controller {
 
-      public Month Archive([Web.Mvc.FromRoute(BinderType = typeof(MonthParameterBinder))]Month? month) {
+      public Month Archive([FromRoute(BinderType = typeof(MonthParameterBinder))]Month? month) {
          return month.GetValueOrDefault();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderGlobal {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderGlobal {
 
    public class RegexConstraintController : Controller {
 
-      public Month Archive([Web.Mvc.FromRoute(Constraint = "[0-9]{2}")]Month? month) {
+      public Month Archive([FromRoute(Constraint = "[0-9]{2}")]Month? month) {
          return month.GetValueOrDefault();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderGlobal {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderGlobal {
 
    public class RegexConstraintController : Controller {
 
-      public Month Archive([Web.Mvc.FromRoute]Month? month) {
+      public Month Archive([FromRoute]Month? month) {
          return month.GetValueOrDefault();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderType {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexParameterAndBinderType {
 
    public class RegexConstraintController : Controller {
 
-      public MonthWithAssociatedBinder Archive([Web.Mvc.FromRoute(Constraint = "[0-9]{2}")]MonthWithAssociatedBinder? month) {
+      public MonthWithAssociatedBinder Archive([FromRoute(Constraint = "[0-9]{2}")]MonthWithAssociatedBinder? month) {
          return month.GetValueOrDefault();
       }
    }
 }
 
-namespace MvcCodeRouting.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderType {
+namespace MvcCodeRouting.Web.Mvc.Tests.ParameterBinding.RegexConstraint.RegexGlobalAndBinderType {
 
    public class RegexConstraintController : Controller {
 
-      public MonthWithAssociatedBinder Archive([Web.Mvc.FromRoute]MonthWithAssociatedBinder? month) {
+      public MonthWithAssociatedBinder Archive([FromRoute]MonthWithAssociatedBinder? month) {
          return month.GetValueOrDefault();
       }
    }

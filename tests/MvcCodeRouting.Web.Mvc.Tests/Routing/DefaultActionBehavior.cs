@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MvcCodeRouting.Web.Mvc;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
 
    [TestClass]
    public class DefaultActionBehavior {
@@ -178,9 +178,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.DefaultAction {
-   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
-   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.DefaultAction {
 
    public class DefaultAction1Controller : Controller {
       public void Index() { }

@@ -5,7 +5,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    //[TestClass]
    public class ActionSelectionFacts {
@@ -42,7 +42,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.ActionSelection {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.ActionSelection {
 
    public class ActionSelectionController : Controller {
 

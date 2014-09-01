@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class RootControllerBehavior {
@@ -40,7 +40,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.RootController {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.RootController {
 
    public class RootController1Controller : Controller {
       public void Foo() { }

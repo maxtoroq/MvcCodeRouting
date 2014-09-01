@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class CustomRouteBehavior {
@@ -91,9 +91,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CustomRoute {
-   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
-   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CustomRoute {
 
    public class CustomRoute1Controller : Controller {
 
@@ -125,13 +123,12 @@ namespace MvcCodeRouting.Tests.Routing.CustomRoute {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CustomRoute.CustomRoute4 {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CustomRoute.CustomRoute4 {
 
    public class CustomRoute4Controller : Controller { }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CustomRoute.CustomRoute4.SubNamespace {
-   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CustomRoute.CustomRoute4.SubNamespace {
 
    public class SubNamespace1Controller : Controller {
 
@@ -140,13 +137,12 @@ namespace MvcCodeRouting.Tests.Routing.CustomRoute.CustomRoute4.SubNamespace {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CustomRoute.CustomRoute5 {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CustomRoute.CustomRoute5 {
 
    public class CustomRoute5Controller : Controller { }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CustomRoute.CustomRoute5.SubNamespace {
-   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CustomRoute.CustomRoute5.SubNamespace {
 
    [CustomRoute("~/bar")]
    public class SubNamespace1Controller : Controller {

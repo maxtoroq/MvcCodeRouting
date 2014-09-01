@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.ModelBinding {
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding {
    
    [TestClass]
    public class CustomNameBehavior {
@@ -82,8 +82,7 @@ namespace MvcCodeRouting.Tests.ModelBinding {
    }
 }
 
-namespace MvcCodeRouting.Tests.ModelBinding.CustomName {
-   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding.CustomName {
 
    public class BindCustomNameController : Controller {
 
@@ -99,7 +98,7 @@ namespace MvcCodeRouting.Tests.ModelBinding.CustomName {
 
       protected override void Initialize(RequestContext requestContext) {
          base.Initialize(requestContext);
-         MvcCodeRouting.Web.Mvc.MvcExtensions.BindRouteProperties(this);
+         this.BindRouteProperties();
       }
 
       public string Index() {

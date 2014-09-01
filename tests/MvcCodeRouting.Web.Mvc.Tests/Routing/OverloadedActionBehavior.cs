@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class OverloadedActionBehavior {
@@ -40,8 +40,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.OverloadedAction {
-   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.OverloadedAction {
 
    public class OverloadedAction1Controller : Controller {
 

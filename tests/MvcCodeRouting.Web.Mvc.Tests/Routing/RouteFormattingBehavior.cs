@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class RouteFormattingBehavior {
@@ -151,7 +151,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.RouteFormatting {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.RouteFormatting {
 
    public class RouteFormatting1Controller : Controller {
       public void Index() { }
@@ -163,7 +163,7 @@ namespace MvcCodeRouting.Tests.Routing.RouteFormatting {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.RouteFormatting.SubNamespace {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.RouteFormatting.SubNamespace {
 
    public class RouteFormatting3Controller : Controller {
       public void Index() { }

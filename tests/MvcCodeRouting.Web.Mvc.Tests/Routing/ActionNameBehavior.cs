@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class ActionNameBehavior {
@@ -40,7 +40,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.ActionName {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.ActionName {
 
    public class ActionName1Controller : Controller {
 

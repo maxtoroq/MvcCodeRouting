@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class ActionConstraintBehavior {
@@ -89,8 +89,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.ActionConstraint {
-   using CustomRouteAttribute = MvcCodeRouting.Web.Mvc.CustomRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.ActionConstraint {
 
    public class ActionConstraint1Controller : Controller {
       public void Foo() { }

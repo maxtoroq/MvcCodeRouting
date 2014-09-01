@@ -8,7 +8,7 @@ using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    
    [TestClass]
    public class CatchAllParameterBehavior {
@@ -46,8 +46,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.CatchAll {
-   using FromRouteAttribute = MvcCodeRouting.Web.Mvc.FromRouteAttribute;
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.CatchAll {
 
    public class CatchAllParameter1Controller : Controller {
       public void Foo([FromRoute(CatchAll = true)]string a) { }

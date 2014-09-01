@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MvcCodeRouting.Tests.Routing {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
 
    [TestClass]
    public class ControllerReflectionBehavior {
@@ -33,7 +33,7 @@ namespace MvcCodeRouting.Tests.Routing {
    }
 }
 
-namespace MvcCodeRouting.Tests.Routing.ControllerReflection {
+namespace MvcCodeRouting.Web.Mvc.Tests.Routing.ControllerReflection {
 
    public class ControllerReflection1Controller : Controller {
 
