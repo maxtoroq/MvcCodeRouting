@@ -31,7 +31,6 @@ namespace MvcCodeRouting.Web.Http.WebHost {
       /// </summary>
       public static void Start() {
 
-         CodeRoutingExtensions.Initialize();
          CodeRoutingHttpExtensions.Initialize();
 
          CodeRoutingSettings.Defaults.HttpConfiguration(GlobalConfiguration.Configuration);

@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Max Toro Q.
+﻿// Copyright 2011 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,26 +13,27 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting.Web.Mvc {
-
-#pragma warning disable 0618
 
    /// <summary>
    /// Represents an attribute that is used to customize the URL for the decorated
    /// action method or controller class.
    /// </summary>
    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-   public sealed class CustomRouteAttribute : MvcCodeRouting.CustomRouteAttribute {
+   public sealed class CustomRouteAttribute : Attribute, ICustomRouteAttribute {
 
-#pragma warning restore 0618
+      readonly string _Url;
 
       /// <summary>
       /// The URL pattern.
       /// </summary>
-      public override sealed string Url {
-         get { return base.Url; }
-      }
+      public string Url { get { return _Url; } }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="CustomRouteAttribute"/> class, 
@@ -42,7 +43,15 @@ namespace MvcCodeRouting.Web.Mvc {
       /// The URL pattern. Constraints can be specified using the <see cref="FromRouteAttribute"/>
       /// on the action method parameters or controller class properties.
       /// </param>
-      public CustomRouteAttribute(string url) 
-         : base(url) { }
+      public CustomRouteAttribute(string url) {
+
+         if (!String.IsNullOrEmpty(url)
+            && url[0] == '/') {
+
+            throw new ArgumentException("Custom route cannot start with '/'.", "url");
+         }
+
+         this._Url = url;
+      }
    }
 }

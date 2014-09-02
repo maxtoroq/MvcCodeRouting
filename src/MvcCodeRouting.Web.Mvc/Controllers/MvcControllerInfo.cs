@@ -21,9 +21,8 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Text;
 using System.Web.Mvc;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web.Mvc {
+namespace MvcCodeRouting.Controllers {
    
    abstract class MvcControllerInfo : ControllerInfo {
 

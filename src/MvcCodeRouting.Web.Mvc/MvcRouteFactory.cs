@@ -21,7 +21,7 @@ using System.Web.Routing;
 using MvcCodeRouting.Controllers;
 using MvcCodeRouting.Web.Routing;
 
-namespace MvcCodeRouting.Web.Mvc {
+namespace MvcCodeRouting {
    
    class MvcRouteFactory : RouteFactory {
 

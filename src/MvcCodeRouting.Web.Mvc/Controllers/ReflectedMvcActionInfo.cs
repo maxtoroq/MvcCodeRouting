@@ -18,9 +18,8 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Web.Mvc;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web.Mvc {
+namespace MvcCodeRouting.Controllers {
 
    class ReflectedMvcActionInfo : MvcActionInfo {
 

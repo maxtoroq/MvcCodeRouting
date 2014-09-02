@@ -21,11 +21,14 @@ using System.Web.Mvc;
 using MvcCodeRouting.Web.Hosting;
 
 namespace MvcCodeRouting {
-   
-   public static partial class CodeRoutingExtensions {
 
-      static CodeRoutingExtensions() {
-         CodeRoutingProvider.RegisterProvider(new Web.Mvc.MvcCodeRoutingProvider());
+   /// <summary>
+   /// Provides the extension methods to configure an ASP.NET MVC application.
+   /// </summary>
+   public static class CodeRoutingMvcExtensions {
+
+      static CodeRoutingMvcExtensions() {
+         CodeRoutingProvider.RegisterProvider(new MvcCodeRoutingProvider());
       }
 
       internal static void Initialize() { }
@@ -60,18 +63,6 @@ namespace MvcCodeRouting {
       /// <param name="controllerBuilder">The controller builder.</param>
       public static void EnableCodeRouting(this ControllerBuilder controllerBuilder) {
          controllerBuilder.SetControllerFactory(new Web.Mvc.CustomControllerFactory());
-      }
-
-      /// <summary>
-      /// Binds controller properties decorated with <see cref="FromRouteAttribute"/>
-      /// using the current route values.
-      /// </summary>
-      /// <param name="controller">The controller to bind.</param>
-      /// <remarks>You can call this method from <see cref="ControllerBase.Initialize"/>.</remarks>
-      [Obsolete("Please use MvcCodeRouting.Web.Mvc.MvcExtensions.BindRouteProperties(ControllerBase) instead.")]
-      [EditorBrowsable(EditorBrowsableState.Never)]
-      public static void BindRouteProperties(this ControllerBase controller) {
-         Web.Mvc.MvcExtensions.BindRouteProperties(controller);
       }
    }
 }

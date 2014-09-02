@@ -20,7 +20,7 @@ using MvcCodeRouting.Web.Hosting;
 namespace MvcCodeRouting {
 
    /// <summary>
-   /// Provides the extension methods to register and configure modules in a host ASP.NET MVC application.
+   /// Provides the extension methods to register modules in a host ASP.NET MVC application.
    /// </summary>
    public static partial class CodeRoutingExtensions {
 

@@ -28,25 +28,9 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing {
       }
 
       [TestMethod, ExpectedException(typeof(InvalidOperationException))]
-      public void FailIfUsingWrongAttribute() {
-
-         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttributeController);
-
-         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
-      }
-
-      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
       public void FailIfUsingWrongAttribute2() {
 
          var controller = typeof(FromRouteAttr.FailIfUsingWrongAttribute2Controller);
-
-         config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
-      }
-
-      [TestMethod, ExpectedException(typeof(InvalidOperationException))]
-      public void FailIfUsingWrongAttribute3() {
-
-         var controller = typeof(FromRouteAttr.FailIfUsingWrongAttribute3Controller);
 
          config.MapCodeRoutes(controller, new CodeRoutingSettings { RootOnly = true });
       }
@@ -70,24 +54,9 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
       }
    }
 
-#pragma warning disable 0618
-
-   public class FailIfUsingWrongAttributeController : ApiController {
-
-      public void Get([MvcCodeRouting.FromRoute]string foo) { }
-   }
-
    public class FailIfUsingWrongAttribute2Controller : ApiController {
 
       public void Get([MvcCodeRouting.Web.Mvc.FromRoute]string foo) { }
-   }
-
-   public class FailIfUsingWrongAttribute3Controller : ApiController {
-
-      [MvcCodeRouting.FromRoute]
-      public string Bar { get; set; }
-
-      public void Get() { }
    }
 
    public class FailIfUsingWrongAttribute4Controller : ApiController {
@@ -97,6 +66,4 @@ namespace MvcCodeRouting.Web.Http.Tests.Routing.FromRouteAttr {
 
       public void Get() { }
    }
-
-#pragma warning restore 0618
 }

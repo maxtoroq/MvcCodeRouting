@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Max Toro Q.
+﻿// Copyright 2011 Max Toro Q.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,17 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
+using MvcCodeRouting.Controllers;
+using MvcCodeRouting.ParameterBinding;
 
 namespace MvcCodeRouting.Web.Mvc {
-
-#pragma warning disable 0618
 
    /// <summary>
    /// Represents an attribute that is used to mark action method parameters and 
@@ -27,57 +32,188 @@ namespace MvcCodeRouting.Web.Mvc {
    /// for each decorated action method parameter, and after the {controller} segment for each 
    /// decorated controller property.
    /// </summary>
-   [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification = "Want constructor argument shortcut.")]
    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
-   public sealed class FromRouteAttribute : MvcCodeRouting.FromRouteAttribute {
-
-#pragma warning restore 0618
+   public sealed class FromRouteAttribute : CustomModelBinderAttribute, IModelBinder, IFromRouteAttribute {
 
       /// <summary>
       /// Gets or sets the route parameter name. The default name used is the parameter or property name.
       /// </summary>
-      public override sealed string Name {
-         get { return base.Name; }
-         set { base.Name = value; }
-      }
+      public string Name { get; set; }
 
       /// <summary>
       /// Gets or sets a regular expression that specify valid values for the decorated parameter or property.
       /// </summary>
-      public override sealed string Constraint {
-         get { return base.Constraint; }
-         set { base.Constraint = value; }
-      }
+      public string Constraint { get; set; }
 
       /// <summary>
       /// true if the parameter represents a catch-all parameter; otherwise, false.
       /// This setting is ignored when used on controller properties.
       /// </summary>
-      public override sealed bool CatchAll {
-         get { return base.CatchAll; }
-         set { base.CatchAll = value; }
-      }
+      [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "Consistent with naming used in the .NET Framework.")]
+      public bool CatchAll { get; set; }
 
       /// <summary>
       /// Gets or sets the type of the binder.
       /// </summary>
-      public override sealed Type BinderType {
-         get { return base.BinderType; }
-         set { base.BinderType = value; }
-      }
+      public Type BinderType { get; set; }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class.
       /// </summary>
-      public FromRouteAttribute() 
-         : base() { }
+      public FromRouteAttribute() { }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="FromRouteAttribute"/> class 
       /// using the specified name.
       /// </summary>
-      /// <param name="name">The name of the route parameter.</param>
-      public FromRouteAttribute(string name) 
-         : base(name) { }
+      /// <param name="tokenName">The name of the route parameter.</param>
+      public FromRouteAttribute(string tokenName) {
+         this.Name = tokenName;
+      }
+
+      /// <summary>
+      /// Gets the model binder used to bind the decorated parameter or property.
+      /// </summary>
+      /// <returns>The model binder.</returns>
+      public override IModelBinder GetBinder() {
+         return this;
+      }
+
+      /// <summary>
+      /// Binds the decorated parameter or property to a value by using the specified controller context and
+      /// binding context.
+      /// </summary>
+      /// <param name="controllerContext">The controller context.</param>
+      /// <param name="bindingContext">The binding context.</param>
+      /// <returns>The bound value.</returns>
+      public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
+
+         if (this.BinderType != null) {
+
+            if (typeof(ParameterBinder).IsAssignableFrom(this.BinderType)) {
+
+               object r1;
+
+               ParamBind(controllerContext, bindingContext, out r1);
+
+               return r1;
+            }
+
+            return ModelBind(controllerContext, bindingContext);
+         }
+
+         bool isDefaultBinder;
+         IModelBinder modelBinder = GetModelBinder(this, bindingContext.ModelType, out isDefaultBinder);
+
+         if (!isDefaultBinder) {
+            return ModelBind(controllerContext, bindingContext, modelBinder);
+         }
+
+         object r2;
+
+         if (ParamBind(controllerContext, bindingContext, out r2).HasValue) {
+            return r2;
+         }
+
+         return ModelBind(controllerContext, bindingContext, modelBinder);
+      }
+
+      bool? ParamBind(ControllerContext controllerContext, ModelBindingContext bindingContext, out object result) {
+
+         RouteData routeData = controllerContext.RouteData;
+         string name = this.Name ?? bindingContext.ModelName;
+
+         object rawValue;
+
+         if (!routeData.Values.TryGetValue(name, out rawValue)) {
+
+            result = null;
+            return false;
+         }
+
+         if (rawValue == null
+            || bindingContext.ModelType.IsInstanceOfType(rawValue)) {
+
+            result = rawValue;
+            return true;
+         }
+
+         ParameterBinder paramBinder = null;
+
+         Route route = routeData.Route as Route;
+         object binders;
+         IDictionary<string, ParameterBinder> bindersDictionary;
+
+         if (route != null
+            && route.DataTokens.TryGetValue(DataTokenKeys.ParameterBinders, out binders)
+            && (bindersDictionary = binders as IDictionary<string, ParameterBinder>) != null) {
+
+            bindersDictionary.TryGetValue(name, out paramBinder);
+         }
+
+         if (paramBinder == null) {
+            paramBinder = ParameterBinder.GetInstance(bindingContext.ModelType, this.BinderType);
+         }
+
+         if (paramBinder == null) {
+            result = null;
+            return null;
+         }
+
+         return paramBinder.TryBind(Convert.ToString(rawValue, CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, out result);
+      }
+
+      object ModelBind(ControllerContext controllerContext, ModelBindingContext bindingContext, IModelBinder binder = null) {
+
+         if (this.Name != null) {
+            bindingContext.ModelName = this.Name;
+         }
+
+         // For action parameters, ValueProvider is ValueProviderCollection (composite).
+         // For controller properties (BindRouteProperties), it's null.
+         // That's why we always need to set it to the appropriate instance here.
+
+         bindingContext.ValueProvider = (ValueProviderFactories.Factories
+            .OfType<RouteDataValueProviderFactory>()
+            .FirstOrDefault()
+            ?? new RouteDataValueProviderFactory())
+            .GetValueProvider(controllerContext);
+
+         if (binder == null) {
+            bool isDefaultBinder;
+            binder = GetModelBinder(this, bindingContext.ModelType, out isDefaultBinder);
+         }
+
+         return binder.BindModel(controllerContext, bindingContext);
+      }
+
+      static IModelBinder GetModelBinder(IFromRouteAttribute fromRouteAttr, Type modelType, out bool isDefaultBinder) {
+
+         if (fromRouteAttr != null
+            && fromRouteAttr.BinderType != null) {
+
+            try {
+               isDefaultBinder = false;
+
+               return (IModelBinder)Activator.CreateInstance(fromRouteAttr.BinderType);
+
+            } catch (Exception ex) {
+               throw new InvalidOperationException("An error occurred when trying to create the IModelBinder '{0}'. Make sure that the binder has a public parameterless constructor.".FormatInvariant(fromRouteAttr.BinderType.FullName), ex);
+            }
+         }
+
+         modelType = TypeHelpers.GetNullableUnderlyingType(modelType);
+
+         IModelBinder binder = ModelBinders.Binders.GetBinder(modelType, fallbackToDefault: false);
+
+         if (binder != null) {
+            isDefaultBinder = false;
+            return binder;
+         }
+
+         isDefaultBinder = true;
+
+         return ModelBinders.Binders.DefaultBinder;
+      }
    }
 }

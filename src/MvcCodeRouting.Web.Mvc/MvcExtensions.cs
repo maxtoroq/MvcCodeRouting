@@ -19,7 +19,6 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
-using FromRouteAttr = MvcCodeRouting.FromRouteAttribute;
 
 namespace MvcCodeRouting.Web.Mvc {
 
@@ -81,8 +80,6 @@ namespace MvcCodeRouting.Web.Mvc {
          }
       }
 
-#pragma warning disable 0618
-
       class ControllerData {
 
          public readonly PropertyData[] Properties;
@@ -93,8 +90,8 @@ namespace MvcCodeRouting.Web.Mvc {
             
             this.Properties =
                (from p in type.GetProperties()
-                let attr = p.GetCustomAttributes(typeof(FromRouteAttr), inherit: true)
-                  .Cast<FromRouteAttr>()
+                let attr = p.GetCustomAttributes(typeof(FromRouteAttribute), inherit: true)
+                  .Cast<FromRouteAttribute>()
                   .SingleOrDefault()
                 where attr != null
                 select new PropertyData(
@@ -109,10 +106,10 @@ namespace MvcCodeRouting.Web.Mvc {
 
          readonly PropertyInfo Property;
          readonly string Name;
-         readonly FromRouteAttr Attribute;
+         readonly FromRouteAttribute Attribute;
          readonly ModelMetadata Metadata;
 
-         public PropertyData(PropertyInfo property, FromRouteAttr attribute, ModelMetadata metadata) {
+         public PropertyData(PropertyInfo property, FromRouteAttribute attribute, ModelMetadata metadata) {
 
             this.Property = property;
             this.Name = property.Name;
@@ -140,7 +137,4 @@ namespace MvcCodeRouting.Web.Mvc {
          }
       }
    }
-
-#pragma warning restore 0618
-
 }

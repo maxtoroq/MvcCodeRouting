@@ -16,9 +16,8 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Mvc.Async;
-using MvcCodeRouting.Controllers;
 
-namespace MvcCodeRouting.Web.Mvc {
+namespace MvcCodeRouting.Controllers {
    
    class DescribedMvcControllerInfo : MvcControllerInfo {
 

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1047C724-56F3-4791-9B07-EEE2CB5C45B7}</ProjectGuid>
+    <ProjectGuid>{44025E04-7AF0-45FA-B1B9-CD1964E5E429}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MvcCodeRouting.Web.Http</RootNamespace>
-    <AssemblyName>MvcCodeRouting.Web.Http</AssemblyName>
+    <RootNamespace>MvcCodeRouting.Web</RootNamespace>
+    <AssemblyName>MvcCodeRouting.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\net40\MvcCodeRouting.Web.Http.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\net40\MvcCodeRouting.Web.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net40\MvcCodeRouting.Web.Http.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\MvcCodeRouting.Web.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -40,42 +40,21 @@
     <AssemblyOriginatorKeyFile>..\MvcCodeRouting\Properties\MvcCodeRouting.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeRoutingHttpExtensions.cs" />
-    <Compile Include="Controllers\CustomApiControllerActionSelector.cs" />
-    <Compile Include="Controllers\DescribedHttpActionInfo.cs" />
-    <Compile Include="Controllers\DescribedHttpActionParameterInfo.cs" />
-    <Compile Include="Controllers\DescribedHttpControllerInfo.cs" />
-    <Compile Include="Controllers\HttpControllerInfo.cs" />
-    <Compile Include="CustomRouteAttribute.cs" />
-    <Compile Include="Dispatcher\CustomHttpControllerSelector.cs" />
-    <Compile Include="FromRouteAttribute.cs" />
-    <Compile Include="HttpCodeRoutingProvider.cs" />
-    <Compile Include="HttpExtensions.cs" />
-    <Compile Include="HttpRouteFactory.cs" />
+    <Compile Include="CodeRoutingExtensions.cs" />
+    <Compile Include="Hosting\AssemblyResources.cs" />
+    <Compile Include="Hosting\AssemblyResourceVirtualDirectory.cs" />
+    <Compile Include="Hosting\AssemblyResourceVirtualFile.cs" />
+    <Compile Include="Hosting\EmbeddedViewsVirtualPathProvider.cs" />
+    <Compile Include="Hosting\VirtualPathComparison.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Routing\CodeHttpRoute.cs" />
+    <Compile Include="RouteDebugHandler.cs" />
+    <Compile Include="Routing\CodeRoute.cs" />
     <Compile Include="Routing\ParameterBindingRouteConstraint.cs" />
     <Compile Include="Routing\RegexRouteConstraint.cs" />
     <Compile Include="Routing\SetRouteConstraint.cs" />
@@ -87,10 +66,6 @@
       <Name>MvcCodeRouting</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -17,20 +17,16 @@ using MvcCodeRouting.Controllers;
 using MvcCodeRouting.ParameterBinding;
 using MvcCodeRouting.Web.Routing;
 
-namespace MvcCodeRouting.Web.Mvc {
+namespace MvcCodeRouting {
    
    class MvcCodeRoutingProvider : CodeRoutingProvider {
 
       readonly RouteFactory _RouteFactory = new MvcRouteFactory();
 
-#pragma warning disable 0618
-
-      readonly Type _FromRouteAttributeType = typeof(MvcCodeRouting.FromRouteAttribute);
-      readonly Type _CustomRouteAttributeType = typeof(MvcCodeRouting.CustomRouteAttribute);
-      readonly Type _DefaultActionAttributeType = typeof(DefaultActionAttribute);
-      readonly Type _ActionOverloadDisambiguationAttributeType = typeof(MvcCodeRouting.RequireRouteParametersAttribute);
-
-#pragma warning restore 0618
+      readonly Type _FromRouteAttributeType = typeof(Web.Mvc.FromRouteAttribute);
+      readonly Type _CustomRouteAttributeType = typeof(Web.Mvc.CustomRouteAttribute);
+      readonly Type _DefaultActionAttributeType = typeof(Web.Mvc.DefaultActionAttribute);
+      readonly Type _ActionOverloadDisambiguationAttributeType = typeof(Web.Mvc.RequireRouteParametersAttribute);
 
       public override RouteFactory RouteFactory {
          get { return _RouteFactory; }

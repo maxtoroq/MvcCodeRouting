@@ -21,7 +21,7 @@ using System.Text;
 using System.Web;
 using System.Web.Routing;
 
-namespace MvcCodeRouting {
+namespace MvcCodeRouting.Web {
 
    /// <summary>
    /// Serves representations of the routes in <see cref="RouteTable.Routes"/> 
@@ -577,7 +577,7 @@ namespace MvcCodeRouting {
 
       void RenderTopComments(string lineCommentChars) {
 
-         Assembly thisAssembly = Assembly.GetExecutingAssembly();
+         Assembly thisAssembly = typeof(CodeRoutingSettings).Assembly;
          AssemblyName assemName = thisAssembly.GetName();
 
          string name = assemName.Name;
