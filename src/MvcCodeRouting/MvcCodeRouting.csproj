@@ -135,6 +135,9 @@
     <Compile Include="..\MvcCodeRouting.Web.Mvc\ViewEngineWrapper.cs">
       <Link>Web.Mvc\ViewEngineWrapper.cs</Link>
     </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\CodeRoutingExtensions.cs">
+      <Link>Web\CodeRoutingExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\MvcCodeRouting.Web\Hosting\AssemblyResources.cs">
       <Link>Web\Hosting\AssemblyResources.cs</Link>
     </Compile>
@@ -168,7 +171,6 @@
     <Compile Include="..\MvcCodeRouting.Web\Routing\TypeAwareRouteConstraint.cs">
       <Link>Web\Routing\TypeAwareRouteConstraint.cs</Link>
     </Compile>
-    <Compile Include="CodeRoutingExtensions.cs" />
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="Controllers\ActionInfo.cs" />
     <Compile Include="Controllers\ActionParameterInfo.cs" />
