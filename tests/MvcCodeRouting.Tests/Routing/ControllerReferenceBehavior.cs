@@ -111,6 +111,19 @@ namespace MvcCodeRouting.Tests.Routing {
       }
 
       [TestMethod]
+      public void ParentOfDefaultController() {
+
+         var controller = typeof(ControllerReference.Parent.AController);
+
+         routes.Clear();
+         routes.MapCodeRoutes(controller);
+
+         var Url = TestUtil.CreateUrlHelper(routes, "~/A/D/Foo");
+
+         Assert.AreEqual("/Foo", Url.Action("Foo", ".."));
+      }
+
+      [TestMethod]
       public void BaseRouteRelative() {
 
          routes.Clear();
@@ -250,6 +263,14 @@ namespace MvcCodeRouting.Tests.Routing.ControllerReference.Parent {
 namespace MvcCodeRouting.Tests.Routing.ControllerReference.Parent.A {
 
    public class CController : Controller {
+
+      public void Foo() { }
+   }
+}
+
+namespace MvcCodeRouting.Tests.Routing.ControllerReference.Parent.A.D {
+
+   public class DController : Controller {
 
       public void Foo() { }
    }
