@@ -76,8 +76,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ParameterBinding\CanonicalBindingBehavior.cs" />
+    <Compile Include="Routing\ControllerReferenceBehavior.cs" />
     <Compile Include="SettingsBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MvcCodeRouting\MvcCodeRouting.csproj">

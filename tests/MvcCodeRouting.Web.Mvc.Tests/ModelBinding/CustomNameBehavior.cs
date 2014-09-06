@@ -14,12 +14,9 @@ namespace MvcCodeRouting.Web.Mvc.Tests.ModelBinding {
    public class CustomNameBehavior {
 
       readonly RouteCollection routes;
-      readonly UrlHelper Url;
 
       public CustomNameBehavior() {
-
          routes = TestUtil.GetRouteCollection();
-         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]

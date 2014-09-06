@@ -17,7 +17,7 @@ namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
       public ActionNameBehavior() {
 
          routes = TestUtil.GetRouteCollection();
-         Url = TestUtil.CreateUrlHelper(routes);
+         Url = TestUtil.CreateUrlHelper(routes, createRouteData: true);
       }
 
       [TestMethod]

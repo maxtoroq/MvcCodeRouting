@@ -14,12 +14,9 @@ namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    public class CustomRouteBehavior {
 
       readonly RouteCollection routes;
-      readonly UrlHelper Url;
 
       public CustomRouteBehavior() {
-
          routes = TestUtil.GetRouteCollection();
-         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]

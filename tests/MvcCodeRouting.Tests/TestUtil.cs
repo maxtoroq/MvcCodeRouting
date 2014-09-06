@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 
-namespace MvcCodeRouting.Web.Http.Tests {
+namespace MvcCodeRouting.Tests {
    
    static class TestUtil {
 
@@ -19,13 +19,10 @@ namespace MvcCodeRouting.Web.Http.Tests {
       }
 
       public static RouteCollection GetRouteCollection() {
-
-         Web.Http.WebHost.PreApplicationStartCode.Start();
-
          return new RouteCollection();
       }
 
-      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentAppRelativePath = "~/", bool createRouteData = false) {
+      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentAppRelativePath = "~/") {
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.ApplicationPath).Returns("");
@@ -33,14 +30,6 @@ namespace MvcCodeRouting.Web.Http.Tests {
          httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
 
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
-
-         if (routeData == null) {
-            if (createRouteData) {
-               routeData = new RouteData { DataTokens = { { "MvcCodeRouting.RouteContext", "" } } };
-            } else {
-               throw new InvalidOperationException();
-            }
-         }
 
          var requestContext = new RequestContext(httpContextMock.Object, routeData);
          var urlHelper = new UrlHelper(requestContext, routes);
@@ -64,33 +53,6 @@ namespace MvcCodeRouting.Web.Http.Tests {
 
       public string Action(string action, Type controller, object routeValues) {
          return base.Action(action, TestUtil.GetControllerName(controller), routeValues);
-      }
-
-      public string HttpRouteUrl(string routeName, Type controller, object routeValues = null) {
-
-         var values = new RouteValueDictionary(routeValues);
-         values["controller"] = TestUtil.GetControllerName(controller);
-
-         return HttpRouteUrl(routeName, values);
-      }
-
-      public string HttpRouteUrl(string routeName, object routeValues) {
-         return HttpRouteUrl(routeName, new RouteValueDictionary(routeValues));
-      }
-
-      public string HttpRouteUrl(string routeName, RouteValueDictionary routeValues) {
-         
-         if (routeValues == null) {
-            routeValues = new RouteValueDictionary();
-            routeValues.Add("httproute", true);
-         } else {
-            routeValues = new RouteValueDictionary(routeValues);
-            if (!routeValues.ContainsKey("httproute")) {
-               routeValues.Add("httproute", true);
-            }
-         }
-
-         return base.RouteUrl(routeName, routeValues);
       }
    }
 }

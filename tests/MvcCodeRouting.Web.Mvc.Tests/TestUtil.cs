@@ -18,25 +18,25 @@ namespace MvcCodeRouting.Web.Mvc.Tests {
          return typeName.Substring(0, typeName.Length - 10);
       }
 
-      public static void SetupHttpContextForUrlHelper(Mock<HttpContextBase> httpContextMock) {
-         
-         httpContextMock.Setup(c => c.Request.ApplicationPath).Returns("");
-         httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
-      }
-
       public static RouteCollection GetRouteCollection() {
          return new RouteCollection();
       }
 
-      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentRouteContext = "") {
+      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentAppRelativePath = "~/", bool createRouteData = false) {
 
          var httpContextMock = new Mock<HttpContextBase>();
-         SetupHttpContextForUrlHelper(httpContextMock);
+         httpContextMock.Setup(c => c.Request.ApplicationPath).Returns("");
+         httpContextMock.Setup(c => c.Request.AppRelativeCurrentExecutionFilePath).Returns(currentAppRelativePath);
+         httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
 
-         var routeData = new RouteData();
+         RouteData routeData = routes.GetRouteData(httpContextMock.Object);
 
-         if (currentRouteContext != null) {
-            routeData.DataTokens["MvcCodeRouting.RouteContext"] = currentRouteContext;
+         if (routeData == null) {
+            if (createRouteData) {
+               routeData = new RouteData { DataTokens = { { "MvcCodeRouting.RouteContext", "" } } };
+            } else {
+               throw new InvalidOperationException();
+            }
          }
 
          var requestContext = new RequestContext(httpContextMock.Object, routeData);
