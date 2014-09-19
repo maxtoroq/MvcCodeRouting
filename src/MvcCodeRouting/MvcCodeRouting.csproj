@@ -34,12 +34,6 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\net40\MvcCodeRouting.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\MvcCodeRouting.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -85,9 +79,6 @@
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TypeHelpers.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\MvcCodeRouting.snk" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
