@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web", "src\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.Web.Mvc", "src\MvcCodeRouting.Web.Mvc\MvcCodeRouting.Web.Mvc.csproj", "{549CE548-F175-4084-8E27-13DF9B30E064}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcCodeRouting.AspNet.Routing", "src\MvcCodeRouting.AspNet.Routing\MvcCodeRouting.AspNet.Routing.csproj", "{F26CDAF0-E1CE-497D-B617-F905279BE066}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{549CE548-F175-4084-8E27-13DF9B30E064}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{549CE548-F175-4084-8E27-13DF9B30E064}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{549CE548-F175-4084-8E27-13DF9B30E064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F26CDAF0-E1CE-497D-B617-F905279BE066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F26CDAF0-E1CE-497D-B617-F905279BE066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F26CDAF0-E1CE-497D-B617-F905279BE066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F26CDAF0-E1CE-497D-B617-F905279BE066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

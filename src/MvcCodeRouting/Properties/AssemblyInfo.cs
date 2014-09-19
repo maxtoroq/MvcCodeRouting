@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("MvcCodeRouting.Web.Mvc")]
 [assembly: InternalsVisibleTo("MvcCodeRouting.Web.Http")]
 [assembly: InternalsVisibleTo("MvcCodeRouting.Web.Http.WebHost")]
+[assembly: InternalsVisibleTo("MvcCodeRouting.AspNet.Routing")]
 
 [module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Mvc", Justification = "Term is recognized.")]
 [module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "MvcCodeRouting", MessageId = "Mvc", Justification = "Term is recognized.")]
