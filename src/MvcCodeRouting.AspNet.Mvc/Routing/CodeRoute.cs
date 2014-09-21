@@ -25,15 +25,12 @@ namespace MvcCodeRouting.AspNet.Routing {
    
    class CodeRoute : TemplateRoute, ICodeRoute {
 
-      public IDictionary<string, object> DataTokens {
-         get { throw new NotImplementedException(); }
-      }
-
+      public IDictionary<string, string> ActionMapping { get; set; }
       public IDictionary<string, string> ControllerMapping { get; set; }
       public IDictionary<string, ControllerDescriptor> ControllerDescriptors { get; set; }
 
       public CodeRoute(IRouter target, string routeTemplate, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens)
-         : base(target, routeTemplate, defaults, constraints, default(IInlineConstraintResolver)) { }
+         : base(target, routeTemplate, defaults, constraints, dataTokens, default(IInlineConstraintResolver)) { }
 
       public string GetVirtualPath(VirtualPathContext context) {
 
@@ -42,10 +39,10 @@ namespace MvcCodeRouting.AspNet.Routing {
          RouteData currentRouteData = actionContext.RouteData;
          TemplateRoute currentRoute = (TemplateRoute)currentRouteData.Routers.First();
 
-         return this.DoGetVirtualPath(context.ProvidedValues, context.AmbientValues, /* TODO: currentRoute.DataTokens */null, () => base.GetVirtualPath(context));
+         return this.DoGetVirtualPath(context.ProvidedValues, context.AmbientValues, currentRoute.DataTokens, () => base.GetVirtualPath(context));
       }
 
-      public Task RouteAsync(RouteContext context) {
+      public override Task RouteAsync(RouteContext context) {
 
          Task baseResult = base.RouteAsync(context);
 
