@@ -29,16 +29,11 @@ namespace MvcCodeRouting.AspNet.Routing {
          get { throw new NotImplementedException(); }
       }
 
-      public IDictionary<string, string> ControllerMapping {
-         get { throw new NotImplementedException(); }
-      }
-
-      public IDictionary<string, string> ActionMapping {
-         get { throw new NotImplementedException(); }
-      }
+      public IDictionary<string, string> ControllerMapping { get; set; }
+      public IDictionary<string, ControllerDescriptor> ControllerDescriptors { get; set; }
 
       public CodeRoute(IRouter target, string routeTemplate, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens)
-         : base(default(IRouter), routeTemplate, defaults, constraints, default(IInlineConstraintResolver)) { }
+         : base(target, routeTemplate, defaults, constraints, default(IInlineConstraintResolver)) { }
 
       public string GetVirtualPath(VirtualPathContext context) {
 
@@ -51,7 +46,14 @@ namespace MvcCodeRouting.AspNet.Routing {
       }
 
       public Task RouteAsync(RouteContext context) {
-         throw new NotImplementedException();
+
+         Task baseResult = base.RouteAsync(context);
+
+         if (context.RouteData.Values != null) {
+            this.IncomingMapping(context.RouteData.Values);
+         }
+
+         return baseResult;
       }
    }
 }
