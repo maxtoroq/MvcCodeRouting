@@ -24,25 +24,25 @@ function Extract-Views {
       Specifies the assembly that contains embedded views.
      
      .PARAMETER ViewsDirectory
-      Specifies the directory relative to the 'Views' directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'. If ommitted, views are saved directly in 'Views'.
+      Specifies the directory relative to the 'Views' directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'. If omitted, views are saved directly in 'Views'.
       
      .PARAMETER ProjectName
-      Specifies the project to use as context. If ommitted, the default project is chosen.
+      Specifies the project to use as context. If omitted, the default project is chosen.
       
      .EXAMPLE
       PM> Extract-Views MvcAccount Account
     #>
     param(
         [Parameter(Mandatory=$true)]
-        [string]$AssemblyName, 
+        [string]$AssemblyName,
         
         [Parameter()]
-        [string]$ViewsDirectory = $null,        
+        [string]$ViewsDirectory = $null,
         
         [Parameter()]
         [string]$ProjectName = $null
-    )   
-       
+    )
+    
     $project = $null
     
     if ($ProjectName) {
