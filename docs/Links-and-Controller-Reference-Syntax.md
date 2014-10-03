@@ -27,7 +27,8 @@ Sibling or self           | `Url.Action("", "User")`              | *HomeControl
 Child or child of sibling | `Url.Action("", "Admin.User")`        | *HomeController*          | `/Admin/User`
 Child                     | `Url.Action("", "+User")`             | *Admin.AdminController*   | `/Admin/User`
 Grandchild                | `Url.Action("", "+Product.Category")` | *Admin.AdminController*   | `/Admin/Product/Category`
-Parent                    | `Url.Action("", "..User")`            | *Admin.ProductController* | `/User`
+Parent                    | `Url.Action("", "..")`                | *Admin.UserController*    | `/Admin`
+Sibling of parent         | `Url.Action("", "..User")`            | *Admin.ProductController* | `/User`
 baseRoute-relative \*     | `Url.Action("", "~User")`             | *Admin.ProductController* | `/User`
 Application-relative      | `Url.Action("", "~~User")`            | *Admin.ProductController* | `/User`
 
