@@ -74,4 +74,4 @@ Parameters:
 
 [1]: http://msdn.microsoft.com/en-us/library/system.web.hosting.virtualpathprovider
 [2]: api/MvcCodeRouting/CodeRoutingSettings/EnableEmbeddedViews.md
-[3]: api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md
+[3]: api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting_1.md

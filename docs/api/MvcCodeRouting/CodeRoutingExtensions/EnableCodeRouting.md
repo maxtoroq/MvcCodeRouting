@@ -1,8 +1,8 @@
-CodeRoutingExtensions.EnableCodeRouting Method
-==============================================
-Enables namespace-aware views location. Always call after you are done adding view engines.
+CodeRoutingExtensions.EnableCodeRouting Method (ControllerBuilder)
+==================================================================
+Sets a custom [DefaultControllerFactory][1] implementation that provides a more direct access to the controller types for routes created by MvcCodeRouting. It enables a scenario where routes are created for controllers that are dynamically loaded at runtime.
 
-**Namespace:** [MvcCodeRouting][1]  
+**Namespace:** [MvcCodeRouting][2]  
 **Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
 
 Syntax
@@ -10,26 +10,27 @@ Syntax
 
 ```csharp
 public static void EnableCodeRouting(
-	this ViewEngineCollection engines
+	this ControllerBuilder controllerBuilder
 )
 ```
 
 ### Parameters
 
-#### *engines*
-Type: [System.Web.Mvc.ViewEngineCollection][2]  
-The view engine collection.
+#### *controllerBuilder*
+Type: [System.Web.Mvc.ControllerBuilder][3]  
+The controller builder.
 
 ### Usage Note
-In Visual Basic and C#, you can call this method as an instance method on any object of type [ViewEngineCollection][2]. When you use instance method syntax to call this method, omit the first parameter. For more information, see [Extension Methods (Visual Basic)][3] or [Extension Methods (C# Programming Guide)][4].
+In Visual Basic and C#, you can call this method as an instance method on any object of type [ControllerBuilder][3]. When you use instance method syntax to call this method, omit the first parameter. For more information, see [Extension Methods (Visual Basic)][4] or [Extension Methods (C# Programming Guide)][5].
 
 See Also
 --------
-[CodeRoutingExtensions Class][5]  
-[MvcCodeRouting Namespace][1]  
+[CodeRoutingExtensions Class][6]  
+[MvcCodeRouting Namespace][2]  
 
-[1]: ../README.md
-[2]: http://msdn.microsoft.com/en-us/library/dd493042
-[3]: http://msdn.microsoft.com/en-us/library/bb384936.aspx
-[4]: http://msdn.microsoft.com/en-us/library/bb383977.aspx
-[5]: README.md
+[1]: http://msdn.microsoft.com/en-us/library/dd470766
+[2]: ../README.md
+[3]: http://msdn.microsoft.com/en-us/library/dd460483
+[4]: http://msdn.microsoft.com/en-us/library/bb384936.aspx
+[5]: http://msdn.microsoft.com/en-us/library/bb383977.aspx
+[6]: README.md

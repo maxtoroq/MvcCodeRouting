@@ -1,8 +1,12 @@
 CodeRoutingSettings.Defaults Property
 =====================================
-The settings that all new [CodeRoutingSettings][1] instances inherit. Use this property to affect the behavior of the [MapCodeRoutes(RouteCollection, Type)][2] methods without having to pass a settings instance for each call.
+The settings that all new [CodeRoutingSettings][1] instances inherit. Use this property to affect the behavior of the 
+```csharp
+MapCodeRoutes
+```
+ methods without having to pass a settings instance for each call.
 
-**Namespace:** [MvcCodeRouting][3]  
+**Namespace:** [MvcCodeRouting][2]  
 **Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
 
 Syntax
@@ -18,8 +22,7 @@ Type: [CodeRoutingSettings][1]
 See Also
 --------
 [CodeRoutingSettings Class][1]  
-[MvcCodeRouting Namespace][3]  
+[MvcCodeRouting Namespace][2]  
 
 [1]: README.md
-[2]: ../CodeRoutingExtensions/MapCodeRoutes_2.md
-[3]: ../README.md
+[2]: ../README.md

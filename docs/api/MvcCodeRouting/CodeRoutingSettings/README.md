@@ -41,17 +41,21 @@ Name       | Description
 Properties
 ----------
 
-Name                      | Description                                                                                                                                                                                                                      
-------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-[Configuration][7]        | Gets or sets an object that is associated to each created route as a data token named 'Configuration'. Use to provide configuration settings to controllers.                                                                     
-[DefaultConstraints][8]   | Gets default constraints used for route parameters that represents action parameters and controller properties.                                                                                                                  
-[Defaults][4]             | The settings that all new **CodeRoutingSettings** instances inherit. Use this property to affect the behavior of the [MapCodeRoutes(RouteCollection, Type)][9] methods without having to pass a settings instance for each call. 
-[EnableEmbeddedViews][10] | true to look for views embedded in assemblies.                                                                                                                                                                                   
-[IgnoredControllers][11]  | Gets a collection of controller types that must be ignored by the route creation process.                                                                                                                                        
-[ParameterBinders][12]    | Gets the default binders used for route parameters that represent action parameters and controller properties.                                                                                                                   
-[RootOnly][13]            | true to create routes for the root controller only.                                                                                                                                                                              
-[RouteFormatter][14]      | Gets or sets a delegate for custom route formatting.                                                                                                                                                                             
-[UseImplicitIdToken][15]  | true to include an {id} route parameter for actions with a parameter named id.                                                                                                                                                   
+Name                     | Description                                                                                                                                                                                                        
+------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+[Configuration][7]       | Gets or sets an object that is associated to each created route as a data token named 'Configuration'. Use to provide configuration settings to controllers.                                                       
+[DefaultConstraints][8]  | Gets default constraints used for route parameters that represents action parameters and controller properties.                                                                                                    
+[Defaults][4]            | The settings that all new **CodeRoutingSettings** instances inherit. Use this property to affect the behavior of the 
+```csharp
+MapCodeRoutes
+```
+ methods without having to pass a settings instance for each call. 
+[EnableEmbeddedViews][9] | true to look for views embedded in assemblies.                                                                                                                                                                     
+[IgnoredControllers][10] | Gets a collection of controller types that must be ignored by the route creation process.                                                                                                                          
+[ParameterBinders][11]   | Gets the default binders used for route parameters that represent action parameters and controller properties.                                                                                                     
+[RootOnly][12]           | true to create routes for the root controller only.                                                                                                                                                                
+[RouteFormatter][13]     | Gets or sets a delegate for custom route formatting.                                                                                                                                                               
+[UseImplicitIdToken][14] | true to include an {id} route parameter for actions with a parameter named id.                                                                                                                                     
 
 
 See Also
@@ -66,10 +70,9 @@ See Also
 [6]: Reset.md
 [7]: Configuration.md
 [8]: DefaultConstraints.md
-[9]: ../CodeRoutingExtensions/MapCodeRoutes_2.md
-[10]: EnableEmbeddedViews.md
-[11]: IgnoredControllers.md
-[12]: ParameterBinders.md
-[13]: RootOnly.md
-[14]: RouteFormatter.md
-[15]: UseImplicitIdToken.md
+[9]: EnableEmbeddedViews.md
+[10]: IgnoredControllers.md
+[11]: ParameterBinders.md
+[12]: RootOnly.md
+[13]: RouteFormatter.md
+[14]: UseImplicitIdToken.md
