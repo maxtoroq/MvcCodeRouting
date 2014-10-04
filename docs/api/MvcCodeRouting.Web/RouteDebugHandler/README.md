@@ -6,10 +6,10 @@ Serves representations of the routes in [Routes][1] for visualization and debugg
 Inheritance Hierarchy
 ---------------------
 [System.Object][2]  
-  **MvcCodeRouting.RouteDebugHandler**  
+  **MvcCodeRouting.Web.RouteDebugHandler**  
 
-**Namespace:** [MvcCodeRouting][3]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web][3]  
+**Assembly:** MvcCodeRouting.Web (in MvcCodeRouting.Web.dll)
 
 Syntax
 ------
@@ -48,7 +48,7 @@ Name               | Description
 
 See Also
 --------
-[MvcCodeRouting Namespace][3]  
+[MvcCodeRouting.Web Namespace][3]  
 
 [1]: http://msdn.microsoft.com/en-us/library/cc679803
 [2]: http://msdn.microsoft.com/en-us/library/e5kfa45b

@@ -99,13 +99,13 @@ After installing MvcCodeRouting using NuGet you should have the following code i
 ```xml
 <system.web>
     <httpHandlers>
-        <add path="routes.axd" verb="GET,HEAD" type="MvcCodeRouting.RouteDebugHandler, MvcCodeRouting"/>
+        <add path="routes.axd" verb="GET,HEAD" type="MvcCodeRouting.Web.RouteDebugHandler, MvcCodeRouting.Web"/>
     </httpHandlers>
 </system.web>
 <system.webServer>
     <validation validateIntegratedModeConfiguration="false"/>
     <handlers>
-        <add name="MvcCodeRouting.RouteDebugHandler" path="routes.axd" verb="GET,HEAD" type="MvcCodeRouting.RouteDebugHandler, MvcCodeRouting"/>
+        <add name="MvcCodeRouting.Web.RouteDebugHandler" path="routes.axd" verb="GET,HEAD" type="MvcCodeRouting.Web.RouteDebugHandler, MvcCodeRouting.Web"/>
     </handlers>
 </system.webServer>
 ```
@@ -118,5 +118,5 @@ Navigate to `~/routes.axd` to visualize the routes that MvcCodeRouting created f
 [4]: api/MvcCodeRouting/CodeRoutingHttpExtensions/README.md#methods
 [5]: Installing.md
 [6]: http://msdn.microsoft.com/en-us/library/system.web.http.httpconfiguration
-[7]: api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting_1.md
+[7]: api/MvcCodeRouting/CodeRoutingMvcExtensions/EnableCodeRouting_1.md
 [8]: http://msdn.microsoft.com/en-us/library/system.web.httprequest.islocal

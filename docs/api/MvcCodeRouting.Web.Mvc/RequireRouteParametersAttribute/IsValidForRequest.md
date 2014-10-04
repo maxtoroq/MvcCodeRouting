@@ -2,8 +2,8 @@ RequireRouteParametersAttribute.IsValidForRequest Method
 ========================================================
 Determines whether the action method selection is valid for the specified controller context.
 
-**Namespace:** [MvcCodeRouting][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web.Mvc][1]  
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
@@ -32,7 +32,7 @@ Type: [Boolean][4]
 See Also
 --------
 [RequireRouteParametersAttribute Class][7]  
-[MvcCodeRouting Namespace][1]  
+[MvcCodeRouting.Web.Mvc Namespace][1]  
 
 [1]: ../README.md
 [2]: http://msdn.microsoft.com/en-us/library/dd492673

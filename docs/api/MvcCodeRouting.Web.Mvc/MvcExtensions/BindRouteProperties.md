@@ -3,7 +3,7 @@ MvcExtensions.BindRouteProperties Method
 Binds controller properties decorated with [FromRouteAttribute][1] using the current route values.
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------

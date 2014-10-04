@@ -2,8 +2,8 @@ RouteDebugHandler.IsReusable Property
 =====================================
 Gets a value indicating whether another request can use the [IHttpHandler][1] instance.
 
-**Namespace:** [MvcCodeRouting][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web][2]  
+**Assembly:** MvcCodeRouting.Web (in MvcCodeRouting.Web.dll)
 
 Syntax
 ------
@@ -21,7 +21,7 @@ Type: [Boolean][3]
 See Also
 --------
 [RouteDebugHandler Class][5]  
-[MvcCodeRouting Namespace][2]  
+[MvcCodeRouting.Web Namespace][2]  
 
 [1]: http://msdn.microsoft.com/en-us/library/7ezc17x8
 [2]: ../README.md

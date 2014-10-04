@@ -2,8 +2,8 @@ RouteDebugHandler.ProcessRequest Method
 =======================================
 Serves representations of the routes in [Routes][1].
 
-**Namespace:** [MvcCodeRouting][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web][2]  
+**Assembly:** MvcCodeRouting.Web (in MvcCodeRouting.Web.dll)
 
 Syntax
 ------
@@ -27,7 +27,7 @@ The HTTP context.
 See Also
 --------
 [RouteDebugHandler Class][5]  
-[MvcCodeRouting Namespace][2]  
+[MvcCodeRouting.Web Namespace][2]  
 
 [1]: http://msdn.microsoft.com/en-us/library/cc679803
 [2]: ../README.md

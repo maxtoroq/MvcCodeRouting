@@ -2,8 +2,8 @@ RouteDebugHandler.DefaultFormat Property
 ========================================
 Gets or sets the default format that the handler should use. Valid values are: "csharp", "vb".
 
-**Namespace:** [MvcCodeRouting][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web][1]  
+**Assembly:** MvcCodeRouting.Web (in MvcCodeRouting.Web.dll)
 
 Syntax
 ------
@@ -18,7 +18,7 @@ Type: [String][2]
 See Also
 --------
 [RouteDebugHandler Class][3]  
-[MvcCodeRouting Namespace][1]  
+[MvcCodeRouting.Web Namespace][1]  
 
 [1]: ../README.md
 [2]: http://msdn.microsoft.com/en-us/library/s1wwdcbf

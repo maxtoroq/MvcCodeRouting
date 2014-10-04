@@ -3,7 +3,7 @@ CodeRoutingExtensions.MapCodeRoutes Method (RouteCollection, String, Type)
 Creates routes for the specified root controller and all other controllers in the same namespace or any sub-namespace, in the same assembly, and prepends the provided base route to the URL of each created route.
 
 **Namespace:** [MvcCodeRouting][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web (in MvcCodeRouting.Web.dll)
 
 Syntax
 ------

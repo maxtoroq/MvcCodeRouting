@@ -1,9 +1,9 @@
-CodeRoutingExtensions.EnableCodeRouting Method (ViewEngineCollection)
-=====================================================================
+CodeRoutingMvcExtensions.EnableCodeRouting Method (ViewEngineCollection)
+========================================================================
 Enables namespace-aware views location. Always call after you are done adding view engines.
 
 **Namespace:** [MvcCodeRouting][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
@@ -25,7 +25,7 @@ In Visual Basic and C#, you can call this method as an instance method on any ob
 
 See Also
 --------
-[CodeRoutingExtensions Class][5]  
+[CodeRoutingMvcExtensions Class][5]  
 [MvcCodeRouting Namespace][1]  
 
 [1]: ../README.md

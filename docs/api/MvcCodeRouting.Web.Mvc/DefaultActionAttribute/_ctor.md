@@ -3,7 +3,7 @@ DefaultActionAttribute Constructor
 Initializes a new instance of the [DefaultActionAttribute][1] class
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------

@@ -1,9 +1,9 @@
-CodeRoutingExtensions.EnableCodeRouting Method (ControllerBuilder)
-==================================================================
+CodeRoutingMvcExtensions.EnableCodeRouting Method (ControllerBuilder)
+=====================================================================
 Sets a custom [DefaultControllerFactory][1] implementation that provides a more direct access to the controller types for routes created by MvcCodeRouting. It enables a scenario where routes are created for controllers that are dynamically loaded at runtime.
 
 **Namespace:** [MvcCodeRouting][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
@@ -25,7 +25,7 @@ In Visual Basic and C#, you can call this method as an instance method on any ob
 
 See Also
 --------
-[CodeRoutingExtensions Class][6]  
+[CodeRoutingMvcExtensions Class][6]  
 [MvcCodeRouting Namespace][2]  
 
 [1]: http://msdn.microsoft.com/en-us/library/dd470766
