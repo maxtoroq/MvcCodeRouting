@@ -1,4 +1,6 @@
 MSBuild.exe ..\..\src\MvcCodeRouting\MvcCodeRouting.csproj /p:Configuration=Release
+MSBuild.exe ..\..\src\MvcCodeRouting.Web\MvcCodeRouting.Web.csproj /p:Configuration=Release
+MSBuild.exe ..\..\src\MvcCodeRouting.Web.Mvc\MvcCodeRouting.Web.Mvc.csproj /p:Configuration=Release
 MSBuild.exe ..\..\src\MvcCodeRouting.Web.Http\MvcCodeRouting.Web.Http.csproj /p:Configuration=Release
 MSBuild.exe ..\..\src\MvcCodeRouting.Web.Http.WebHost\MvcCodeRouting.Web.Http.WebHost.csproj /p:Configuration=Release
 MSBuild.exe MvcCodeRouting.shfbproj

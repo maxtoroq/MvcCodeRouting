@@ -29,10 +29,14 @@
     <BinaryTOC>False</BinaryTOC>
     <DocumentationSources>
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting\bin\Release\net40\MvcCodeRouting.dll" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web\bin\Release\net40\MvcCodeRouting.Web.dll" />
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http\bin\Release\net40\MvcCodeRouting.Web.Http.dll" />
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http.WebHost\bin\Release\net40\MvcCodeRouting.Web.Http.WebHost.dll" />
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http.WebHost\bin\Release\net40\MvcCodeRouting.Web.Http.WebHost.xml" />
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Http\bin\Release\net40\MvcCodeRouting.Web.Http.xml" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Mvc\bin\Release\net40\MvcCodeRouting.Web.Mvc.dll" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web.Mvc\bin\Release\net40\MvcCodeRouting.Web.Mvc.xml" />
+      <DocumentationSource sourceFile="..\..\src\MvcCodeRouting.Web\bin\Release\net40\MvcCodeRouting.Web.xml" />
       <DocumentationSource sourceFile="..\..\src\MvcCodeRouting\bin\Release\net40\MvcCodeRouting.xml" />
     </DocumentationSources>
     <PlugInConfigurations>
