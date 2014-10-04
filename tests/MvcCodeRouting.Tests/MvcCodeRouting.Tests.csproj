@@ -82,6 +82,14 @@
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MvcCodeRouting.Web.Mvc\MvcCodeRouting.Web.Mvc.csproj">
+      <Project>{549ce548-f175-4084-8e27-13df9b30e064}</Project>
+      <Name>MvcCodeRouting.Web.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\MvcCodeRouting.Web\MvcCodeRouting.Web.csproj">
+      <Project>{44025e04-7af0-45fa-b1b9-cd1964e5e429}</Project>
+      <Name>MvcCodeRouting.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\MvcCodeRouting\MvcCodeRouting.csproj">
       <Project>{94d52e7e-6949-439f-80ed-212daa85db6c}</Project>
       <Name>MvcCodeRouting</Name>
