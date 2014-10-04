@@ -10,7 +10,7 @@ Inheritance Hierarchy
     **MvcCodeRouting.Web.Mvc.DefaultActionAttribute**  
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][3]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------

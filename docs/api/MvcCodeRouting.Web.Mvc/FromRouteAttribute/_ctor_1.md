@@ -3,7 +3,7 @@ FromRouteAttribute Constructor (String)
 Initializes a new instance of the [FromRouteAttribute][1] class using the specified name.
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------

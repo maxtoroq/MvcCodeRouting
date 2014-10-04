@@ -1,6 +1,12 @@
 ﻿Changes
 =======
 
+v1.3.0
+------
+- Added [#1156](https://mvccoderouting.codeplex.com/workitem/1156): Cannot locate dynamically loaded assemblies in Mvc (see [EnableCodeRouting(ControllerBuilder)](docs/api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md) extension method)
+- Added [#1161](https://mvccoderouting.codeplex.com/workitem/1161): Parent controller reference syntax
+- Improved PowerShell module documentation
+
 Web.Http.WebHost.v1.0.0
 -----------------------
 First MvcCodeRouting.Web.Http.WebHost release

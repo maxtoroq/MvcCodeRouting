@@ -3,7 +3,7 @@ CustomRouteAttribute Constructor
 Initializes a new instance of the [CustomRouteAttribute][1] class, using the provided URL pattern.
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
