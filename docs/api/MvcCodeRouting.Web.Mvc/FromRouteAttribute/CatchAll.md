@@ -3,13 +3,13 @@ FromRouteAttribute.CatchAll Property
 true if the parameter represents a catch-all parameter; otherwise, false. This setting is ignored when used on controller properties.
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
 
 ```csharp
-public override sealed bool CatchAll { get; set; }
+public bool CatchAll { get; set; }
 ```
 
 ### Property Value

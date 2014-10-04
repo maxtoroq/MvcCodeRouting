@@ -8,17 +8,16 @@ Inheritance Hierarchy
 [System.Object][2]  
   [System.Attribute][3]  
     [System.Web.Mvc.ActionMethodSelectorAttribute][1]  
-      [MvcCodeRouting.RequireRouteParametersAttribute][4]  
-        **MvcCodeRouting.Web.Mvc.RequireRouteParametersAttribute**  
+      **MvcCodeRouting.Web.Mvc.RequireRouteParametersAttribute**  
 
-**Namespace:** [MvcCodeRouting.Web.Mvc][5]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Namespace:** [MvcCodeRouting.Web.Mvc][4]  
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
 
 ```csharp
-public sealed class RequireRouteParametersAttribute : RequireRouteParametersAttribute
+public sealed class RequireRouteParametersAttribute : ActionMethodSelectorAttribute
 ```
 
 The **RequireRouteParametersAttribute** type exposes the following members.
@@ -29,25 +28,25 @@ Constructors
 
 Name                                 | Description                                                                 
 ------------------------------------ | --------------------------------------------------------------------------- 
-[RequireRouteParametersAttribute][6] | Initializes a new instance of the **RequireRouteParametersAttribute** class 
+[RequireRouteParametersAttribute][5] | Initializes a new instance of the **RequireRouteParametersAttribute** class 
 
 
 Methods
 -------
 
-Name                   | Description                                                                                                                                          
----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- 
-[IsValidForRequest][7] | Determines whether the action method selection is valid for the specified controller context. (Inherited from [RequireRouteParametersAttribute][4].) 
+Name                   | Description                                                                                                                                                                                    
+---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+[IsValidForRequest][6] | Determines whether the action method selection is valid for the specified controller context. (Overrides [ActionMethodSelectorAttribute.IsValidForRequest(ControllerContext, MethodInfo)][7].) 
 
 
 See Also
 --------
-[MvcCodeRouting.Web.Mvc Namespace][5]  
+[MvcCodeRouting.Web.Mvc Namespace][4]  
 
 [1]: http://msdn.microsoft.com/en-us/library/dd470807
 [2]: http://msdn.microsoft.com/en-us/library/e5kfa45b
 [3]: http://msdn.microsoft.com/en-us/library/e8kc3626
-[4]: ../../MvcCodeRouting/RequireRouteParametersAttribute/README.md
-[5]: ../README.md
-[6]: _ctor.md
-[7]: ../../MvcCodeRouting/RequireRouteParametersAttribute/IsValidForRequest.md
+[4]: ../README.md
+[5]: _ctor.md
+[6]: IsValidForRequest.md
+[7]: http://msdn.microsoft.com/en-us/library/dd470593

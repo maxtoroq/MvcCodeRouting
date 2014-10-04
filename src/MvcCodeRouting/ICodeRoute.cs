@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MvcCodeRouting.Controllers;
 
 namespace MvcCodeRouting {
    
@@ -107,22 +108,24 @@ namespace MvcCodeRouting {
 
       static string GetRouteContext(IDictionary<string, object> values, IDictionary<string, object> requestRouteValues, IDictionary<string, object> requestRouteDataTokens, out string originalController) {
 
+         object origControllerObj;
          originalController = null;
 
-         if (values.ContainsKey("controller")) {
-            originalController = (string)values["controller"];
+         if (values.TryGetValue("controller", out origControllerObj)) {
+            originalController = (string)origControllerObj;
          }
 
-         const string routeContextKey = "__routecontext";
+         object routeContextParamObj;
 
-         if (values.ContainsKey(routeContextKey)) {
-            return (string)values[routeContextKey];
+         if (values.TryGetValue("__routecontext", out routeContextParamObj)) {
+            return (string)routeContextParamObj;
          }
-         
+
+         object routeContextObj;
          string routeContext = null;
 
-         if (requestRouteDataTokens.ContainsKey(DataTokenKeys.RouteContext)) { 
-            routeContext = (string)requestRouteDataTokens[DataTokenKeys.RouteContext];
+         if (requestRouteDataTokens.TryGetValue(DataTokenKeys.RouteContext, out routeContextObj)) {
+            routeContext = (string)routeContextObj;
          }
 
          if (routeContext == null) {
@@ -176,6 +179,34 @@ namespace MvcCodeRouting {
 
             routeContextSegments.RemoveAt(routeContextSegments.Count - 1);
             theController.Remove(0, 2);
+
+            if (theController.Length == 0) {
+
+               object namespacesObj;
+               string[] namespaces;
+
+               if (requestRouteDataTokens.TryGetValue(DataTokenKeys.Namespaces, out namespacesObj)
+                  && (namespaces = namespacesObj as string[]) != null
+                  && namespaces.Length == 1) {
+                  
+                  string[] namespaceSegments = namespaces[0].Split('.');
+                  string nsLast = namespaceSegments[namespaceSegments.Length - 1];
+                  string currentController = (string)requestRouteValues["controller"];
+
+                  string parentController = nsLast;
+
+                  if (ControllerInfo.NameEquals(nsLast, currentController)
+                     && namespaceSegments.Length > 1) {
+
+                     parentController = namespaceSegments
+                        .Skip(namespaceSegments.Length - 2)
+                        .Take(1)
+                        .First();
+                  }
+
+                  theController.Append(parentController);
+               }
+            }
          }
 
          if (theController.Length > 1) {
@@ -208,15 +239,16 @@ namespace MvcCodeRouting {
          }
 
          originalValue = originalObject as string;
+         string mappedValue;
 
          if (originalValue == null
             || mapping == null
-            || !mapping.ContainsKey(originalValue)) {
+            || !mapping.TryGetValue(originalValue, out mappedValue)) {
 
             return false;
          }
 
-         values[name] = mapping[originalValue];
+         values[name] = mappedValue;
 
          return true;
       }

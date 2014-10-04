@@ -3,13 +3,13 @@ FromRouteAttribute.BinderType Property
 Gets or sets the type of the binder.
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][1]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------
 
 ```csharp
-public override sealed Type BinderType { get; set; }
+public Type BinderType { get; set; }
 ```
 
 ### Property Value

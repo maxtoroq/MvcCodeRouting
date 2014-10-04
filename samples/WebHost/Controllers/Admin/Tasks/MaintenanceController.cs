@@ -9,7 +9,7 @@ namespace Samples.Controllers.Admin.Tasks {
    public class MaintenanceController : Controller {
 
       public ActionResult Index() {
-         throw new NotImplementedException();
+         return View();
       }
    }
 }

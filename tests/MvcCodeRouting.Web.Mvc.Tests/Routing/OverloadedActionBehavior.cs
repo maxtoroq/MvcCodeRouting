@@ -12,12 +12,9 @@ namespace MvcCodeRouting.Web.Mvc.Tests.Routing {
    public class OverloadedActionBehavior {
 
       readonly RouteCollection routes;
-      readonly UrlHelper Url;
 
       public OverloadedActionBehavior() {
-
          routes = TestUtil.GetRouteCollection();
-         Url = TestUtil.CreateUrlHelper(routes);
       }
 
       [TestMethod]

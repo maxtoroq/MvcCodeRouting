@@ -9,7 +9,7 @@ Inheritance Hierarchy
   **MvcCodeRouting.Web.Mvc.MvcExtensions**  
 
 **Namespace:** [MvcCodeRouting.Web.Mvc][2]  
-**Assembly:** MvcCodeRouting (in MvcCodeRouting.dll)
+**Assembly:** MvcCodeRouting.Web.Mvc (in MvcCodeRouting.Web.Mvc.dll)
 
 Syntax
 ------

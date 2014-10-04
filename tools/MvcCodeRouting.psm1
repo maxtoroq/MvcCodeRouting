@@ -13,14 +13,33 @@
 # limitations under the License.
 
 function Extract-Views {
+    <#
+     .SYNOPSIS
+      Copies assembly-embedded views to your project.
+
+     .DESCRIPTION
+      Copies assembly-embedded views to your project.
+      
+     .PARAMETER AssemblyName
+      Specifies the assembly that contains embedded views.
+     
+     .PARAMETER ViewsDirectory
+      Specifies the directory relative to the 'Views' directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'. If omitted, views are saved directly in 'Views'.
+      
+     .PARAMETER ProjectName
+      Specifies the project to use as context. If omitted, the default project is chosen.
+      
+     .EXAMPLE
+      PM> Extract-Views MvcAccount Account
+    #>
     param(
-        [Parameter(Mandatory=$true, HelpMessage="The name of the assembly that contains embedded views.")]
-        [string]$AssemblyName, 
+        [Parameter(Mandatory=$true)]
+        [string]$AssemblyName,
         
-        [Parameter(HelpMessage="The directory relative to the Views directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'")]
+        [Parameter()]
         [string]$ViewsDirectory = $null,
         
-        [Parameter(HelpMessage="The name of the project to which you want to apply this command.")]
+        [Parameter()]
         [string]$ProjectName = $null
     )
     
