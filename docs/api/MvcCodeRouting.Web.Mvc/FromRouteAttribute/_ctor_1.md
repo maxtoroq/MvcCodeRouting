@@ -10,13 +10,13 @@ Syntax
 
 ```csharp
 public FromRouteAttribute(
-	string tokenName
+	string name
 )
 ```
 
 ### Parameters
 
-#### *tokenName*
+#### *name*
 Type: [System.String][3]  
 The name of the route parameter.
 
