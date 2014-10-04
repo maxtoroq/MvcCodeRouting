@@ -21,16 +21,6 @@ MvcCodeRouting is an alternative to
 - Attribute routing
 - Areas
 
-Get it now! using NuGet
------------------------
-```powershell
-# MVC
-Install-Package MvcCodeRouting
-
-# Web API
-Install-Package MvcCodeRouting.Web.Http.WebHost
-```
-
 Motivation
 ----------
 - [Why ASP.NET MVC Routing sucks](http://maxtoroq.github.io/2014/02/why-aspnet-mvc-routing-sucks.html)
@@ -38,7 +28,7 @@ Motivation
 
 Resources
 ---------
-- [Documentation](https://mvccoderouting.codeplex.com/documentation)
+- [Documentation](docs/README.md)
 - [Ask for help](https://mvccoderouting.codeplex.com/discussions)
 - [Report an issue](https://mvccoderouting.codeplex.com/workitem/list/basic)
 

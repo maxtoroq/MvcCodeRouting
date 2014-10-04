@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 
-namespace MvcCodeRouting.Web.Mvc.Tests {
+namespace MvcCodeRouting.Tests {
    
    static class TestUtil {
 
@@ -19,13 +19,10 @@ namespace MvcCodeRouting.Web.Mvc.Tests {
       }
 
       public static RouteCollection GetRouteCollection() {
-
-         PreApplicationStartCode.Start();
-
          return new RouteCollection();
       }
 
-      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentAppRelativePath = "~/", bool createRouteData = false) {
+      public static UrlHelper CreateUrlHelper(RouteCollection routes, string currentAppRelativePath = "~/") {
 
          var httpContextMock = new Mock<HttpContextBase>();
          httpContextMock.Setup(c => c.Request.ApplicationPath).Returns("");
@@ -33,14 +30,6 @@ namespace MvcCodeRouting.Web.Mvc.Tests {
          httpContextMock.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
 
          RouteData routeData = routes.GetRouteData(httpContextMock.Object);
-
-         if (routeData == null) {
-            if (createRouteData) {
-               routeData = new RouteData { DataTokens = { { "MvcCodeRouting.RouteContext", "" } } };
-            } else {
-               throw new InvalidOperationException();
-            }
-         }
 
          var requestContext = new RequestContext(httpContextMock.Object, routeData);
          var urlHelper = new UrlHelper(requestContext, routes);
