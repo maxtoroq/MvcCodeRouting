@@ -6,6 +6,7 @@ v1.3.0
 - Added [#1156](https://mvccoderouting.codeplex.com/workitem/1156): Cannot locate dynamically loaded assemblies in Mvc (see [EnableCodeRouting(ControllerBuilder)](docs/api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md) extension method)
 - Added [#1161](https://mvccoderouting.codeplex.com/workitem/1161): Parent controller reference syntax
 - Improved PowerShell module documentation
+- Added [#1154](https://mvccoderouting.codeplex.com/workitem/1154): *Extract-Views* support for localized views in satellite assemblies
 
 Web.Http.WebHost.v1.0.0
 -----------------------
