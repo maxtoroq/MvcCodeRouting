@@ -3,11 +3,13 @@
 
 Web.Http.WebHost.v1.1.0
 -----------------------
-No binary changes, requires Web.Http.v1.1
+- Internal changes
+- Requires Web.Http.v1.1
 
 Web.Http.v1.1.0
 ---------------
-No binary changes, requires v1.3
+- Internal changes
+- Requires v1.3
 
 v1.3.0
 ------
