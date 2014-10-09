@@ -12,16 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+$ErrorActionPreference = "Stop"
+
 function Extract-Views {
+    <#
+     .SYNOPSIS
+      Copies assembly-embedded views to your project.
+      
+     .DESCRIPTION
+      Copies assembly-embedded views to your project.
+      
+     .PARAMETER AssemblyName
+      Specifies the assembly that contains embedded views.
+      
+     .PARAMETER ViewsDirectory
+      Specifies the directory relative to the 'Views' directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'. If omitted, views are saved directly in 'Views'.
+      
+     .PARAMETER ProjectName
+      Specifies the project to use as context. If omitted, the default project is chosen.
+      
+     .PARAMETER Culture
+      Specifies the culture of the satellite assembly to extract views from. If omitted, views are extracted from the main assembly.
+      
+     .EXAMPLE
+      PM> Extract-Views MvcAccount Account
+    #>
     param(
-        [Parameter(Mandatory=$true, HelpMessage="The name of the assembly that contains embedded views.")]
-        [string]$AssemblyName, 
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$AssemblyName,
         
-        [Parameter(HelpMessage="The directory relative to the Views directory where you want to save the views. e.g. if 'Foo\Bar' views are saved in 'Views\Foo\Bar'")]
+        [Parameter(Position=1)]
         [string]$ViewsDirectory = $null,
         
-        [Parameter(HelpMessage="The name of the project to which you want to apply this command.")]
-        [string]$ProjectName = $null
+        [Parameter(Position=2)]
+        [string]$ProjectName = $null,
+        
+        [Parameter()]
+        [string]$Culture = $null
     )
     
     $project = $null
@@ -44,13 +71,27 @@ function Extract-Views {
         throw "Couldn't find $AssemblyName reference in $ProjectName."
     }
     
+    $cult = $null
+    
+    if ($Culture) {
+        $cult = [Globalization.CultureInfo]::GetCultureInfo($Culture)
+    }    
+    
+    
     $assemblyPath = if ($isWebsite) { $assemblyRef.FullPath } else { $assemblyRef.Path }
+    
+    if ($cult) {
+        $assemblyPath = [IO.Path]::Combine([IO.Path]::GetDirectoryName($assemblyPath), $cult.Name, [IO.Path]::GetFileNameWithoutExtension($assemblyPath)) + ".resources.dll"
+    }
+    
     $assembly = [Reflection.Assembly]::Load([IO.File]::ReadAllBytes($assemblyPath))
+    
     $viewResourceNames = $assembly.GetManifestResourceNames() | 
         where {[Text.RegularExpressions.Regex]::IsMatch($_, "^$AssemblyName\.Views\.", [Text.RegularExpressions.RegexOptions]::IgnoreCase)}
     
     if ($viewResourceNames -eq $null `
         -or $viewResourceNames.Length -eq 0) {
+        
         throw "$AssemblyName doesn't have embedded views."
     }
        
@@ -64,6 +105,11 @@ function Extract-Views {
         
         $resParts = $res.Split(".")
         $viewFileName = [string]::Join(".", $resParts[($resParts.Length - 2)..($resParts.Length - 1)])
+        
+        if ($cult) {
+            $viewFileName = [IO.Path]::GetFileNameWithoutExtension($viewFileName) + "." + $cult.Name + [IO.Path]::GetExtension($viewFileName)
+        }
+        
         $viewDirParts = New-Object Collections.ArrayList
         $viewDirParts.AddRange($resParts[($AssemblyName.Split('.').Length)..($resParts.Length - 3)])
         
@@ -97,10 +143,22 @@ function Extract-Views {
         if ($createFile) {
             
             $resStream = $assembly.GetManifestResourceStream($res)
-            $fileStream = [IO.File]::Create($viewPath)
-            $resStream.CopyTo($fileStream)
-            $fileStream.Dispose()
-            $resStream.Dispose()
+            
+            try {
+            
+                $fileStream = [IO.File]::Create($viewPath)
+            
+                try {
+                
+                    $resStream.CopyTo($fileStream)
+                
+                } finally {
+                    $fileStream.Dispose()
+                }
+            
+            } finally {
+                $resStream.Dispose()
+            }
             
             $extracted++
             
@@ -113,11 +171,8 @@ function Extract-Views {
     if ($extracted `
         -and $isWebsite) {
         
-        # Focus on Solution Explorer
-        #$dte.Windows.Item("{3AE79031-E1BC-11D0-8F78-00A0C9110057}").Activate()
-        
         try {
-            # Refresh
+            # Refresh Solution Explorer
             $dte.Commands.Raise("{1496A755-94DE-11D0-8C3F-00C04FC2AAE2}", 222, [ref]$null, [ref]$null)
         } catch { }
     }

@@ -75,7 +75,102 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeRoutingExtensions.cs" />
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\CodeRoutingMvcExtensions.cs">
+      <Link>Web.Mvc\CodeRoutingMvcExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\DescribedMvcActionInfo.cs">
+      <Link>Web.Mvc\Controllers\DescribedMvcActionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\DescribedMvcActionParameterInfo.cs">
+      <Link>Web.Mvc\Controllers\DescribedMvcActionParameterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\DescribedMvcAsyncActionInfo.cs">
+      <Link>Web.Mvc\Controllers\DescribedMvcAsyncActionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\DescribedMvcControllerInfo.cs">
+      <Link>Web.Mvc\Controllers\DescribedMvcControllerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\MvcActionInfo.cs">
+      <Link>Web.Mvc\Controllers\MvcActionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\MvcControllerInfo.cs">
+      <Link>Web.Mvc\Controllers\MvcControllerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\ReflectedMvcActionInfo.cs">
+      <Link>Web.Mvc\Controllers\ReflectedMvcActionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\ReflectedMvcActionParameterInfo.cs">
+      <Link>Web.Mvc\Controllers\ReflectedMvcActionParameterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\ReflectedMvcAsyncActionInfo.cs">
+      <Link>Web.Mvc\Controllers\ReflectedMvcAsyncActionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\Controllers\ReflectedMvcControllerInfo.cs">
+      <Link>Web.Mvc\Controllers\ReflectedMvcControllerInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\CustomControllerFactory.cs">
+      <Link>Web.Mvc\CustomControllerFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\CustomRouteAttribute.cs">
+      <Link>Web.Mvc\CustomRouteAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\DefaultActionAttribute.cs">
+      <Link>Web.Mvc\DefaultActionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\FromRouteAttribute.cs">
+      <Link>Web.Mvc\FromRouteAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\MvcCodeRoutingProvider.cs">
+      <Link>Web.Mvc\MvcCodeRoutingProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\MvcExtensions.cs">
+      <Link>Web.Mvc\MvcExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\MvcRouteFactory.cs">
+      <Link>Web.Mvc\MvcRouteFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\RequireRouteParametersAttribute.cs">
+      <Link>Web.Mvc\RequireRouteParametersAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web.Mvc\ViewEngineWrapper.cs">
+      <Link>Web.Mvc\ViewEngineWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\CodeRoutingExtensions.cs">
+      <Link>Web\CodeRoutingExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Hosting\AssemblyResources.cs">
+      <Link>Web\Hosting\AssemblyResources.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Hosting\AssemblyResourceVirtualDirectory.cs">
+      <Link>Web\Hosting\AssemblyResourceVirtualDirectory.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Hosting\AssemblyResourceVirtualFile.cs">
+      <Link>Web\Hosting\AssemblyResourceVirtualFile.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Hosting\EmbeddedViewsVirtualPathProvider.cs">
+      <Link>Web\Hosting\EmbeddedViewsVirtualPathProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Hosting\VirtualPathComparison.cs">
+      <Link>Web\Hosting\VirtualPathComparison.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\RouteDebugHandler.cs">
+      <Link>Web\RouteDebugHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Routing\CodeRoute.cs">
+      <Link>Web\Routing\CodeRoute.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Routing\ParameterBindingRouteConstraint.cs">
+      <Link>Web\Routing\ParameterBindingRouteConstraint.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Routing\RegexRouteConstraint.cs">
+      <Link>Web\Routing\RegexRouteConstraint.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Routing\SetRouteConstraint.cs">
+      <Link>Web\Routing\SetRouteConstraint.cs</Link>
+    </Compile>
+    <Compile Include="..\MvcCodeRouting.Web\Routing\TypeAwareRouteConstraint.cs">
+      <Link>Web\Routing\TypeAwareRouteConstraint.cs</Link>
+    </Compile>
     <Compile Include="CodeRoutingSettings.cs" />
     <Compile Include="Controllers\ActionInfo.cs" />
     <Compile Include="Controllers\ActionParameterInfo.cs" />
@@ -110,7 +205,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterSettings.cs" />
     <Compile Include="RequireRouteParametersAttribute.cs" />
-    <Compile Include="RouteDebugHandler.cs" />
     <Compile Include="RouteFactory.cs" />
     <Compile Include="RouteFormatterArgs.cs" />
     <Compile Include="RouteSegmentType.cs" />
@@ -119,34 +213,6 @@
     <Compile Include="Utilities\ReferenceEqualityComparer.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TypeHelpers.cs" />
-    <Compile Include="Web.Hosting\AssemblyResources.cs" />
-    <Compile Include="Web.Hosting\AssemblyResourceVirtualDirectory.cs" />
-    <Compile Include="Web.Hosting\AssemblyResourceVirtualFile.cs" />
-    <Compile Include="Web.Hosting\EmbeddedViewsVirtualPathProvider.cs" />
-    <Compile Include="Web.Hosting\VirtualPathComparison.cs" />
-    <Compile Include="Web.Mvc\Controllers\DescribedMvcActionInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\DescribedMvcActionParameterInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\DescribedMvcAsyncActionInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\DescribedMvcControllerInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\MvcActionInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\MvcControllerInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\ReflectedMvcActionInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\ReflectedMvcActionParameterInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\ReflectedMvcAsyncActionInfo.cs" />
-    <Compile Include="Web.Mvc\Controllers\ReflectedMvcControllerInfo.cs" />
-    <Compile Include="Web.Mvc\CustomRouteAttribute.cs" />
-    <Compile Include="Web.Mvc\DefaultActionAttribute.cs" />
-    <Compile Include="Web.Mvc\FromRouteAttribute.cs" />
-    <Compile Include="Web.Mvc\MvcCodeRoutingProvider.cs" />
-    <Compile Include="Web.Mvc\MvcExtensions.cs" />
-    <Compile Include="Web.Mvc\MvcRouteFactory.cs" />
-    <Compile Include="Web.Mvc\RequireRouteParametersAttribute.cs" />
-    <Compile Include="Web.Mvc\ViewEngineWrapper.cs" />
-    <Compile Include="Web.Routing\CodeRoute.cs" />
-    <Compile Include="Web.Routing\SetRouteConstraint.cs" />
-    <Compile Include="Web.Routing\ParameterBindingRouteConstraint.cs" />
-    <Compile Include="Web.Routing\RegexRouteConstraint.cs" />
-    <Compile Include="Web.Routing\TypeAwareRouteConstraint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

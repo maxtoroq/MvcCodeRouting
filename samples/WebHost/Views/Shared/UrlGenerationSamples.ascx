@@ -42,11 +42,19 @@
    </tr>
    <tr>
       <td>
-         <code>Url.Action("", "..Admin")</code>
+         <code>Url.Action("", "..")</code>
       </td>
-      <td><%: Url.Action("", "~Admin") %></td>
-      <td><%: Url.Action("", "..Admin") %></td>
+      <td><i>(varies)</i></td>
+      <td><%: Url.Action("", "..") %></td>
       <td>Parent reference.</td>
+   </tr>
+   <tr>
+      <td>
+         <code>Url.Action("", "..User")</code>
+      </td>
+      <td><i>(varies)</i></td>
+      <td><%: Url.Action("", "..User") %></td>
+      <td>Sibling of parent reference.</td>
    </tr>
    <tr>
       <td>

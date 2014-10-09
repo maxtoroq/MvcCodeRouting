@@ -17,6 +17,8 @@ namespace Samples {
          FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
          ViewEngineConfig.RegisterViewEngines(ViewEngines.Engines);
          WebApiConfig.Register(GlobalConfiguration.Configuration);
+
+         ControllerBuilder.Current.EnableCodeRouting();
       }
    }
 }

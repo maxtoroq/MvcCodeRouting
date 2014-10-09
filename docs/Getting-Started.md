@@ -118,5 +118,5 @@ Navigate to `~/routes.axd` to visualize the routes that MvcCodeRouting created f
 [4]: api/MvcCodeRouting/CodeRoutingHttpExtensions/README.md#methods
 [5]: Installing.md
 [6]: http://msdn.microsoft.com/en-us/library/system.web.http.httpconfiguration
-[7]: api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md
+[7]: api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting_1.md
 [8]: http://msdn.microsoft.com/en-us/library/system.web.httprequest.islocal

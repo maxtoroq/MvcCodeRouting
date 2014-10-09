@@ -82,6 +82,12 @@ namespace MvcCodeRouting.Web.Routing {
 
          this.ActionMapping = httpRoute.ActionMapping;
          this.ControllerMapping = httpRoute.ControllerMapping;
+
+         if (httpRoute.ControllerDescriptors != null) {
+
+            this.ControllerTypes = httpRoute.ControllerDescriptors
+               .ToDictionary(p => p.Key, p => p.Value.ControllerType, StringComparer.OrdinalIgnoreCase); 
+         }
       }
       
       public override RouteData GetRouteData(HttpContextBase httpContext) {
