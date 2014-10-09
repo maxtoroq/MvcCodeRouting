@@ -1,6 +1,14 @@
 ﻿Changes
 =======
 
+Web.Http.WebHost.v1.1.0
+-----------------------
+No binary changes, requires Web.Http.v1.1
+
+Web.Http.v1.1.0
+---------------
+No binary changes, requires v1.3
+
 v1.3.0
 ------
 - Added [#1156](https://mvccoderouting.codeplex.com/workitem/1156): Cannot locate dynamically loaded assemblies in Mvc (see [EnableCodeRouting(ControllerBuilder)](docs/api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md) extension method)
@@ -14,7 +22,7 @@ First MvcCodeRouting.Web.Http.WebHost release
 
 Web.Http.v1.0.0
 ---------------
-- Requires MvcCodeRouting v1.2
+- Requires v1.2
 - Moved WebHost to separate assembly/package
 
 v1.2.0
@@ -34,7 +42,7 @@ Fixed [#1155](https://mvccoderouting.codeplex.com/workitem/1155): FromRoute.Bind
 
 Web.Http.v0.9.3
 ---------------
-- Requires MvcCodeRouting v1.1.0
+- Requires v1.1
 - Fix: Web.Http.FromRoute attribute does not bind when using a custom name
 - Changed Web.Http MapCodeRoutes to extend HttpConfiguration instead of HttpRouteCollection. Calling CodeRoutingSettings.HttpConfiguration() is no longer needed, that method is now internal
 
