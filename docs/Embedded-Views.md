@@ -63,7 +63,7 @@ PM> Extract-Views MvcAccount Account
 Usage:
 
 ```text
-Extract-Views [-AssemblyName] <String> [[-ViewsDirectory] <String>] [[-ProjectName] <String>]
+Extract-Views [-AssemblyName] <String> [[-ViewsDirectory] <String>] [[-ProjectName] <String>] [-Culture <String>]
 ```
 
 Parameters:
@@ -71,6 +71,7 @@ Parameters:
 - **AssemblyName**: Specifies the assembly that contains embedded views.
 - **ViewsDirectory**: Specifies the directory relative to the *Views* directory where you want to save the views. e.g. if *Foo\Bar* views are saved in *Views\Foo\Bar*. If omitted, views are saved directly in *Views*.
 - **ProjectName**: Specifies the project to use as context. If omitted, the default project is chosen.
+- **Culture**: Specifies the culture of the satellite assembly to extract views from. If omitted, views are extracted from the main assembly.
 
 [1]: http://msdn.microsoft.com/en-us/library/system.web.hosting.virtualpathprovider
 [2]: api/MvcCodeRouting/CodeRoutingSettings/EnableEmbeddedViews.md
