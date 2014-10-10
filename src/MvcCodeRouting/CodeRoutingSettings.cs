@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Web.Routing;
 using MvcCodeRouting.ParameterBinding;
 using MvcCodeRouting.ParameterBinding.Binders;
 
@@ -38,7 +37,7 @@ namespace MvcCodeRouting {
 
       /// <summary>
       /// The settings that all new <see cref="CodeRoutingSettings"/> instances inherit.
-      /// Use this property to affect the behavior of the <see cref="CodeRoutingExtensions.MapCodeRoutes(RouteCollection, Type)"/> 
+      /// Use this property to affect the behavior of the <c>MapCodeRoutes</c> 
       /// methods without having to pass a settings instance for each call.
       /// </summary>
       public static CodeRoutingSettings Defaults {

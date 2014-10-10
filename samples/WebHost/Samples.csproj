@@ -104,6 +104,7 @@
     <Compile Include="Controllers\Admin\AdminController.cs" />
     <Compile Include="Controllers\Admin\CrudController.cs" />
     <Compile Include="Controllers\Admin\RoleController.cs" />
+    <Compile Include="Controllers\Admin\Tasks\TasksController.cs" />
     <Compile Include="Controllers\Admin\Tasks\MaintenanceController.cs" />
     <Compile Include="Controllers\Admin\UserController.cs" />
     <Compile Include="Controllers\Api\ApiController.cs" />
@@ -132,6 +133,8 @@
     <Content Include="Views\Account\LogOn.aspx" />
     <Content Include="Views\Account\LogOnStatus.ascx" />
     <Content Include="Views\Admin\Index.aspx" />
+    <Content Include="Views\Admin\Tasks\Index.aspx" />
+    <Content Include="Views\Admin\Tasks\Maintenance\Index.aspx" />
     <Content Include="Views\Admin\User\Edit.aspx" />
     <Content Include="Views\Admin\User\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />

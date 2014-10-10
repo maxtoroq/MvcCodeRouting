@@ -46,7 +46,7 @@ namespace MvcCodeRouting {
             ControllerDescriptors = routeSettings.Actions
                .Select(a => a.Controller)
                .DistinctReference()
-               .ToDictionary(c => c.Name, c => ((DescribedHttpControllerInfo)c).Descriptor)
+               .ToDictionary(c => c.Name, c => ((DescribedHttpControllerInfo)c).Descriptor, StringComparer.OrdinalIgnoreCase)
          };
       }
 
