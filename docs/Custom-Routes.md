@@ -22,8 +22,8 @@ The route created for the above action is:
 
 ```csharp
 routes.MapRoute(null, "Blog/{year}/{month}/{slug}", 
-    new { controller = @"Blog", action = @"Post" }, 
-    new { year = @"[0-9]{4}", month = @"[0-9]{2}" }, 
+    new { controller = "Blog", action = "Post" }, 
+    new { year = new RegexRouteConstraint(@"[0-9]{4}"), month = new RegexRouteConstraint(@"[0-9]{2}") }, 
     new[] { "CoolBlog.Controllers" });
 ```
 
@@ -43,8 +43,8 @@ Which produces:
 
 ```csharp
 routes.MapRoute(null, "{year}/{month}/{slug}", 
-    new { controller = @"Blog", action = @"Post" }, 
-    new { year = @"[0-9]{4}", month = @"[0-9]{2}" }, 
+    new { controller = "Blog", action = "Post" }, 
+    new { year = new RegexRouteConstraint(@"[0-9]{4}"), month = new RegexRouteConstraint(@"[0-9]{2}") }, 
     new[] { "CoolBlog.Controllers" });
 ```
 
@@ -58,10 +58,10 @@ namespace CoolBlog.Controllers {
     [CustomRoute("~/{year}/{month}/{slug}")]
     public class PostController : Controller {
           
-        [FromRoute]
+        [FromRoute(Constraint = "[0-9]{4}")]
         public int Year { get; set; }
 
-        [FromRoute]
+        [FromRoute(Constraint = "[0-9]{2}")]
         public int Month { get; set; }
         
         [FromRoute]
@@ -88,8 +88,8 @@ Which produces:
 
 ```csharp
 routes.MapRoute(null, "{year}/{month}/{slug}/{action}", 
-    new { controller = @"Blog", action = @"Index" }, 
-    new { action = "Index|Comments" year = @"[0-9]{4}", month = @"[0-9]{2}" }, 
+    new { controller = "Post", action = "Index" }, 
+    new { action = new SetRouteConstraint("Index", "Comments"), year = new RegexRouteConstraint(@"[0-9]{4}"), month = new RegexRouteConstraint(@"[0-9]{2}") }, 
     new[] { "CoolBlog.Controllers" });
 ```
 
