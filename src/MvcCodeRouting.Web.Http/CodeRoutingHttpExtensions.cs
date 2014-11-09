@@ -39,7 +39,7 @@ namespace MvcCodeRouting {
       /// in the same namespace or any sub-namespace, in the same assembly.
       /// </summary>
       /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
-      /// <param name="rootController">The route controller for the application.</param>
+      /// <param name="rootController">The root controller for the application.</param>
       /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController) {
          return MapCodeRoutes(configuration, rootController, null);
@@ -50,7 +50,7 @@ namespace MvcCodeRouting {
       /// in the same namespace or any sub-namespace, in the same assembly.
       /// </summary>
       /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
-      /// <param name="rootController">The route controller for the application.</param>
+      /// <param name="rootController">The root controller for the application.</param>
       /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
       /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, Type rootController, CodeRoutingSettings settings) {
@@ -64,7 +64,7 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
       /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
-      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <param name="rootController">The root controller for the provided base route.</param>
       /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController) {
          return MapCodeRoutes(configuration, baseRoute, rootController, null);
@@ -77,7 +77,7 @@ namespace MvcCodeRouting {
       /// </summary>
       /// <param name="configuration">The <see cref="System.Web.Http.HttpConfiguration"/> configuration object.</param>
       /// <param name="baseRoute">A base route to prepend to the URL of each created route. This parameter can be null.</param>
-      /// <param name="rootController">The route controller for the provided base route.</param>
+      /// <param name="rootController">The root controller for the provided base route.</param>
       /// <param name="settings">A settings object that customizes the route creation process. This parameter can be null.</param>
       /// <returns>The created routes.</returns>
       public static ICollection<IHttpRoute> MapCodeRoutes(this HttpConfiguration configuration, string baseRoute, Type rootController, CodeRoutingSettings settings) {

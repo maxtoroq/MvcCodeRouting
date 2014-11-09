@@ -24,7 +24,7 @@ The [HttpConfiguration][2] configuration object.
 
 #### *rootController*
 Type: [System.Type][3]  
-The route controller for the application.
+The root controller for the application.
 
 #### *settings*
 Type: [MvcCodeRouting.CodeRoutingSettings][4]  

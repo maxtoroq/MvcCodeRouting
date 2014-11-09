@@ -23,7 +23,7 @@ The [HttpConfiguration][2] configuration object.
 
 #### *rootController*
 Type: [System.Type][3]  
-The route controller for the application.
+The root controller for the application.
 
 ### Return Value
 Type: [ICollection][4]&lt;[IHttpRoute][5]>  

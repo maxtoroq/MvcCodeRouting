@@ -23,7 +23,7 @@ A collection of routes for the application.
 
 #### *rootController*
 Type: [System.Type][3]  
-The route controller for the application.
+The root controller for the application.
 
 ### Return Value
 Type: [ICollection][4]&lt;[Route][5]>  

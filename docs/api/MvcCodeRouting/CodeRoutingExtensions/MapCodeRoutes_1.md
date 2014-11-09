@@ -29,7 +29,7 @@ A base route to prepend to the URL of each created route. This parameter can be 
 
 #### *rootController*
 Type: [System.Type][4]  
-The route controller for the provided base route.
+The root controller for the provided base route.
 
 #### *settings*
 Type: [MvcCodeRouting.CodeRoutingSettings][5]  
