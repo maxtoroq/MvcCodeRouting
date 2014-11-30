@@ -3,7 +3,7 @@ Getting Started
 
 Convention over configuration Routing
 -------------------------------------
-Suppose you want a URL like `Store/Products/Browse/{category}/{page}`, the *Store* segment can be mapped to a namespace, *Products* to a controller, *Browse* to an action, an the rest to parameters. So, your code should look like this:
+Suppose you want a URL like `Store/Products/Browse/{category}/{page}`, the *Store* segment can be mapped to a namespace, *Products* to a controller, *Browse* to an action, and the rest to parameters. So, your code should look like this:
 
 ```csharp
 using System.Web.Mvc;
