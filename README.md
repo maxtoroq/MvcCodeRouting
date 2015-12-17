@@ -31,5 +31,3 @@ Resources
 - [Documentation](docs/README.md)
 - [Ask for help](https://mvccoderouting.codeplex.com/discussions)
 - [Report an issue](https://mvccoderouting.codeplex.com/workitem/list/basic)
-
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](http://maxtoroq.github.io/p/donate.html)
