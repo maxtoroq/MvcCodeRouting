@@ -1,5 +1,5 @@
-﻿[MvcCodeRouting](http://mvccoderouting.codeplex.com/) — Namespace-based Modularity for ASP.NET MVC and Web API
-==============================================================================================================
+﻿MvcCodeRouting — Namespace-based Modularity for ASP.NET MVC and Web API
+=======================================================================
 
 - Break your application into as many parts as you want, using namespaces and projects
 - URL generation and Views location are relative to the module
@@ -29,5 +29,5 @@ Motivation
 Resources
 ---------
 - [Documentation](docs/README.md)
-- [Ask for help](https://mvccoderouting.codeplex.com/discussions)
-- [Report an issue](https://mvccoderouting.codeplex.com/workitem/list/basic)
+- [Ask for help](http://maxtoroq.github.io/MvcCodeRouting/discussions/)
+- [Report an issue](http://maxtoroq.github.io/MvcCodeRouting/issues/)

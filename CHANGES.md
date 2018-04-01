@@ -13,10 +13,10 @@ Web.Http.v1.1.0
 
 v1.3.0
 ------
-- Added [#1156](https://mvccoderouting.codeplex.com/workitem/1156): Cannot locate dynamically loaded assemblies in Mvc (see [EnableCodeRouting(ControllerBuilder)](docs/api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md) extension method)
-- Added [#1161](https://mvccoderouting.codeplex.com/workitem/1161): Parent controller reference syntax
+- Added [#1156](http://maxtoroq.github.io/MvcCodeRouting/issues/1156.html): Cannot locate dynamically loaded assemblies in Mvc (see [EnableCodeRouting(ControllerBuilder)](docs/api/MvcCodeRouting/CodeRoutingExtensions/EnableCodeRouting.md) extension method)
+- Added [#1161](http://maxtoroq.github.io/MvcCodeRouting/issues/1161.html): Parent controller reference syntax
 - Improved PowerShell module documentation
-- Added [#1154](https://mvccoderouting.codeplex.com/workitem/1154): *Extract-Views* support for localized views in satellite assemblies
+- Added [#1154](http://maxtoroq.github.io/MvcCodeRouting/issues/1154.html): *Extract-Views* support for localized views in satellite assemblies
 
 Web.Http.WebHost.v1.0.0
 -----------------------
@@ -35,12 +35,12 @@ v1.2.0
 Web.Http.v0.10.0
 ----------------  
 - Implemented BindRouteProperties
-- Fixed [#1152](https://mvccoderouting.codeplex.com/workitem/1152): Both traditional and verb-based routing cannot be used in the same ApiController
+- Fixed [#1152](http://maxtoroq.github.io/MvcCodeRouting/issues/1152.html): Both traditional and verb-based routing cannot be used in the same ApiController
 - Using Guid as route name in self host
 
 v1.1.1
 ------
-Fixed [#1155](https://mvccoderouting.codeplex.com/workitem/1155): FromRoute.BinderType ignored by BindRouteProperties
+Fixed [#1155](http://maxtoroq.github.io/MvcCodeRouting/issues/1155.html): FromRoute.BinderType ignored by BindRouteProperties
 
 Web.Http.v0.9.3
 ---------------
@@ -64,7 +64,7 @@ No binary changes, updated MvcCodeRouting dependency version range
 v1.0.2
 ------
 - Support for loading views embedded in satellite assemblies
-- Fixed [#1148](https://mvccoderouting.codeplex.com/workitem/1148): RouteDebugHandler fails if RouteTable has Route with null DataTokens
+- Fixed [#1148](http://maxtoroq.github.io/MvcCodeRouting/issues/1148.html): RouteDebugHandler fails if RouteTable has Route with null DataTokens
 
 Web.Http.v0.9.1
 ---------------
@@ -77,7 +77,7 @@ v1.0.1
 v1.0.0
 ------
 - .NET 3.5 support (compiled against MVC 2)
-- Fixed [#1147](https://mvccoderouting.codeplex.com/workitem/1147): Generic methods should not be considered actions
+- Fixed [#1147](http://maxtoroq.github.io/MvcCodeRouting/issues/1147.html): Generic methods should not be considered actions
 
 Special thanks to [tylerburd](http://www.codeplex.com/site/users/view/tylerburd), [Grenaderov](http://www.codeplex.com/site/users/view/Grenaderov) and [JoshuaGough](http://www.codeplex.com/site/users/view/JoshuaGough) for their invaluable feedback
 
@@ -86,30 +86,30 @@ v0.9.8
 - Async controller support
 - MVC 4 Release Candidate support
 - Added Configuration setting
-- Fixed [#950](https://mvccoderouting.codeplex.com/workitem/950): Visual Studio build fails after using Extract-Views command
+- Fixed [#950](http://maxtoroq.github.io/MvcCodeRouting/issues/950.html): Visual Studio build fails after using Extract-Views command
 - Absolute custom route support
 - CustomRoute attribute support for controllers
 
 v0.9.7
 ------
-- Fixed [#890](https://mvccoderouting.codeplex.com/workitem/890): Embedded views don't work when assembly has multipart name
+- Fixed [#890](http://maxtoroq.github.io/MvcCodeRouting/issues/890.html): Embedded views don't work when assembly has multipart name
 - Added CodeRoutingSettings.Defaults property
 - Added CodeRoutingSettings.Reset() method
 - Added Extract-Views powershell command, use from Package Manager Console   
 
 v0.9.6
 ------
-- Fixed [#783](https://mvccoderouting.codeplex.com/workitem/783): Default action with optional route parameters does not work
-- Fixed [#779](https://mvccoderouting.codeplex.com/workitem/779): Allow multiple actions with same custom route if {action} token is present
+- Fixed [#783](http://maxtoroq.github.io/MvcCodeRouting/issues/783.html): Default action with optional route parameters does not work
+- Fixed [#779](http://maxtoroq.github.io/MvcCodeRouting/issues/779.html): Allow multiple actions with same custom route if {action} token is present
 - Added RootOnly setting
 - Removed limitation that required ViewEngineCollection.EnableCodeRouting() to be called after RouteCollection.MapCodeRoutes(), when using embedded views. Now both methods can be called in any order
 
 v0.9.5
 ------
-- Fixed [#708](https://mvccoderouting.codeplex.com/workitem/708): Optional string parameter with a null default value does not create an optional token
-- Fixed [#744](https://mvccoderouting.codeplex.com/workitem/744): Create only one route for multiple actions with equal custom routes
-- Fixed [#746](https://mvccoderouting.codeplex.com/workitem/746): UseImplicitIdToken is not copied to new CodeRoutingSettings instance
-- Fixed [#747](https://mvccoderouting.codeplex.com/workitem/747): IgnoredControllers is wrapped by new CodeRoutingSettings instance instead of copying its items
+- Fixed [#708](http://maxtoroq.github.io/MvcCodeRouting/issues/708.html): Optional string parameter with a null default value does not create an optional token
+- Fixed [#744](http://maxtoroq.github.io/MvcCodeRouting/issues/744.html): Create only one route for multiple actions with equal custom routes
+- Fixed [#746](http://maxtoroq.github.io/MvcCodeRouting/issues/746.html): UseImplicitIdToken is not copied to new CodeRoutingSettings instance
+- Fixed [#747](http://maxtoroq.github.io/MvcCodeRouting/issues/747.html): IgnoredControllers is wrapped by new CodeRoutingSettings instance instead of copying its items
 - Automatic constraints for enum parameters and properties, using Enum.GetNames(Type)
 - Custom model binder support for parameters and properties decorated with FromRouteAttribute
 
